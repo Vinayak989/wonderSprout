@@ -478,6 +478,8 @@ export default function App() {
     : 100;
   const starsToNext = badge.next ? Math.max(0, badge.target - progress.stars) : 0;
   const playLimitReached = parentPreferences.dailyLimit > 0 && minutesToday >= parentPreferences.dailyLimit;
+  const featuredGame = filteredGames.find((game) => game.id === 'moon-meadow-quest') ?? filteredGames.find((game) => game.mode === 'adventure') ?? filteredGames[0];
+  const explorerLevel = Math.floor(progress.stars / 10) + 1;
 
   function updateProgress(transform: (previous: Progress) => Progress) {
     setProgress((previous) => {
@@ -786,17 +788,25 @@ export default function App() {
         {playLimitReached && <div className="session-break-banner section-wrap" role="status">🌱 {tr(language, 'Take a little screen break. Your games and progress will be here when you come back.')} <a href="/club#club-grownup" onClick={(event) => { event.preventDefault(); openClubSection('grownup'); }}>{tr(language, 'Grown-up corner')} →</a></div>}
         <section className="hero section-wrap" id="top" hidden={subject !== 'all'}>
           <div className="hero-copy">
-            <div className="eyebrow"><span className="eyebrow-dot" /> {tr(language, 'A happy place to learn')}</div>
+            <div className="eyebrow"><span className="eyebrow-dot" /> {language === 'hi' ? 'तुम्हारा गेमिंग संसार' : 'YOUR GAME WORLD'}</div>
+            <div className="hero-player-hud">
+              <span className="hero-player-avatar" aria-hidden="true">{clubData.avatar}</span>
+              <span className="hero-player-level"><small>{language === 'hi' ? 'खोजकर्ता लेवल' : 'EXPLORER LEVEL'}</small><strong>{String(explorerLevel).padStart(2, '0')}</strong></span>
+              <span className="hero-player-xp"><span>{language === 'hi' ? `${progress.stars} स्टार XP` : `${progress.stars} STAR XP`}</span><i><b style={{ width: `${badgeProgress}%` }} /></i></span>
+              <span className="hero-player-missions">🎮 {progress.games}</span>
+            </div>
             <h1>{tr(language, 'Play big.')}<br /><span>{tr(language, 'Grow curious.')}</span></h1>
             <p className="hero-description">{tr(language, 'Choose a world, collect little wins, and find a new adventure every day.')}</p>
             <div className="hero-actions">
-              <a className="button button-primary" href="#adventures">{tr(language, 'Let’s play')} <span aria-hidden="true">↗</span></a>
+              <a className="button button-primary" href="#adventures"><span aria-hidden="true">▶</span> {tr(language, 'Let’s play')}</a>
               <a className="text-link" href="#rewards">{tr(language, 'See my star garden')} <span aria-hidden="true">↓</span></a>
             </div>
-            <div className="hero-footnote"><span aria-hidden="true">🌈</span> {tr(language, 'Made for curious kids ages 3–12')}</div>
+            <div className="hero-footnote"><span aria-hidden="true">🕹️</span> {language === 'hi' ? 'खेलो · मिशन पूरे करो · सितारे कमाओ' : 'PLAY · COMPLETE MISSIONS · EARN STARS'}</div>
           </div>
           <div className="hero-visual">
             <img className="hero-art-image" src="/wonder-world-hero.png" alt={tr(language, 'A fox, rabbit, and turtle setting off on a colorful adventure.')} width="1672" height="1024" fetchPriority="high" />
+            <div className="hero-world-stamp"><span>🗺️</span><div><small>{language === 'hi' ? 'दुनिया 01' : 'WORLD 01'}</small><strong>{language === 'hi' ? 'सपनों का जंगल' : 'Wonder Woods'}</strong></div></div>
+            {featuredGame && <button className="hero-mission-button" type="button" onClick={() => void startGame(featuredGame)}><span className="hero-mission-icon">{featuredGame.icon}</span><span className="hero-mission-copy"><small>{language === 'hi' ? 'आज का मिशन' : 'TODAY’S MISSION'}</small><strong>{localizedGame(language, featuredGame).title}</strong></span><span className="hero-mission-play">▶</span></button>}
             <div className="hero-art-badge"><span aria-hidden="true">🌟</span><div><strong>{games.length || 80}</strong><small>{tr(language, 'games to discover')}</small></div></div>
           </div>
         </section>
@@ -885,9 +895,10 @@ export default function App() {
             <div className="game-grid">
               {visibleGames.map((game, index) => (
                 <article className={`game-card ${game.theme}`} key={game.id}>
-                  <div className="card-topline"><span className="card-number">{language === 'hi' ? `खेल ${String(index + 1).padStart(2, '0')}` : `QUEST ${String(index + 1).padStart(2, '0')}`}</span><span className="card-age">{language === 'hi' ? ageCopyHi[currentAge.label] : currentAge.label}</span></div>
+                  <div className="card-topline"><span className="card-number">{language === 'hi' ? `मिशन ${String(index + 1).padStart(2, '0')}` : `MISSION ${String(index + 1).padStart(2, '0')}`}</span><span className="card-age">{language === 'hi' ? ageCopyHi[currentAge.label] : currentAge.label}</span></div>
                   <div className="game-art" aria-hidden="true">
                     <span className="art-halo" />
+                    <span className="game-art-label">{language === 'hi' ? 'खेल शुरू करो' : 'PLAY QUEST'}</span>
                     <span className="game-icon">{game.icon}</span>
                     <span className="art-sparkle art-sparkle-a">✦</span>
                     <span className="art-sparkle art-sparkle-b">✧</span>
@@ -897,6 +908,7 @@ export default function App() {
                     <button className={`favorite-toggle ${clubData.favorites.includes(game.id) ? 'is-favorite' : ''}`} type="button" aria-label={tr(language, clubData.favorites.includes(game.id) ? 'Remove favorite' : 'Add to favorites')} aria-pressed={clubData.favorites.includes(game.id)} onClick={() => updateClubData((previous) => ({ ...previous, favorites: previous.favorites.includes(game.id) ? previous.favorites.filter((id) => id !== game.id) : [...previous.favorites, game.id] }))}>{clubData.favorites.includes(game.id) ? '♥' : '♡'}</button>
                     <h3>{localizedGame(language, game).title}</h3>
                     <p>{localizedGame(language, game).description}</p>
+                    <div className="game-arcade-meta"><span>{game.mode === 'adventure' ? '🧭' : game.mode === 'memory' ? '🧠' : game.mode === 'puzzle' || game.mode === 'sudoku' ? '🧩' : game.mode === 'creative' || game.mode === 'monster' || game.mode === 'pixel' ? '🎨' : game.mode === 'maze3d' || game.mode === 'space3d' ? '🕹️' : '✨'} {language === 'hi' ? 'मिशन तैयार' : 'MISSION READY'}</span>{progress.performance[game.id] && <span>🎯 {Math.round(progress.performance[game.id].correct / progress.performance[game.id].attempts * 100)}%</span>}</div>
                     <div className="card-bottom">
                       <span className="game-time"><span aria-hidden="true">◷</span> {language === 'hi' ? '8–10 मिनट' : '8–10 min'}</span>
                       <button className="play-button" type="button" onClick={() => void startGame(game)} aria-label={`${tr(language, 'Play')} ${localizedGame(language, game).title}`}>
