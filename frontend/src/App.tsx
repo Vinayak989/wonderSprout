@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
 import { ageCopyHi, hindiQuestionRound, localizedGame, localizedLesson, localizedQuestion, localizedSubject, subjectsHi, tr, type Language } from './i18n';
 import ClubPage, { type ClubGame } from './ClubPage';
 import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readClubData, readParentPreferences, usageStorageKey, type ClubData, type GalleryArtwork, type GamePerformance, type ParentPreferences } from './club';
@@ -8,7 +8,7 @@ const ThreeArcade = lazy(() => import('./ThreeArcade'));
 type AgeBand = '3-5' | '6-8' | '9-12';
 type Page = 'welcome' | 'games' | 'game' | 'club';
 type Subject = 'all' | 'Math magic' | 'Word adventures' | 'Science wonders' | 'Adventure & Treasure Hunt' | 'Memory Games' | 'Puzzle & Logic' | 'Art & Creativity' | 'Geography & World Explorer' | 'Animals & Nature' | 'Music & Rhythm' | 'Coding & Computational Thinking' | 'Life Skills & Good Habits' | 'Emotions & Social Skills' | 'Time & Calendar' | 'History & Culture' | 'Money & Financial Literacy' | 'Sports & Movement' | 'Interactive Stories & Reading';
-type GameMode = 'quiz' | 'bubble' | 'spell' | 'match' | 'adventure' | 'memory' | 'puzzle' | 'creative' | 'scavenger' | 'coding' | 'sequence' | 'missing' | 'sudoku' | 'monster' | 'pixel' | 'piano' | 'rhythm' | 'sound' | 'sort' | 'clock' | 'shop' | 'balance' | 'emotion' | 'loop' | 'readaloud' | 'maze3d' | 'space3d';
+type GameMode = 'quiz' | 'bubble' | 'spell' | 'match' | 'adventure' | 'memory' | 'puzzle' | 'creative' | 'scavenger' | 'coding' | 'sequence' | 'missing' | 'sudoku' | 'monster' | 'pixel' | 'piano' | 'rhythm' | 'sound' | 'sort' | 'clock' | 'shop' | 'balance' | 'emotion' | 'loop' | 'readaloud' | 'maze3d' | 'space3d' | 'racing' | 'shooting';
 
 type AdventureScene = { place: string; story: string; landmark: string; reward: string; node: string };
 
@@ -575,7 +575,7 @@ export default function App() {
     answerLock.current = false;
     roundRecorded.current = false;
     try {
-      const localModes: GameMode[] = ['creative', 'coding', 'loop', 'sequence', 'missing', 'sudoku', 'monster', 'pixel', 'piano', 'rhythm', 'sound', 'sort', 'clock', 'shop', 'balance', 'maze3d', 'space3d'];
+      const localModes: GameMode[] = ['creative', 'coding', 'loop', 'sequence', 'missing', 'sudoku', 'monster', 'pixel', 'piano', 'rhythm', 'sound', 'sort', 'clock', 'shop', 'balance', 'maze3d', 'space3d', 'racing', 'shooting'];
       if (localModes.includes(game.mode)) {
         setQuizLoading(false);
         return;
@@ -1075,6 +1075,14 @@ export default function App() {
 
             {!quizLoading && !quizError && !roundComplete && activeGame.mode === 'balance' && (
               <BalanceGame language={language} onFinish={finishSpecialGame} />
+            )}
+
+            {!quizLoading && !quizError && !roundComplete && activeGame.mode === 'racing' && (
+              <WonderKartRace age={age} language={language} onFinish={finishSpecialGame} />
+            )}
+
+            {!quizLoading && !quizError && !roundComplete && activeGame.mode === 'shooting' && (
+              <SparkleTargetBlaster age={age} language={language} onFinish={finishSpecialGame} />
             )}
 
             {!quizLoading && !quizError && !roundComplete && (activeGame.mode === 'maze3d' || activeGame.mode === 'space3d') && (
@@ -1732,6 +1740,193 @@ function BalanceGame({ language, onFinish }: { language: Language; onFinish: () 
     <div className="balance-controls"><button type="button" onClick={() => nudge(-1)} aria-label={tr(language, 'Move balance left')}>← {tr(language, 'Left')}</button><input type="range" min="0" max="100" value={position} onChange={(event) => setPosition(Number(event.target.value))} aria-label={tr(language, 'Balance position')} /><button type="button" onClick={() => nudge(1)} aria-label={tr(language, 'Move balance right')}>{tr(language, 'Right')} →</button></div>
     <p className="activity-message" role="status">{message}</p><button className="button button-primary" type="button" onClick={balance}>{tr(language, 'Hold it steady!')}</button>
   </div>;
+}
+
+type KartTrackItem = { id: number; lane: number; top: number; kind: 'star' | 'puddle' };
+
+function gameText(language: Language, english: string, hindi: string) {
+  return language === 'hi' ? hindi : english;
+}
+
+function WonderKartRace({ age, language, onFinish }: { age: AgeBand; language: Language; onFinish: () => void }) {
+  const [timeLeft, setTimeLeft] = useState(8 * 60);
+  const [paused, setPaused] = useState(false);
+  const [lane, setLane] = useState(1);
+  const [stars, setStars] = useState(0);
+  const [items, setItems] = useState<KartTrackItem[]>([]);
+  const [message, setMessage] = useState(gameText(language, 'Pick a lane, grab stars, and splash past the puddles!', 'अपनी लेन चुनो, तारे बटोरों और पानी के गड्ढों से बचो!'));
+  const laneRef = useRef(1);
+  const itemsRef = useRef<KartTrackItem[]>([]);
+  const nextId = useRef(0);
+  const starCount = useRef(0);
+  const finishRef = useRef(onFinish);
+
+  useEffect(() => { finishRef.current = onFinish; }, [onFinish]);
+  useEffect(() => {
+    if (paused) return;
+    const timer = window.setInterval(() => setTimeLeft((value) => {
+      if (value <= 1) { window.clearInterval(timer); finishRef.current(); return 0; }
+      return value - 1;
+    }), 1000);
+    return () => window.clearInterval(timer);
+  }, [paused]);
+
+  function moveTo(nextLane: number) {
+    const safeLane = Math.max(0, Math.min(2, nextLane));
+    laneRef.current = safeLane;
+    setLane(safeLane);
+  }
+
+  useEffect(() => {
+    if (paused) return;
+    const spawnDelay = age === '3-5' ? 1450 : age === '6-8' ? 1180 : 980;
+    const spawn = window.setInterval(() => {
+      const item: KartTrackItem = { id: nextId.current++, lane: Math.floor(Math.random() * 3), top: 0, kind: Math.random() < 0.67 ? 'star' : 'puddle' };
+      const next = [...itemsRef.current, item];
+      itemsRef.current = next;
+      setItems(next);
+    }, spawnDelay);
+    const drive = window.setInterval(() => {
+      const next: KartTrackItem[] = [];
+      for (const item of itemsRef.current) {
+        const moved = { ...item, top: item.top + 2.2 };
+        if (moved.top >= 78) {
+          if (moved.lane === laneRef.current && moved.kind === 'star') {
+            starCount.current += 1;
+            setStars(starCount.current);
+            if (starCount.current % 10 === 0) setMessage(gameText(language, 'Checkpoint reached! The next race world is waiting!', 'चेकपॉइंट मिल गया! अगली रेस की दुनिया तैयार है!'));
+            else setMessage(gameText(language, 'Star collected! Keep an eye on the road.', 'तारा मिल गया! सड़क पर नज़र रखो।'));
+          } else if (moved.lane === laneRef.current && moved.kind === 'puddle') {
+            setMessage(gameText(language, 'Splash! Try another lane next time.', 'छपाक! अगली बार दूसरी लेन आज़माओ।'));
+          }
+        } else next.push(moved);
+      }
+      itemsRef.current = next;
+      setItems(next);
+    }, 80);
+    return () => { window.clearInterval(spawn); window.clearInterval(drive); };
+  }, [age, language, paused]);
+
+  useEffect(() => {
+    if (paused) return;
+    const steer = (event: KeyboardEvent) => {
+      if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key.toLowerCase() !== 'a' && event.key.toLowerCase() !== 'd') return;
+      event.preventDefault();
+      moveTo(laneRef.current + (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a' ? -1 : 1));
+    };
+    window.addEventListener('keydown', steer);
+    return () => window.removeEventListener('keydown', steer);
+  }, [paused]);
+
+  const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const seconds = (timeLeft % 60).toString().padStart(2, '0');
+  const world = stars < 10 ? gameText(language, 'Cloud Circuit', 'बादलों का रास्ता') : stars < 20 ? gameText(language, 'Rainbow Ridge', 'इंद्रधनुषी पहाड़ी') : gameText(language, 'Comet Coast', 'धूमकेतु तट');
+
+  return <section className="activity-card arcade-game kart-race" aria-label={gameText(language, 'Wonder Kart Rally game', 'वंडर कार्ट रैली खेल')}>
+    <div className="arcade-game-top"><div><span className="arcade-world-tag">🏁 {world}</span><strong>{gameText(language, 'Star Rally', 'तारा रैली')}</strong></div><div className="arcade-hud"><span>⭐ {stars}</span><span aria-label={gameText(language, `Time remaining ${minutes} minutes ${seconds} seconds`, `बाकी समय ${minutes} मिनट ${seconds} सेकंड`)}>⏱ {minutes}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
+    <p className="arcade-instruction">{gameText(language, 'Steer between three lanes. Collect ⭐ stars, and dodge 🟤 puddles. Arrow keys or tap a lane.', 'तीन लेनों में कार चलाओ। ⭐ तारे लो और 🟤 पानी के गड्ढों से बचो। तीर वाले बटन या लेन टैप करो।')}</p>
+    <div className={`kart-road ${paused ? 'is-paused' : ''}`}>
+      {[0, 1, 2].map((trackLane) => <button className={`kart-lane ${lane === trackLane ? 'lane-selected' : ''}`} key={trackLane} type="button" disabled={paused} onClick={() => moveTo(trackLane)} aria-label={gameText(language, `Steer into lane ${trackLane + 1}`, `${trackLane + 1}वीं लेन में जाओ`)}>
+        {items.filter((item) => item.lane === trackLane).map((item) => <span className={`kart-pickup ${item.kind}`} key={item.id} style={{ top: `${item.top}%` }} aria-hidden="true">{item.kind === 'star' ? '⭐' : '🟤'}</span>)}
+        {lane === trackLane && <span className="kart-player" aria-hidden="true">🏎️</span>}
+        <span className="kart-lane-label">{trackLane + 1}</span>
+      </button>)}
+      {paused && <div className="kart-pause-overlay">{gameText(language, 'Pit stop! Take a breather.', 'पिट स्टॉप! थोड़ा आराम करो।')}</div>}
+    </div>
+    <div className="kart-steering"><button type="button" disabled={paused} onClick={() => moveTo(lane - 1)} aria-label={gameText(language, 'Steer left', 'बाईं ओर मोड़ो')}>◀</button><span>🏎️</span><button type="button" disabled={paused} onClick={() => moveTo(lane + 1)} aria-label={gameText(language, 'Steer right', 'दाईं ओर मोड़ो')}>▶</button></div>
+    <div className="arcade-mission"><span>🎯 {gameText(language, 'Next checkpoint', 'अगला चेकपॉइंट')}</span><strong>{10 - stars % 10} ⭐</strong><small>{gameText(language, 'Plan your route, notice patterns, and count your stars!', 'रास्ते की योजना बनाओ, पैटर्न पहचानो और तारे गिनो!')}</small></div>
+    <p className="activity-message" role="status" aria-live="polite">{paused ? gameText(language, 'Race paused. Ready when you are!', 'रेस रुकी हुई है। तैयार हो तो फिर चलो!') : message}</p>
+  </section>;
+}
+
+type ShapeTarget = { id: string; glyph: string; english: string; hindi: string; colorName: string; colorHi: string; color: string; sides: number; fact: string; factHi: string };
+type BlasterRound = { targets: ShapeTarget[]; goal: ShapeTarget };
+
+const blasterShapes: ShapeTarget[] = [
+  { id: 'circle', glyph: '●', english: 'circle', hindi: 'गोला', colorName: 'red', colorHi: 'लाल', color: '#ff7383', sides: 0, fact: 'A circle has one curved edge and no corners.', factHi: 'गोले का एक घुमावदार किनारा होता है और कोई कोना नहीं होता।' },
+  { id: 'triangle', glyph: '▲', english: 'triangle', hindi: 'त्रिभुज', colorName: 'yellow', colorHi: 'पीला', color: '#ffbe4f', sides: 3, fact: 'A triangle has 3 sides and 3 corners.', factHi: 'त्रिभुज की 3 भुजाएँ और 3 कोने होते हैं।' },
+  { id: 'square', glyph: '■', english: 'square', hindi: 'वर्ग', colorName: 'green', colorHi: 'हरा', color: '#61cfa6', sides: 4, fact: 'A square has 4 equal sides.', factHi: 'वर्ग की 4 बराबर भुजाएँ होती हैं।' },
+  { id: 'pentagon', glyph: '⬟', english: 'pentagon', hindi: 'पंचभुज', colorName: 'purple', colorHi: 'बैंगनी', color: '#8f83f5', sides: 5, fact: 'A pentagon has 5 sides.', factHi: 'पंचभुज की 5 भुजाएँ होती हैं।' },
+  { id: 'hexagon', glyph: '⬢', english: 'hexagon', hindi: 'षट्भुज', colorName: 'blue', colorHi: 'नीला', color: '#44b9da', sides: 6, fact: 'A honeycomb cell is often shaped like a hexagon.', factHi: 'मधुमक्खी के छत्ते की एक कोठरी अक्सर षट्भुज जैसी होती है।' },
+  { id: 'octagon', glyph: '⯃', english: 'octagon', hindi: 'अष्टभुज', colorName: 'orange', colorHi: 'नारंगी', color: '#f39151', sides: 8, fact: 'An octagon has 8 sides. Stop signs are often octagons.', factHi: 'अष्टभुज की 8 भुजाएँ होती हैं। रुकने के संकेत अक्सर अष्टभुज होते हैं।' },
+];
+
+function shuffled<T>(items: T[]) {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const other = Math.floor(Math.random() * (index + 1));
+    [result[index], result[other]] = [result[other], result[index]];
+  }
+  return result;
+}
+
+function makeBlasterRound(previousId = ''): BlasterRound {
+  const pool = shuffled(blasterShapes.filter((shape) => shape.id !== previousId));
+  const goal = pool[Math.floor(Math.random() * pool.length)];
+  const targets = shuffled([goal, ...pool.filter((shape) => shape.id !== goal.id).slice(0, 3)]);
+  return { targets, goal };
+}
+
+function SparkleTargetBlaster({ age, language, onFinish }: { age: AgeBand; language: Language; onFinish: () => void }) {
+  const [timeLeft, setTimeLeft] = useState(8 * 60);
+  const [paused, setPaused] = useState(false);
+  const [round, setRound] = useState<BlasterRound>(() => makeBlasterRound());
+  const [aimed, setAimed] = useState('');
+  const [firing, setFiring] = useState(false);
+  const [shots, setShots] = useState(0);
+  const [message, setMessage] = useState(gameText(language, 'Read the clue, aim at a shape, then launch a sparkle!', 'संकेत पढ़ो, सही आकृति पर निशाना लगाओ और चमक छोड़ो!'));
+  const finishRef = useRef(onFinish);
+  useEffect(() => { finishRef.current = onFinish; }, [onFinish]);
+  useEffect(() => {
+    if (paused) return;
+    const timer = window.setInterval(() => setTimeLeft((value) => {
+      if (value <= 1) { window.clearInterval(timer); finishRef.current(); return 0; }
+      return value - 1;
+    }), 1000);
+    return () => window.clearInterval(timer);
+  }, [paused]);
+
+  const goalName = language === 'hi' ? round.goal.hindi : round.goal.english;
+  const clue = age === '3-5'
+    ? gameText(language, `Aim for the ${language === 'hi' ? round.goal.colorHi : round.goal.colorName} sparkle!`, `${round.goal.colorHi} चमक पर निशाना लगाओ!`)
+    : age === '6-8'
+      ? gameText(language, `Find the ${goalName} shape!`, `${goalName} वाली आकृति ढूँढो!`)
+      : round.goal.sides === 0
+        ? gameText(language, 'Find the shape with no corners!', 'बिना कोनों वाली आकृति ढूँढो!')
+        : gameText(language, `Find the shape with ${round.goal.sides} sides!`, `${round.goal.sides} भुजाओं वाली आकृति ढूँढो!`);
+  const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const seconds = (timeLeft % 60).toString().padStart(2, '0');
+
+  function launch() {
+    if (!aimed) { setMessage(gameText(language, 'Tap a floating target to aim first!', 'पहले निशाना लगाने के लिए तैरते लक्ष्य को टैप करो!')); return; }
+    setFiring(true);
+    window.setTimeout(() => setFiring(false), 460);
+    setShots((count) => count + 1);
+    if (aimed === round.goal.id) {
+      setMessage(language === 'hi' ? round.goal.factHi : round.goal.fact);
+      setRound(makeBlasterRound(round.goal.id));
+      setAimed('');
+    } else {
+      setMessage(gameText(language, 'Whoosh! Check the clue and try another target.', 'स्विश! संकेत फिर पढ़ो और दूसरा लक्ष्य आज़माओ।'));
+    }
+  }
+
+  return <section className="activity-card arcade-game sparkle-blaster" aria-label={gameText(language, 'Sparkle Target Blaster game', 'चमकता लक्ष्य ब्लास्टर खेल')}>
+    <div className="arcade-game-top"><div><span className="arcade-world-tag">✨ {gameText(language, 'Starry practice range', 'तारों वाला अभ्यास मैदान')}</span><strong>{gameText(language, 'Shape Safari', 'आकृति सफारी')}</strong></div><div className="arcade-hud"><span>🎯 {shots}</span><span aria-label={gameText(language, `Time remaining ${minutes} minutes ${seconds} seconds`, `बाकी समय ${minutes} मिनट ${seconds} सेकंड`)}>⏱ {minutes}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
+    <p className="arcade-instruction">{gameText(language, 'A friendly aim-and-pop game: match the clue to a shape. No enemies, just sparkles!', 'एक प्यारा निशाना लगाने वाला खेल: संकेत को आकृति से मिलाओ। यहाँ कोई दुश्मन नहीं, बस चमक है!')}</p>
+    <div className={`blaster-range ${paused ? 'is-paused' : ''} ${firing ? 'is-firing' : ''}`}>
+      <div className="blaster-clue"><span>🔎</span><strong>{clue}</strong></div>
+      <div className="blaster-target-grid" role="group" aria-label={gameText(language, 'Choose a shape to aim at', 'निशाना लगाने के लिए आकृति चुनो')}>
+        {round.targets.map((target, index) => <button key={target.id} type="button" disabled={paused} className={`blaster-target ${aimed === target.id ? 'is-aimed' : ''}`} onClick={() => { setAimed(target.id); setMessage(gameText(language, 'Nice aim! Press launch to send a sparkle.', 'अच्छा निशाना! चमक छोड़ने के लिए लॉन्च दबाओ।')); }} aria-pressed={aimed === target.id} aria-label={gameText(language, `${target.english}, target ${index + 1}`, `${target.hindi}, लक्ष्य ${index + 1}`)} style={{ '--target-color': target.color } as CSSProperties}>
+          <span className="target-shape" aria-hidden="true">{target.glyph}</span><span className="target-label">{language === 'hi' ? target.hindi : target.english}</span><span className="target-star" aria-hidden="true">✦</span>
+        </button>)}
+      </div>
+      <div className="blaster-launch-deck"><span className="blaster-wand" aria-hidden="true">🪄</span><span className="blaster-shot-path" aria-hidden="true">✨ · · · · · · ·</span><button type="button" className="blaster-launch" disabled={paused} onClick={launch}>✨ {gameText(language, 'Launch sparkle!', 'चमक छोड़ो!')}</button></div>
+      {paused && <div className="blaster-pause-overlay">{gameText(language, 'Pause and take a break.', 'रुको और थोड़ा आराम करो।')}</div>}
+    </div>
+    <div className="arcade-mission"><span>🧠 {gameText(language, 'Tiny learning boost', 'छोटी-सी सीख')}</span><strong>{age === '9-12' ? gameText(language, 'Shape facts', 'आकृति के तथ्य') : age === '6-8' ? gameText(language, 'Shape names', 'आकृतियों के नाम') : gameText(language, 'Colors & shapes', 'रंग और आकृतियाँ')}</strong><small>{gameText(language, 'Each pop shares a quick fact about the shape you found.', 'हर सही निशाने के बाद उस आकृति का एक मज़ेदार तथ्य मिलेगा।')}</small></div>
+    <p className="activity-message" role="status" aria-live="polite">{message}</p>
+  </section>;
 }
 
 function WelcomePage({ language, age, onAge, onLanguage, onContinue }: { language: Language; age: AgeBand | ''; onAge: (age: AgeBand) => void; onLanguage: (language: Language) => void; onContinue: () => void }) {

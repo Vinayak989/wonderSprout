@@ -1478,3 +1478,83 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
 @media (prefers-reduced-motion: reduce) {
   .portal-icon, .art-halo { animation: none !important; }
 }
+
+/* Playable arcade missions */
+.arcade-game { width: min(100%, 760px); margin: 18px auto 10px; padding: 19px; overflow: hidden; border: 3px solid white; border-radius: 26px; background: radial-gradient(circle at 85% 0%, #634da6, transparent 38%), linear-gradient(155deg, #30204f, #21163e); box-shadow: 0 7px 0 #8b70c2, 0 13px 26px #24163d24; color: white; }
+.arcade-game-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.arcade-game-top > div:first-child { display: flex; flex-direction: column; gap: 5px; }
+.arcade-game-top strong { color: white; font-family: 'Fredoka', 'Trebuchet MS', sans-serif; font-size: 25px; }
+.arcade-world-tag { width: fit-content; padding: 5px 9px; border: 1px solid #ffffff35; border-radius: 999px; background: #ffffff16; color: #ffe58e; font-size: 10px; font-weight: 900; }
+.arcade-hud { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+.arcade-hud > span, .arcade-hud > button { display: inline-flex; min-height: 34px; align-items: center; justify-content: center; gap: 5px; padding: 6px 9px; border: 1px solid #ffffff35; border-radius: 11px; background: #ffffff13; color: #fff4ce; font-size: 12px; font-weight: 900; }
+.arcade-hud > button { cursor: pointer; }
+.arcade-hud > button:hover { background: #ffffff25; }
+.arcade-instruction { margin: 12px 0; color: #e1d7f6; font-size: 12px; font-weight: 700; line-height: 1.55; }
+.arcade-game .activity-message { min-height: 37px; margin: 8px 0 0; padding: 9px 11px; border: 1px solid #ffffff26; border-radius: 12px; background: #ffffff12; color: #fff4c4; font-size: 11px; font-weight: 850; line-height: 1.5; text-align: center; }
+.arcade-mission { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 10px; margin-top: 12px; padding: 11px 13px; border: 1px solid #ffffff36; border-radius: 15px; background: linear-gradient(100deg, #ffffff12, #ffffff08); }
+.arcade-mission > span { color: #d7c9f5; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; }
+.arcade-mission > strong { color: #ffe37e; font-family: 'Fredoka', sans-serif; font-size: 18px; }
+.arcade-mission > small { grid-column: 1 / -1; color: #ded4f3; font-size: 10px; line-height: 1.5; }
+.kart-road { position: relative; display: grid; height: 310px; grid-template-columns: repeat(3, 1fr); overflow: hidden; border: 4px solid #fff; border-radius: 20px; background: repeating-linear-gradient(180deg, #423e59 0 36px, #494561 36px 72px); box-shadow: inset 0 0 0 3px #211838, inset 0 0 28px #17112e; }
+.kart-road::before { position: absolute; z-index: 1; inset: 0; pointer-events: none; background: linear-gradient(90deg, #17132c 0 5%, transparent 5% 95%, #17132c 95%), repeating-linear-gradient(180deg, transparent 0 35px, #fff8 35px 49px, transparent 49px 70px); background-size: 100% 100%, 3px 70px; background-position: center, center; content: ''; opacity: .66; }
+.kart-lane { position: relative; min-width: 0; border: 0; border-right: 2px dashed #ffffff43; background: transparent; cursor: pointer; }
+.kart-lane:last-of-type { border-right: 0; }
+.kart-lane:disabled { cursor: default; }
+.kart-lane.lane-selected { background: linear-gradient(180deg, #ffe06b0c, #ffe06b1c); }
+.kart-lane-label { position: absolute; z-index: 2; bottom: 5px; left: 50%; color: #ffffff88; font-size: 9px; font-weight: 900; transform: translateX(-50%); }
+.kart-pickup { position: absolute; z-index: 3; left: 50%; display: grid; width: 38px; height: 38px; place-items: center; filter: drop-shadow(0 3px 5px #130d25a6); font-size: 27px; transform: translate(-50%, -50%); }
+.kart-pickup.star { animation: pickup-spin 1s linear infinite; }
+@keyframes pickup-spin { 50% { scale: 1.18; } }
+.kart-player { position: absolute; z-index: 4; bottom: 10%; left: 50%; display: block; filter: drop-shadow(0 5px 3px #120d25); font-size: 37px; transform: translateX(-50%); animation: kart-bounce .48s ease-in-out infinite alternate; }
+@keyframes kart-bounce { to { translate: 0 -3px; } }
+.kart-pause-overlay, .blaster-pause-overlay { position: absolute; z-index: 6; inset: 0; display: grid; place-items: center; padding: 20px; background: #22163bdc; color: #fff0aa; font-family: 'Fredoka', sans-serif; font-size: 23px; font-weight: 700; text-align: center; }
+.kart-steering { display: flex; align-items: center; justify-content: center; gap: 25px; margin-top: 9px; }
+.kart-steering > button { display: grid; width: 59px; height: 48px; place-items: center; border: 2px solid white; border-radius: 15px; background: linear-gradient(145deg, #ffe477, #ffa859); box-shadow: 0 4px 0 #a96048; color: #543556; cursor: pointer; font-size: 20px; font-weight: 1000; }
+.kart-steering > button:disabled { opacity: .55; }
+.kart-steering > span { filter: drop-shadow(0 3px 3px #100a25); font-size: 32px; }
+.blaster-range { position: relative; overflow: hidden; padding: 13px; border: 3px solid white; border-radius: 20px; background: radial-gradient(circle at 50% 0, #7957bf, transparent 57%), linear-gradient(160deg, #39255c, #251941); }
+.blaster-clue { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 8px 12px; border: 2px solid white; border-radius: 15px; background: linear-gradient(110deg, #fff5ce, #ffdef0); box-shadow: 0 4px 0 #d3aacc; color: #39254f; text-align: center; }
+.blaster-clue > span { font-size: 22px; }
+.blaster-clue > strong { font-family: 'Fredoka', sans-serif; font-size: 17px; }
+.blaster-target-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px; margin: 16px 0 12px; }
+.blaster-target { position: relative; display: flex; min-height: 126px; flex-direction: column; align-items: center; justify-content: center; gap: 5px; overflow: hidden; padding: 9px 5px; border: 3px solid white; border-radius: 19px; background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--target-color) 38%, white), #ffffff 70%); box-shadow: 0 5px 0 #a996cd; color: #39254f; cursor: crosshair; transition: transform .16s, box-shadow .16s; }
+.blaster-target:hover:not(:disabled) { transform: translateY(-4px) rotate(-2deg); }
+.blaster-target:disabled { cursor: default; }
+.blaster-target.is-aimed { outline: 4px solid #ffdf6a; outline-offset: 2px; box-shadow: 0 5px 0 #a996cd, 0 0 22px #ffe66da6; transform: scale(1.035); }
+.target-shape { display: grid; width: 61px; height: 61px; place-items: center; border: 3px solid white; border-radius: 50%; background: var(--target-color); box-shadow: inset 0 -5px #00000018, 0 4px 0 #66527c45, 0 0 20px color-mix(in srgb, var(--target-color) 75%, transparent); color: white; font-family: Arial, sans-serif; font-size: 39px; text-shadow: 0 2px 3px #30204f55; }
+.target-label { position: relative; z-index: 2; color: #453055; font-size: 10px; font-weight: 950; text-transform: capitalize; }
+.target-star { position: absolute; top: 6px; right: 9px; color: #edb831; font-size: 14px; }
+.blaster-launch-deck { position: relative; display: flex; min-height: 63px; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; border: 1px solid #ffffff40; border-radius: 16px; background: #ffffff12; }
+.blaster-wand { z-index: 1; font-size: 32px; transform: rotate(-38deg); }
+.blaster-shot-path { position: absolute; left: 49px; color: #ffef9a; font-size: 15px; letter-spacing: 3px; opacity: .8; }
+@keyframes sparkle-shot { from { opacity: .25; transform: translateX(0) scale(.7); } to { opacity: 1; transform: translateX(230px) scale(1.2); } }
+.blaster-range.is-firing .blaster-shot-path { animation: sparkle-shot .42s ease-out; }
+.blaster-launch { position: relative; z-index: 1; min-height: 43px; padding: 8px 15px; border: 2px solid white; border-radius: 13px; background: linear-gradient(120deg, #ffdd69, #ff9f61); box-shadow: 0 4px 0 #a86051; color: #4e3054; cursor: pointer; font-size: 12px; font-weight: 1000; }
+.blaster-launch:hover:not(:disabled) { transform: translateY(-2px); }
+.blaster-launch:disabled { opacity: .55; cursor: default; }
+.sparkle-blaster .arcade-mission { background: linear-gradient(100deg, #7a5dc126, #ffffff08); }
+
+@media (max-width: 700px) {
+  .arcade-game { margin-top: 12px; padding: 12px; border-width: 2px; border-radius: 21px; box-shadow: 0 5px 0 #8b70c2; }
+  .arcade-game-top { align-items: flex-start; flex-direction: column; }
+  .arcade-game-top strong { font-size: 22px; }
+  .arcade-hud { width: 100%; justify-content: space-between; }
+  .arcade-hud > span, .arcade-hud > button { min-height: 31px; padding: 5px 8px; font-size: 10px; }
+  .arcade-instruction { font-size: 10px; }
+  .kart-road { height: 260px; border-radius: 16px; }
+  .kart-pickup { font-size: 23px; }
+  .kart-player { font-size: 32px; }
+  .blaster-range { padding: 9px; border-width: 2px; border-radius: 16px; }
+  .blaster-target-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 12px 0; }
+  .blaster-target { min-height: 105px; border-radius: 15px; }
+  .target-shape { width: 53px; height: 53px; font-size: 34px; }
+  .target-label { font-size: 9px; }
+  .blaster-clue > strong { font-size: 15px; }
+  .blaster-launch-deck { min-height: 58px; padding-inline: 8px; }
+  .blaster-shot-path { left: 43px; font-size: 12px; letter-spacing: 1px; }
+  .blaster-launch { min-height: 40px; padding-inline: 10px; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kart-pickup.star, .kart-player { animation: none; }
+}

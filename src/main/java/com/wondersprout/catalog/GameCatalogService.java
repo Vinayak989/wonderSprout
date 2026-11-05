@@ -114,7 +114,11 @@ public class GameCatalogService {
             new Game("crystal-cave-3d", "3D Crystal Cave", "Adventure & Treasure Hunt", "maze3d",
                     "Play three 3D cave missions: find crystals, unlock portals, and rescue a lost firefly.", "💎", "lilac", 9, AGE_BANDS),
             new Game("solar-system-3d", "3D Space Rescue Missions", "Science wonders", "space3d",
-                    "Pilot a 3D shuttle on three rescue missions. Collect cargo, dodge asteroids, and dock safely.", "🪐", "space", 9, AGE_BANDS)
+                    "Pilot a 3D shuttle on three rescue missions. Collect cargo, dodge asteroids, and dock safely.", "🪐", "space", 9, AGE_BANDS),
+            game("wonder-kart-rally", "Wonder Kart Rally", "Sports & Movement", "racing",
+                    "Race through colorful worlds, steer around puddles, and collect stars. Practice planning and counting.", "🏎️", "sports", 8),
+            game("sparkle-target-blaster", "Sparkle Target Blaster", "Adventure & Treasure Hunt", "shooting",
+                    "Aim a friendly sparkle launcher at stars and shape targets. No enemies or combat.", "✨", "space", 8)
     );
 
     private final Map<String, Map<String, List<Question>>> questionBank = buildQuestionBank();
