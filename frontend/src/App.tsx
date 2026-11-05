@@ -1078,11 +1078,11 @@ export default function App() {
             )}
 
             {!quizLoading && !quizError && !roundComplete && activeGame.mode === 'racing' && (
-              <WonderKartRace age={age} language={language} onFinish={finishSpecialGame} />
+              <WonderKartRace age={age} language={language} minutes={activeGame.minutes} onFinish={finishSpecialGame} />
             )}
 
             {!quizLoading && !quizError && !roundComplete && activeGame.mode === 'shooting' && (
-              <SparkleTargetBlaster age={age} language={language} onFinish={finishSpecialGame} />
+              <SparkleTargetBlaster age={age} language={language} minutes={activeGame.minutes} onFinish={finishSpecialGame} />
             )}
 
             {!quizLoading && !quizError && !roundComplete && (activeGame.mode === 'maze3d' || activeGame.mode === 'space3d') && (
@@ -1748,8 +1748,8 @@ function gameText(language: Language, english: string, hindi: string) {
   return language === 'hi' ? hindi : english;
 }
 
-function WonderKartRace({ age, language, onFinish }: { age: AgeBand; language: Language; onFinish: () => void }) {
-  const [timeLeft, setTimeLeft] = useState(8 * 60);
+function WonderKartRace({ age, language, minutes, onFinish }: { age: AgeBand; language: Language; minutes: number; onFinish: () => void }) {
+  const [timeLeft, setTimeLeft] = useState(minutes * 60);
   const [paused, setPaused] = useState(false);
   const [lane, setLane] = useState(1);
   const [stars, setStars] = useState(0);
@@ -1818,12 +1818,12 @@ function WonderKartRace({ age, language, onFinish }: { age: AgeBand; language: L
     return () => window.removeEventListener('keydown', steer);
   }, [paused]);
 
-  const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const minutesLeft = Math.floor(timeLeft / 60).toString().padStart(2, '0');
   const seconds = (timeLeft % 60).toString().padStart(2, '0');
   const world = stars < 10 ? gameText(language, 'Cloud Circuit', 'बादलों का रास्ता') : stars < 20 ? gameText(language, 'Rainbow Ridge', 'इंद्रधनुषी पहाड़ी') : gameText(language, 'Comet Coast', 'धूमकेतु तट');
 
   return <section className="activity-card arcade-game kart-race" aria-label={gameText(language, 'Wonder Kart Rally game', 'वंडर कार्ट रैली खेल')}>
-    <div className="arcade-game-top"><div><span className="arcade-world-tag">🏁 {world}</span><strong>{gameText(language, 'Star Rally', 'तारा रैली')}</strong></div><div className="arcade-hud"><span>⭐ {stars}</span><span aria-label={gameText(language, `Time remaining ${minutes} minutes ${seconds} seconds`, `बाकी समय ${minutes} मिनट ${seconds} सेकंड`)}>⏱ {minutes}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
+    <div className="arcade-game-top"><div><span className="arcade-world-tag">🏁 {world}</span><strong>{gameText(language, 'Star Rally', 'तारा रैली')}</strong></div><div className="arcade-hud"><span>⭐ {stars}</span><span aria-label={gameText(language, `Time remaining ${minutesLeft} minutes ${seconds} seconds`, `बाकी समय ${minutesLeft} मिनट ${seconds} सेकंड`)}>⏱ {minutesLeft}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
     <p className="arcade-instruction">{gameText(language, 'Steer between three lanes. Collect ⭐ stars, and dodge 🟤 puddles. Arrow keys or tap a lane.', 'तीन लेनों में कार चलाओ। ⭐ तारे लो और 🟤 पानी के गड्ढों से बचो। तीर वाले बटन या लेन टैप करो।')}</p>
     <div className={`kart-road ${paused ? 'is-paused' : ''}`}>
       {[0, 1, 2].map((trackLane) => <button className={`kart-lane ${lane === trackLane ? 'lane-selected' : ''}`} key={trackLane} type="button" disabled={paused} onClick={() => moveTo(trackLane)} aria-label={gameText(language, `Steer into lane ${trackLane + 1}`, `${trackLane + 1}वीं लेन में जाओ`)}>
@@ -1867,8 +1867,8 @@ function makeBlasterRound(previousId = ''): BlasterRound {
   return { targets, goal };
 }
 
-function SparkleTargetBlaster({ age, language, onFinish }: { age: AgeBand; language: Language; onFinish: () => void }) {
-  const [timeLeft, setTimeLeft] = useState(8 * 60);
+function SparkleTargetBlaster({ age, language, minutes, onFinish }: { age: AgeBand; language: Language; minutes: number; onFinish: () => void }) {
+  const [timeLeft, setTimeLeft] = useState(minutes * 60);
   const [paused, setPaused] = useState(false);
   const [round, setRound] = useState<BlasterRound>(() => makeBlasterRound());
   const [aimed, setAimed] = useState('');
@@ -1894,7 +1894,7 @@ function SparkleTargetBlaster({ age, language, onFinish }: { age: AgeBand; langu
       : round.goal.sides === 0
         ? gameText(language, 'Find the shape with no corners!', 'बिना कोनों वाली आकृति ढूँढो!')
         : gameText(language, `Find the shape with ${round.goal.sides} sides!`, `${round.goal.sides} भुजाओं वाली आकृति ढूँढो!`);
-  const minutes = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const minutesLeft = Math.floor(timeLeft / 60).toString().padStart(2, '0');
   const seconds = (timeLeft % 60).toString().padStart(2, '0');
 
   function launch() {
@@ -1912,7 +1912,7 @@ function SparkleTargetBlaster({ age, language, onFinish }: { age: AgeBand; langu
   }
 
   return <section className="activity-card arcade-game sparkle-blaster" aria-label={gameText(language, 'Sparkle Target Blaster game', 'चमकता लक्ष्य ब्लास्टर खेल')}>
-    <div className="arcade-game-top"><div><span className="arcade-world-tag">✨ {gameText(language, 'Starry practice range', 'तारों वाला अभ्यास मैदान')}</span><strong>{gameText(language, 'Shape Safari', 'आकृति सफारी')}</strong></div><div className="arcade-hud"><span>🎯 {shots}</span><span aria-label={gameText(language, `Time remaining ${minutes} minutes ${seconds} seconds`, `बाकी समय ${minutes} मिनट ${seconds} सेकंड`)}>⏱ {minutes}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
+    <div className="arcade-game-top"><div><span className="arcade-world-tag">✨ {gameText(language, 'Starry practice range', 'तारों वाला अभ्यास मैदान')}</span><strong>{gameText(language, 'Shape Safari', 'आकृति सफारी')}</strong></div><div className="arcade-hud"><span>🎯 {shots}</span><span aria-label={gameText(language, `Time remaining ${minutesLeft} minutes ${seconds} seconds`, `बाकी समय ${minutesLeft} मिनट ${seconds} सेकंड`)}>⏱ {minutesLeft}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
     <p className="arcade-instruction">{gameText(language, 'A friendly aim-and-pop game: match the clue to a shape. No enemies, just sparkles!', 'एक प्यारा निशाना लगाने वाला खेल: संकेत को आकृति से मिलाओ। यहाँ कोई दुश्मन नहीं, बस चमक है!')}</p>
     <div className={`blaster-range ${paused ? 'is-paused' : ''} ${firing ? 'is-firing' : ''}`}>
       <div className="blaster-clue"><span>🔎</span><strong>{clue}</strong></div>
