@@ -249,8 +249,9 @@ public class GameCatalogService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Choose an answer to keep playing.");
         }
 
+        String sourceQuestionId = request.questionId().replaceFirst("~v\\d+$", "");
         Question question = questionsFor(gameId, request.ageBand()).stream()
-                .filter(candidate -> candidate.id().equals(request.questionId()))
+                .filter(candidate -> candidate.id().equals(sourceQuestionId))
                 .findFirst()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "That question is no longer in this adventure."));
 

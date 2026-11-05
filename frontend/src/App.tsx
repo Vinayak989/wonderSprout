@@ -141,6 +141,7 @@ const portalCards: { subject: Subject; icon: string; className: string; descript
 ];
 
 const progressKey = 'wonder-sprout-progress-v1';
+const questionHistoryKey = 'wonder-sprout-question-history-v1';
 const preferenceKey = 'wonder-sprout-preferences-v1';
 
 function categorySlug(category: string) {
@@ -196,6 +197,71 @@ function readTodayMinutes() {
     const saved = JSON.parse(localStorage.getItem(usageStorageKey) ?? '{}') as { date?: string; minutes?: number };
     return saved.date === dayKey() ? Math.max(0, Number(saved.minutes) || 0) : 0;
   } catch { return 0; }
+}
+
+function shuffleItems<T>(items: T[]): T[] {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const other = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[other]] = [shuffled[other], shuffled[index]];
+  }
+  return shuffled;
+}
+
+type QuestionHistory = Record<string, { played: string[]; lastRound: string[] }>;
+
+function chooseQuestionRound(questions: Question[], game: Game, age: AgeBand, language: Language): Question[] {
+  const variants = questions.flatMap((question) => {
+    const prompts = language === 'hi'
+      ? [question.prompt, `संकेत पढ़ो: ${question.hint} कौन-सा जवाब सही है?`, `सही जवाब चुनो: ${question.prompt}`, `खोजकर्ता सवाल: ${question.prompt}`, `ध्यान से सोचो: ${question.hint} सही विकल्प चुनो।`]
+      : [question.prompt, `Clue time: ${question.hint} Which answer fits?`, `Choose the best answer: ${question.prompt}`, `Explorer challenge: ${question.prompt}`, `Think carefully: ${question.hint} Pick the right choice.`];
+    const correctChoice = question.answerValue ?? question.choices[question.answerIndex ?? 0];
+    return prompts.map((prompt, index) => {
+      const choices = shuffleItems(question.choices);
+      return {
+        ...question,
+        id: `${question.id}~v${index}`,
+        prompt,
+        hint: index === 0 ? question.hint : language === 'hi' ? `एक और संकेत: ${question.hint}` : `Another clue: ${question.hint}`,
+        choices,
+        answerIndex: question.answerValue === undefined ? choices.indexOf(correctChoice) : undefined,
+      };
+    });
+  });
+
+  const key = `${game.id}:${age}:${language}`;
+  let history: QuestionHistory = {};
+  try {
+    const saved = JSON.parse(localStorage.getItem(questionHistoryKey) ?? '{}') as QuestionHistory | null;
+    history = saved && typeof saved === 'object' ? saved : {};
+  } catch { /* Start a fresh question cycle if local storage is unavailable. */ }
+  const previous = history[key] ?? { played: [], lastRound: [] };
+  const getUnplayed = (played: string[]) => variants.filter((question) => !played.includes(question.id));
+  let played = previous.played;
+  let available = getUnplayed(played);
+  if (new Set(available.map((question) => question.id.split('~v')[0])).size < Math.min(5, questions.length)) {
+    played = previous.lastRound;
+    available = getUnplayed(played);
+  }
+
+  const grouped = new Map<string, Question[]>();
+  for (const question of available) {
+    const sourceId = question.id.split('~v')[0];
+    grouped.set(sourceId, [...(grouped.get(sourceId) ?? []), question]);
+  }
+  const questionGroups = [...grouped.values()];
+  const selected = (game.mode === 'adventure' ? questionGroups : shuffleItems(questionGroups))
+    .slice(0, 5)
+    .map((group) => shuffleItems(group)[0]);
+  if (selected.length < 5) {
+    const selectedIds = new Set(selected.map((question) => question.id));
+    selected.push(...shuffleItems(available.filter((question) => !selectedIds.has(question.id))).slice(0, 5 - selected.length));
+  }
+
+  const selectedIds = selected.map((question) => question.id);
+  history[key] = { played: [...new Set([...played, ...selectedIds])], lastRound: selectedIds };
+  try { localStorage.setItem(questionHistoryKey, JSON.stringify(history)); } catch { /* Questions still rotate for this visit. */ }
+  return selected;
 }
 
 async function readJson<T>(response: Response): Promise<T> {
@@ -516,10 +582,10 @@ export default function App() {
         const response = await fetch(`/api/games/${game.id}/memory-cards?ageBand=${age}`);
         setMemoryCards(await readJson<MemoryCard[]>(response));
       } else if (language === 'hi') {
-        setQuestions(hindiQuestionRound(game.subject, game.id, age));
+        setQuestions(chooseQuestionRound(hindiQuestionRound(game.subject, game.id, age), game, age, language));
       } else {
         const response = await fetch(`/api/games/${game.id}/questions?ageBand=${age}`);
-        setQuestions(await readJson<Question[]>(response));
+        setQuestions(chooseQuestionRound(await readJson<Question[]>(response), game, age, language));
       }
       setQuizLoading(false);
     } catch (error) {
