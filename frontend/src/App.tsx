@@ -1,10 +1,12 @@
 import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { ageCopyHi, hindiQuestionRound, localizedGame, localizedLesson, localizedQuestion, localizedSubject, subjectsHi, tr, type Language } from './i18n';
+import ClubPage, { type ClubGame } from './ClubPage';
+import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readClubData, readParentPreferences, usageStorageKey, type ClubData, type GalleryArtwork, type GamePerformance, type ParentPreferences } from './club';
 
 const ThreeArcade = lazy(() => import('./ThreeArcade'));
 
 type AgeBand = '3-5' | '6-8' | '9-12';
-type Page = 'welcome' | 'games' | 'game';
+type Page = 'welcome' | 'games' | 'game' | 'club';
 type Subject = 'all' | 'Math magic' | 'Word adventures' | 'Science wonders' | 'Adventure & Treasure Hunt' | 'Memory Games' | 'Puzzle & Logic' | 'Art & Creativity' | 'Geography & World Explorer' | 'Animals & Nature' | 'Music & Rhythm' | 'Coding & Computational Thinking' | 'Life Skills & Good Habits' | 'Emotions & Social Skills' | 'Time & Calendar' | 'History & Culture' | 'Money & Financial Literacy' | 'Sports & Movement' | 'Interactive Stories & Reading';
 type GameMode = 'quiz' | 'bubble' | 'spell' | 'match' | 'adventure' | 'memory' | 'puzzle' | 'creative' | 'scavenger' | 'coding' | 'sequence' | 'missing' | 'sudoku' | 'monster' | 'pixel' | 'piano' | 'rhythm' | 'sound' | 'sort' | 'clock' | 'shop' | 'balance' | 'emotion' | 'loop' | 'readaloud' | 'maze3d' | 'space3d';
 
@@ -79,7 +81,7 @@ type AnswerResult = {
   encouragement: string;
 };
 
-type Progress = { stars: number; games: number };
+type Progress = { stars: number; games: number; performance: Record<string, GamePerformance> };
 type MemoryCard = { id: string; pairKey: string; face: string; label: string; fact: string };
 type Point = [number, number];
 type CodingLevel = { size: number; start: Point; goal: Point; walls: string[]; maxBlocks: number };
@@ -164,6 +166,7 @@ function readPreferences(): { age: AgeBand; language: Language } | null {
 }
 
 function pageFromPath(path: string): Page {
+  if (path === '/club' || path.startsWith('/club/')) return 'club';
   if (path === '/games' || path.startsWith('/games/category/')) return 'games';
   return path.startsWith('/games/') ? 'game' : 'welcome';
 }
@@ -171,15 +174,28 @@ function pageFromPath(path: string): Page {
 function readProgress(): Progress {
   try {
     const saved = localStorage.getItem(progressKey);
-    if (!saved) return { stars: 0, games: 0 };
+    if (!saved) return { stars: 0, games: 0, performance: {} };
     const parsed = JSON.parse(saved) as Partial<Progress>;
     return {
       stars: Math.max(0, Number(parsed.stars) || 0),
       games: Math.max(0, Number(parsed.games) || 0),
+      performance: parsed.performance && typeof parsed.performance === 'object' ? parsed.performance : {},
     };
   } catch {
-    return { stars: 0, games: 0 };
+    return { stars: 0, games: 0, performance: {} };
   }
+}
+
+function dayKey() {
+  const today = new Date();
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+}
+
+function readTodayMinutes() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(usageStorageKey) ?? '{}') as { date?: string; minutes?: number };
+    return saved.date === dayKey() ? Math.max(0, Number(saved.minutes) || 0) : 0;
+  } catch { return 0; }
 }
 
 async function readJson<T>(response: Response): Promise<T> {
@@ -218,6 +234,12 @@ export default function App() {
   const [subject, setSubject] = useState<Subject>(() => subjectFromPath(window.location.pathname));
   const [showMoreGames, setShowMoreGames] = useState(false);
   const [progress, setProgress] = useState<Progress>(readProgress);
+  const [clubData, setClubData] = useState<ClubData>(readClubData);
+  const [parentPreferences, setParentPreferences] = useState<ParentPreferences>(readParentPreferences);
+  const [artworks, setArtworks] = useState<GalleryArtwork[]>(readArtwork);
+  const [minutesToday, setMinutesToday] = useState(readTodayMinutes);
+  const [online, setOnline] = useState(navigator.onLine);
+  const [breakReminder, setBreakReminder] = useState(false);
   const [activeGame, setActiveGame] = useState<Game | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [memoryCards, setMemoryCards] = useState<MemoryCard[]>([]);
@@ -245,6 +267,13 @@ export default function App() {
       setSubject(subjectFromPath(path));
       setShowMoreGames(false);
     }
+  }
+
+  function openClubSection(section: string) {
+    navigate('/club');
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      document.getElementById(`club-${section}`)?.scrollIntoView({ behavior: parentPreferences.reduceMotion ? 'auto' : 'smooth' });
+    }));
   }
 
   function choosePreferences() {
@@ -285,6 +314,42 @@ export default function App() {
   }, [language, page, activeGame, subject]);
 
   useEffect(() => {
+    try { localStorage.setItem(clubStorageKey, JSON.stringify(clubData)); } catch { /* New club progress stays available for this visit. */ }
+  }, [clubData]);
+
+  useEffect(() => {
+    try { localStorage.setItem(parentStorageKey, JSON.stringify(parentPreferences)); } catch { /* Accessibility choices still apply in memory. */ }
+    document.body.classList.toggle('accessibility-contrast', parentPreferences.highContrast);
+    document.body.classList.toggle('easy-read-font', parentPreferences.dyslexicFont);
+    document.body.classList.toggle('reduce-motion', parentPreferences.reduceMotion);
+    return () => {
+      document.body.classList.remove('accessibility-contrast', 'easy-read-font', 'reduce-motion');
+    };
+  }, [parentPreferences]);
+
+  useEffect(() => {
+    const updateNetwork = () => setOnline(navigator.onLine);
+    window.addEventListener('online', updateNetwork);
+    window.addEventListener('offline', updateNetwork);
+    return () => {
+      window.removeEventListener('online', updateNetwork);
+      window.removeEventListener('offline', updateNetwork);
+    };
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+      setMinutesToday((value) => {
+        const next = value + 1;
+        try { localStorage.setItem(usageStorageKey, JSON.stringify({ date: dayKey(), minutes: next })); } catch { /* Session reminders remain local. */ }
+        return next;
+      });
+    }, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
     if (page === 'welcome') return undefined;
     let cancelled = false;
     fetch('/api/games')
@@ -323,12 +388,21 @@ export default function App() {
   const currentQuestion = rawCurrentQuestion && activeGame
     ? localizedQuestion(language, activeGame.subject, activeGame.id, rawCurrentQuestion)
     : rawCurrentQuestion;
+  useEffect(() => {
+    if (!parentPreferences.readAloud || page !== 'game' || !currentQuestion || !('speechSynthesis' in window)) return undefined;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(`${currentQuestion.prompt}. ${currentQuestion.hint}`);
+    utterance.lang = language === 'hi' ? 'hi-IN' : 'en-US';
+    window.speechSynthesis.speak(utterance);
+    return () => window.speechSynthesis.cancel();
+  }, [parentPreferences.readAloud, language, page, currentQuestion?.id]);
   const usedTiles = new Set(selectedTiles);
   const currentAdventure = activeGame?.mode === 'adventure' ? adventureFor(activeGame, language) : undefined;
   const adventureScene = currentAdventure?.[questionIndex];
   const matchInstruction = tr(language, activeGame?.subject === 'Animals & Nature' ? 'Match the clue to the right home or nature answer.' : 'Read the clue, then tap or drag it to the matching card.');
   const searchInstruction = tr(language, activeGame?.subject === 'Animals & Nature' ? 'Look closely through the nature scene and tap what the clue describes.' : activeGame?.subject === 'Geography & World Explorer' ? 'Explore the travel scene and tap the place that fits the clue.' : activeGame?.subject === 'Life Skills & Good Habits' ? 'Look closely and tap the safe, helpful choice.' : 'Search the explorer scene and tap the answer to the clue.');
-  const gentleRetryMode = activeGame?.mode === 'adventure' || activeGame?.mode === 'scavenger' || activeGame?.mode === 'puzzle';
+  const activePerformance = activeGame ? progress.performance[activeGame.id] : undefined;
+  const gentleRetryMode = activeGame?.mode === 'adventure' || activeGame?.mode === 'scavenger' || activeGame?.mode === 'puzzle' || Boolean(activePerformance && activePerformance.attempts >= 3 && activePerformance.correct / activePerformance.attempts < .55);
   const currentAge = ageBands.find((band) => band.id === age)!;
   const badge = badgeFor(progress.stars);
   const priorMilestone = progress.stars >= 15 ? 15 : progress.stars >= 5 ? 5 : 0;
@@ -337,6 +411,7 @@ export default function App() {
     ? Math.min(100, ((progress.stars - priorMilestone) / (nextMilestone - priorMilestone)) * 100)
     : 100;
   const starsToNext = badge.next ? Math.max(0, badge.target - progress.stars) : 0;
+  const playLimitReached = parentPreferences.dailyLimit > 0 && minutesToday >= parentPreferences.dailyLimit;
 
   function updateProgress(transform: (previous: Progress) => Progress) {
     setProgress((previous) => {
@@ -350,11 +425,51 @@ export default function App() {
     });
   }
 
+  function updateClubData(transform: (previous: ClubData) => ClubData) {
+    setClubData((previous) => {
+      const next = transform(previous);
+      try { localStorage.setItem(clubStorageKey, JSON.stringify(next)); } catch { /* The club stays usable for this visit. */ }
+      return next;
+    });
+  }
+
+  function recordAnswer(correct: boolean) {
+    if (!activeGame) return;
+    updateProgress((previous) => {
+      const old = previous.performance[activeGame.id] ?? { attempts: 0, correct: 0 };
+      return {
+        ...previous,
+        stars: previous.stars + (correct ? 1 : 0),
+        performance: { ...previous.performance, [activeGame.id]: { attempts: old.attempts + 1, correct: old.correct + (correct ? 1 : 0) } },
+      };
+    });
+  }
+
+  function markGameCompleted() {
+    if (!activeGame) return;
+    updateClubData((previous) => ({ ...previous, lastCompletedGameId: activeGame.id }));
+  }
+
+  function saveArtwork(image: string) {
+    const next = [{ id: `art-${Date.now()}`, title: language === 'hi' ? `मेरी कला ${artworks.length + 1}` : `My artwork ${artworks.length + 1}`, image, savedAt: new Date().toISOString() }, ...artworks].slice(0, 12);
+    setArtworks(next);
+    try { localStorage.setItem(artworkStorageKey, JSON.stringify(next)); } catch { /* The download still succeeds if browser storage is full. */ }
+  }
+
+  function removeArtwork(id: string) {
+    setArtworks((previous) => {
+      const next = previous.filter((artwork) => artwork.id !== id);
+      try { localStorage.setItem(artworkStorageKey, JSON.stringify(next)); } catch { /* The gallery can still be cleared in memory. */ }
+      return next;
+    });
+  }
+
   function finishSpecialGame() {
     if (roundRecorded.current) return;
     roundRecorded.current = true;
     setRoundStars(1);
     setRoundComplete(true);
+    markGameCompleted();
     updateProgress((previous) => ({ ...previous, stars: previous.stars + 1, games: previous.games + 1 }));
   }
 
@@ -362,10 +477,15 @@ export default function App() {
     if (roundRecorded.current) return;
     roundRecorded.current = true;
     setRoundComplete(true);
+    markGameCompleted();
     updateProgress((previous) => ({ ...previous, games: previous.games + 1 }));
   }
 
   async function startGame(game: Game, openRoute = true) {
+    if (playLimitReached) {
+      setBreakReminder(true);
+      return;
+    }
     if (openRoute) {
       if (page !== 'game') cataloguePath.current = window.location.pathname;
       navigate(`/games/${game.id}`);
@@ -410,11 +530,12 @@ export default function App() {
 
   useEffect(() => {
     if (page !== 'game' || activeGame || games.length === 0) return;
+    if (playLimitReached) { navigate('/club', true); return; }
     const gameId = window.location.pathname.split('/')[2];
     const game = games.find((candidate) => candidate.id === gameId);
     if (game) void startGame(game, false);
     else navigate('/games', true);
-  }, [page, games, activeGame]);
+  }, [page, games, activeGame, playLimitReached]);
 
   function closeGame() {
     answerLock.current = false;
@@ -435,10 +556,10 @@ export default function App() {
     setSelectedChoice(choice);
     setCheckingAnswer(true);
     setAnswerError('');
-    if (rawCurrentQuestion?.localized) {
+    if (rawCurrentQuestion?.localized || (!navigator.onLine && rawCurrentQuestion?.answerValue !== undefined)) {
       const selectedIndex = currentQuestion.choices.indexOf(choice);
       const correct = rawCurrentQuestion.answerValue !== undefined
-        ? choice === rawCurrentQuestion.answerValue
+        ? (originalChoice ?? choice) === rawCurrentQuestion.answerValue
         : selectedIndex === rawCurrentQuestion.answerIndex;
       setAnswerResult({
         correct,
@@ -447,10 +568,8 @@ export default function App() {
         encouragement: correct ? 'बहुत बढ़िया सोच!' : 'अच्छी कोशिश!',
       });
       setCheckingAnswer(false);
-      if (correct) {
-        setRoundStars((value) => value + 1);
-        updateProgress((previous) => ({ ...previous, stars: previous.stars + 1 }));
-      }
+      recordAnswer(correct);
+      if (correct) setRoundStars((value) => value + 1);
       return;
     }
     try {
@@ -472,11 +591,18 @@ export default function App() {
         encouragement: language === 'hi' ? result.correct ? 'बहुत बढ़िया सोच!' : 'अच्छी कोशिश!' : result.encouragement,
       });
       setCheckingAnswer(false);
-      if (result.correct) {
-        setRoundStars((value) => value + 1);
-        updateProgress((previous) => ({ ...previous, stars: previous.stars + 1 }));
-      }
+      recordAnswer(result.correct);
+      if (result.correct) setRoundStars((value) => value + 1);
     } catch (error) {
+      if (rawCurrentQuestion?.answerValue !== undefined) {
+        const correct = (originalChoice ?? choice) === rawCurrentQuestion.answerValue;
+        const answerText = rawCurrentQuestion.answerValue;
+        setAnswerResult({ correct, correctAnswer: answerText, lesson: rawCurrentQuestion.lesson ?? '', encouragement: language === 'hi' ? 'शाबाश, खोजी!' : 'Brilliant thinking, explorer!' });
+        setCheckingAnswer(false);
+        recordAnswer(correct);
+        if (correct) setRoundStars((value) => value + 1);
+        return;
+      }
       setAnswerError(error instanceof Error ? error.message : 'Your answer could not be checked.');
       setCheckingAnswer(false);
       answerLock.current = false;
@@ -499,6 +625,7 @@ export default function App() {
       setRoundComplete(true);
       if (!roundRecorded.current) {
         roundRecorded.current = true;
+        markGameCompleted();
         updateProgress((previous) => ({ ...previous, games: previous.games + 1 }));
       }
       return;
@@ -538,10 +665,39 @@ export default function App() {
     void chooseAnswer(word, originalWord);
   }
 
+  if (page === 'club') return <ClubPage
+    age={age}
+    language={language}
+    games={games.map((game) => {
+      const copy = localizedGame(language, game);
+      return { ...game, localizedTitle: copy.title, localizedDescription: copy.description, localizedSubject: localizedSubject(language, game.subject) };
+    }) as ClubGame[]}
+    progress={progress}
+    data={clubData}
+    onDataChange={setClubData}
+    preferences={parentPreferences}
+    onPreferencesChange={setParentPreferences}
+    artworks={artworks}
+    onRemoveArtwork={removeArtwork}
+    minutesToday={minutesToday}
+    online={online}
+    onPlay={(clubGame) => {
+      const game = games.find((candidate) => candidate.id === clubGame.id);
+      if (game) void startGame(game);
+    }}
+    onCoopComplete={() => {
+      updateProgress((previous) => ({ ...previous, stars: previous.stars + 2, games: previous.games + 1 }));
+      updateClubData((previous) => ({ ...previous, coopWins: previous.coopWins + 1, lastCompletedGameId: null }));
+    }}
+    onWeeklyComplete={() => updateProgress((previous) => ({ ...previous, stars: previous.stars + 3 }))}
+    onBack={() => navigate('/games')}
+  />;
+
   if (page === 'welcome') return <WelcomePage language={language} age={setupAge} onAge={setSetupAge} onLanguage={setLanguage} onContinue={choosePreferences} />;
 
   return (
     <>
+      {breakReminder && <div className="break-reminder-backdrop" role="presentation"><section className="break-reminder-card" role="dialog" aria-modal="true" aria-labelledby="break-reminder-title"><span aria-hidden="true">🌱</span><h2 id="break-reminder-title">{tr(language, 'Time for a little break')}</h2><p>{tr(language, 'Take a little screen break. Your games and progress will be here when you come back.')}</p><button className="button button-primary" type="button" onClick={() => setBreakReminder(false)}>{tr(language, 'Got it')}</button><a href="/club#club-grownup" onClick={(event) => { event.preventDefault(); setBreakReminder(false); openClubSection('grownup'); }}>{tr(language, 'Grown-up corner')} →</a></section></div>}
       <a className="skip-link" href="#main" hidden={page === 'game'}>{tr(language, 'Skip to games')}</a>
       <header className="site-header" hidden={page === 'game'}>
         <a className="brand" href="#top" aria-label={tr(language, 'WonderSprout home')}>
@@ -550,6 +706,7 @@ export default function App() {
         </a>
         <nav className="main-nav" aria-label={tr(language, 'Main navigation')}>
           <a href="#adventures">{tr(language, 'Play zone')}</a>
+          <a href="/club" onClick={(event) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate('/club'); }}>{tr(language, 'Wonder Club')}</a>
           <a href="#rewards">{tr(language, 'My rewards')}</a>
           <a href="#grownups">{tr(language, 'For grown-ups')}</a>
           <a href="/" aria-label={tr(language, 'Change age or language')} onClick={(event) => { event.preventDefault(); setSetupAge(age); navigate('/'); }}>{tr(language, 'Change age or language')}</a>
@@ -560,6 +717,7 @@ export default function App() {
       </header>
 
       <main id="main" hidden={page === 'game'}>
+        {playLimitReached && <div className="session-break-banner section-wrap" role="status">🌱 {tr(language, 'Take a little screen break. Your games and progress will be here when you come back.')} <a href="/club#club-grownup" onClick={(event) => { event.preventDefault(); openClubSection('grownup'); }}>{tr(language, 'Grown-up corner')} →</a></div>}
         <section className="hero section-wrap" id="top" hidden={subject !== 'all'}>
           <div className="hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> {tr(language, 'A happy place to learn')}</div>
@@ -670,6 +828,7 @@ export default function App() {
                   </div>
                   <div className="game-info">
                     <span className="game-subject">{localizedSubject(language, game.subject)}</span>
+                    <button className={`favorite-toggle ${clubData.favorites.includes(game.id) ? 'is-favorite' : ''}`} type="button" aria-label={tr(language, clubData.favorites.includes(game.id) ? 'Remove favorite' : 'Add to favorites')} aria-pressed={clubData.favorites.includes(game.id)} onClick={() => updateClubData((previous) => ({ ...previous, favorites: previous.favorites.includes(game.id) ? previous.favorites.filter((id) => id !== game.id) : [...previous.favorites, game.id] }))}>{clubData.favorites.includes(game.id) ? '♥' : '♡'}</button>
                     <h3>{localizedGame(language, game).title}</h3>
                     <p>{localizedGame(language, game).description}</p>
                     <div className="card-bottom">
@@ -732,6 +891,9 @@ export default function App() {
         <a className="mobile-nav-item mobile-nav-active" href="#adventures">
           <span aria-hidden="true">🎮</span><small>{tr(language, 'Games')}</small>
         </a>
+        <a className="mobile-nav-item" href="/club" onClick={(event) => { event.preventDefault(); navigate('/club'); }}>
+          <span aria-hidden="true">🧭</span><small>{tr(language, 'Wonder Club')}</small>
+        </a>
         <a className="mobile-nav-item" href="#rewards">
           <span aria-hidden="true">🌟</span><small>{tr(language, 'Stars')}</small>
         </a>
@@ -778,7 +940,7 @@ export default function App() {
             )}
 
             {!quizLoading && !quizError && !roundComplete && activeGame.mode === 'creative' && (
-              <DoodleStudio age={age} language={language} onFinish={finishSpecialGame} />
+              <DoodleStudio age={age} language={language} onFinish={finishSpecialGame} onArtworkSaved={saveArtwork} />
             )}
 
             {!quizLoading && !quizError && !roundComplete && activeGame.mode === 'coding' && (
@@ -1067,7 +1229,7 @@ function MemoryBoard({ cards, age, language, onPairFound, onFinish }: { cards: M
   );
 }
 
-function DoodleStudio({ age, language, onFinish }: { age: AgeBand; language: Language; onFinish: () => void }) {
+function DoodleStudio({ age, language, onFinish, onArtworkSaved }: { age: AgeBand; language: Language; onFinish: () => void; onArtworkSaved: (image: string) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
   const [color, setColor] = useState('#fa765e');
@@ -1128,6 +1290,7 @@ function DoodleStudio({ age, language, onFinish }: { age: AgeBand; language: Lan
     link.download = 'my-wondersprout-art.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
+    onArtworkSaved(canvas.toDataURL('image/jpeg', .72));
   }
 
   return (

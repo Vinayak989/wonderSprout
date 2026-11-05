@@ -1,0 +1,14 @@
+{
+  "name": "WonderSprout Kids Games",
+  "short_name": "WonderSprout",
+  "description": "Play, discover, and grow with friendly games for curious kids.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f8f7ff",
+  "theme_color": "#8056d9",
+  "icons": [
+    { "src": "/sprout-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

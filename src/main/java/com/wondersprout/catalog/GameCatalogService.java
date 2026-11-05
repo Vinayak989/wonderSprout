@@ -240,7 +240,7 @@ public class GameCatalogService {
         }
         return shuffled.stream()
                 .limit(QUESTIONS_PER_ROUND)
-                .map(question -> new PublicQuestion(question.id(), question.prompt(), question.hint(), question.choices()))
+                .map(question -> new PublicQuestion(question.id(), question.prompt(), question.hint(), question.choices(), question.answer(), question.lesson()))
                 .toList();
     }
 
