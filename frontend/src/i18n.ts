@@ -158,6 +158,15 @@ export const textHi: Record<string, string> = {
 };
 
 const moreTextHi: Record<string, string> = {
+  'Play big.': '\u0916\u0942\u092c \u0916\u0947\u0932\u094b\u0964',
+  'Grow curious.': '\u091c\u093f\u091c\u094d\u091e\u093e\u0938\u0941 \u092c\u0928\u094b\u0964',
+  'Choose a world, collect little wins, and find a new adventure every day.': '\u090f\u0915 \u0926\u0941\u0928\u093f\u092f\u093e \u091a\u0941\u0928\u094b, \u091b\u094b\u091f\u0940 \u091c\u0940\u0924 \u091c\u092e\u093e \u0915\u0930\u094b \u0914\u0930 \u0939\u0930 \u0926\u093f\u0928 \u0928\u092f\u093e \u0930\u094b\u092e\u093e\u0902\u091a \u0922\u0942\u0901\u0922\u094b\u0964',
+  'A fox, rabbit, and turtle setting off on a colorful adventure.': '\u0932\u094b\u092e\u0921\u093c\u0940, \u0916\u0930\u0917\u094b\u0936 \u0914\u0930 \u0915\u091b\u0941\u0906 \u0930\u0902\u0917\u0940\u0928 \u0930\u094b\u092e\u093e\u0902\u091a \u092a\u0930 \u0928\u093f\u0915\u0932 \u0930\u0939\u0947 \u0939\u0948\u0902\u0964',
+  'games to discover': '\u0916\u094b\u091c\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f \u0916\u0947\u0932',
+  'Choose a portal': '\u090f\u0915 \u0926\u094d\u0935\u093e\u0930 \u091a\u0941\u0928\u094b',
+  'Pick your first world': '\u0905\u092a\u0928\u0940 \u092a\u0939\u0932\u0940 \u0926\u0941\u0928\u093f\u092f\u093e \u091a\u0941\u0928\u094b',
+  'See every game': '\u0938\u093e\u0930\u0947 \u0916\u0947\u0932 \u0926\u0947\u0916\u0947\u0902',
+  'OPEN A WORLD': '\u090f\u0915 \u0926\u0941\u0928\u093f\u092f\u093e \u0916\u094b\u0932\u0947\u0902',
   'Loading your 3D adventure…': 'तुम्हारा 3D रोमांच खुल रहा है…',
   'Game categories': 'खेलों की श्रेणियाँ',
   'Friendly feelings clue': 'भावनाओं का प्यारा संकेत', 'Find the match!': 'सही जोड़ी ढूँढ़ो!', 'Letter tiles': 'अक्षरों की टाइलें',

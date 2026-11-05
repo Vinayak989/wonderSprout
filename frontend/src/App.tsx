@@ -131,6 +131,13 @@ const categories: { id: Subject; label: string; icon: string }[] = [
   { id: 'Interactive Stories & Reading', label: 'Interactive Stories & Reading', icon: '📖' },
 ];
 
+const portalCards: { subject: Subject; icon: string; className: string; description: [string, string] }[] = [
+  { subject: 'Adventure & Treasure Hunt', icon: '🧭', className: 'portal-adventure', description: ['Follow the map. Find the treasure.', 'नक्शे पर चलो और खज़ाना खोजो।'] },
+  { subject: 'Memory Games', icon: '🃏', className: 'portal-memory', description: ['Flip, match, and remember.', 'पलटो, जोड़ियाँ मिलाओ और याद रखो।'] },
+  { subject: 'Art & Creativity', icon: '🎨', className: 'portal-art', description: ['Make something wonderfully yours.', 'अपनी प्यारी कलाकारी बनाओ।'] },
+  { subject: 'Science wonders', icon: '🚀', className: 'portal-science', description: ['Explore nature and outer space.', 'प्रकृति और अंतरिक्ष की सैर करो।'] },
+];
+
 const progressKey = 'wonder-sprout-progress-v1';
 const preferenceKey = 'wonder-sprout-preferences-v1';
 
@@ -556,24 +563,42 @@ export default function App() {
         <section className="hero section-wrap" id="top" hidden={subject !== 'all'}>
           <div className="hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> {tr(language, 'A happy place to learn')}</div>
-            <h1>{tr(language, 'Big imaginations.')}<br /><span>{tr(language, 'Brilliant little wins.')}</span></h1>
-            <p className="hero-description">{tr(language, 'Pick an age, choose an adventure, and let curiosity do the rest. Every little answer helps a big brain grow.')}</p>
+            <h1>{tr(language, 'Play big.')}<br /><span>{tr(language, 'Grow curious.')}</span></h1>
+            <p className="hero-description">{tr(language, 'Choose a world, collect little wins, and find a new adventure every day.')}</p>
             <div className="hero-actions">
               <a className="button button-primary" href="#adventures">{tr(language, 'Let’s play')} <span aria-hidden="true">↗</span></a>
               <a className="text-link" href="#rewards">{tr(language, 'See my star garden')} <span aria-hidden="true">↓</span></a>
             </div>
             <div className="hero-footnote"><span aria-hidden="true">🌈</span> {tr(language, 'Made for curious kids ages 3–12')}</div>
           </div>
-          <div className="hero-visual" aria-label="A friendly fox mascot surrounded by stars and flowers">
-            <div className="hero-sun" />
-            <div className="hero-orbit hero-orbit-one" />
-            <div className="hero-orbit hero-orbit-two" />
-            <div className="hero-character">🦊</div>
-            <div className="floaty floaty-star">✦</div>
-            <div className="floaty floaty-flower">🌼</div>
-            <div className="floaty floaty-sparkle">✧</div>
-            <div className="floaty floaty-leaf">🍃</div>
-            <div className="hero-note"><span>{tr(language, 'Little steps')}</span><strong>{tr(language, 'BIG magic')}</strong><i>✦ ✦ ✦</i></div>
+          <div className="hero-visual">
+            <img className="hero-art-image" src="/wonder-world-hero.png" alt={tr(language, 'A fox, rabbit, and turtle setting off on a colorful adventure.')} width="1672" height="1024" fetchPriority="high" />
+            <div className="hero-art-badge"><span aria-hidden="true">🌟</span><div><strong>{games.length || 80}</strong><small>{tr(language, 'games to discover')}</small></div></div>
+          </div>
+        </section>
+
+        <section className="world-portals section-wrap" hidden={subject !== 'all'}>
+          <div className="portal-heading">
+            <div><span className="portal-kicker">{tr(language, 'Choose a portal')}</span><h2>{tr(language, 'Pick your first world')}</h2></div>
+            <a href="#adventures">{tr(language, 'See every game')} <span aria-hidden="true">↘</span></a>
+          </div>
+          <div className="portal-grid">
+            {portalCards.map((portal) => (
+              <a
+                className={`portal-card ${portal.className}`}
+                href={`/games/category/${categorySlug(portal.subject)}`}
+                key={portal.subject}
+                onClick={(event) => {
+                  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault();
+                  navigate(`/games/category/${categorySlug(portal.subject)}`);
+                }}
+              >
+                <span className="portal-icon" aria-hidden="true"><span>{portal.icon}</span></span>
+                <span className="portal-copy"><small>{tr(language, 'OPEN A WORLD')}</small><strong>{localizedSubject(language, portal.subject)}</strong><span>{portal.description[language === 'hi' ? 1 : 0]}</span></span>
+                <span className="portal-arrow" aria-hidden="true">↗</span>
+              </a>
+            ))}
           </div>
         </section>
 
@@ -1470,6 +1495,7 @@ function BalanceGame({ language, onFinish }: { language: Language; onFinish: () 
 
 function WelcomePage({ language, age, onAge, onLanguage, onContinue }: { language: Language; age: AgeBand | ''; onAge: (age: AgeBand) => void; onLanguage: (language: Language) => void; onContinue: () => void }) {
   return <main className="welcome-page">
+    <img className="welcome-world-art" src="/wonder-world-hero.png" alt="" aria-hidden="true" width="1672" height="1024" fetchPriority="high" />
     <a className="brand welcome-brand" href="/" aria-label="WonderSprout">
       <span className="brand-mark" aria-hidden="true">✿</span><span className="brand-name">wonder<span>sprout</span></span>
     </a>
