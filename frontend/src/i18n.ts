@@ -1,4 +1,6 @@
-export type Language = 'en' | 'hi';
+import { ageCopyMr, gameCopyMr, hindiTextMr, questionTextMr, subjectsMr, textMr } from './marathi-data';
+
+export type Language = 'en' | 'hi' | 'mr';
 
 export const subjectsHi: Record<string, string> = {
   'all': 'सभी खेल', 'Math magic': 'गणित की मस्ती', 'Word adventures': 'शब्दों का रोमांच', 'Science wonders': 'विज्ञान के कमाल',
@@ -417,20 +419,66 @@ export function hindiQuestionRound(subject: string, gameId: string, age: string)
 }
 
 export function tr(language: Language, text: string): string {
-  return language === 'hi' ? moreTextHi[text] ?? textHi[text] ?? text : text;
+  if (language === 'hi') return moreTextHi[text] ?? textHi[text] ?? text;
+  if (language === 'mr') return textMr[text] ?? hindiTextMr[text] ?? questionTextMr[text] ?? text;
+  return text;
+}
+
+export function localizedText(language: Language, english: string, hindi: string): string {
+  if (language === 'hi') return hindi;
+  return language === 'mr' ? textMr[english] ?? hindiTextMr[hindi] ?? english : english;
 }
 
 export function localizedGame(language: Language, game: { id: string; title: string; description: string }) {
-  const copy = language === 'hi' ? gameCopyHi[game.id] : undefined;
+  const copy = language === 'hi' ? gameCopyHi[game.id] : language === 'mr' ? gameCopyMr[game.id] : undefined;
   return copy ? { ...game, title: copy[0], description: copy[1] } : game;
 }
 
 export function localizedSubject(language: Language, subject: string): string {
-  return language === 'hi' ? subjectsHi[subject] ?? subject : subject;
+  return language === 'hi' ? subjectsHi[subject] ?? subject : language === 'mr' ? subjectsMr[subject] ?? subject : subject;
+}
+
+export function localizedAgeCopy(language: Language, label: string): string {
+  return language === 'hi' ? ageCopyHi[label] ?? label : language === 'mr' ? ageCopyMr[label] ?? label : label;
+}
+
+export function localizedPair(language: Language, pair: readonly (string | undefined)[]): string {
+  const english = pair[0] ?? '';
+  return localizedText(language, english, pair[1] ?? english);
+}
+
+function graphemes(word: string): string[] {
+  const Segmenter = (Intl as typeof Intl & { Segmenter?: new (locale?: string, options?: { granularity: 'grapheme' }) => { segment(value: string): Iterable<{ segment: string }> } }).Segmenter;
+  return Segmenter ? [...new Segmenter('mr', { granularity: 'grapheme' }).segment(word)].map((part) => part.segment) : Array.from(word);
+}
+
+export function marathiQuestionRound(subject: string, gameId: string, age: string) {
+  return hindiQuestionRound(subject, gameId, age).map((question, index) => {
+    const answerValue = question.answerValue ? questionTextMr[question.answerValue] ?? question.answerValue : undefined;
+    const choices = gameId === 'word-builder' && answerValue
+      ? graphemes(answerValue).sort(() => Math.random() - 0.5)
+      : question.choices.map((choice) => questionTextMr[choice] ?? choice);
+    return {
+      ...question,
+      id: `mr-${gameId}-${index + 1}`,
+      prompt: questionTextMr[question.prompt] ?? question.prompt,
+      hint: questionTextMr[question.hint] ?? question.hint,
+      lesson: question.lesson ? questionTextMr[question.lesson] ?? question.lesson : undefined,
+      choices,
+      answerValue,
+      localized: true,
+    };
+  });
 }
 
 export function localizedQuestion<T extends { id: string; prompt: string; hint: string; choices: string[] }>(language: Language, subject: string, gameId: string, question: T): T {
-  if (language !== 'hi') return question;
+  if (language === 'en' || language === 'mr' && 'localized' in question && question.localized) return question;
+  if (language === 'mr') return {
+    ...question,
+    prompt: textMr[question.prompt] ?? question.prompt,
+    hint: textMr[question.hint] ?? question.hint,
+    choices: question.choices.map((choice) => textMr[choice] ?? choice),
+  };
   if ('localized' in question && question.localized) return question;
   const index = Number(question.id.match(/-(\d+)$/)?.[1] ?? 0) - 1;
   const translated = gameId === 'guess-the-emotion' ? emotionQuestionsHi[index] : question.id.startsWith(`${gameId}-`) ? generatedQuestionsHi[subject]?.[index] : undefined;
@@ -439,7 +487,8 @@ export function localizedQuestion<T extends { id: string; prompt: string; hint: 
 }
 
 export function localizedLesson(language: Language, subject: string, questionId: string, lesson: string): string {
-  if (language !== 'hi') return lesson;
+  if (language === 'en') return lesson;
+  if (language === 'mr') return textMr[lesson] ?? questionTextMr[lesson] ?? lesson;
   const index = Number(questionId.match(/-(\d+)$/)?.[1] ?? 0) - 1;
   const translated = generatedQuestionsHi[subject]?.[index] ?? (questionId.startsWith('guess-the-emotion-') ? emotionQuestionsHi[index] : undefined);
   return translated?.lesson ?? tr(language, lesson);

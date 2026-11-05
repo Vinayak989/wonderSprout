@@ -588,6 +588,7 @@ button.word-slot { border-style: solid; border-color: #d9c9f4; background: #f6f0
   .welcome-age-option small { font-size: 8px; }
   .welcome-language-options { display: grid; grid-template-columns: 1fr 1fr; }
   .welcome-language-options button { min-width: 0; font-size: 10px; }
+  .welcome-language-options button:last-child:nth-child(odd) { grid-column: 1 / -1; width: calc(50% - 5px); justify-self: center; }
   .game-page-screen { padding: 10px; }
   .game-page-screen .game-dialog { margin: 5px 0; padding: 16px 13px; }
   .main-nav a:last-child { display: inline-flex; padding: 7px 8px; font-size: 8px; }

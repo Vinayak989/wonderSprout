@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
-import { ageCopyHi, hindiQuestionRound, localizedGame, localizedLesson, localizedQuestion, localizedSubject, subjectsHi, tr, type Language } from './i18n';
+import { hindiQuestionRound, localizedAgeCopy, localizedGame, localizedLesson, localizedPair, localizedQuestion, localizedSubject, localizedText, marathiQuestionRound, tr, type Language } from './i18n';
 import ClubPage, { type ClubGame } from './ClubPage';
 import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readClubData, readParentPreferences, usageStorageKey, type ClubData, type GalleryArtwork, type GamePerformance, type ParentPreferences } from './club';
 
@@ -47,7 +47,9 @@ function adventureFor(game: Game, language: Language): AdventureScene[] {
     reward: tr(language, place.reward),
     story: language === 'hi'
       ? index === 0 ? `तुम्हारा ${title} यहाँ से शुरू होता है। ध्यान से देखो और पहला संकेत खोजो।` : `${title} में आगे बढ़ते रहो। पिछली जगह सीखी बात से अगला संकेत ढूँढ़ो।`
-      : index === 0 ? `Your ${title} begins here. Look carefully and follow the first clue.` : `Keep exploring ${title}. Use what you learned at the last stop to find the next clue.`,
+      : language === 'mr'
+        ? index === 0 ? `तुझी ${title} मोहीम इथून सुरू होते. नीट पाहा आणि पहिला संकेत शोध.` : `${title} मध्ये पुढे जात राहा. मागच्या ठिकाणी शिकलेल्या गोष्टीचा उपयोग करून पुढचा संकेत शोध.`
+        : index === 0 ? `Your ${title} begins here. Look carefully and follow the first clue.` : `Keep exploring ${title}. Use what you learned at the last stop to find the next clue.`,
   }));
 }
 
@@ -161,7 +163,7 @@ function readPreferences(): { age: AgeBand; language: Language } | null {
     const saved = localStorage.getItem(preferenceKey);
     if (!saved) return null;
     const value = JSON.parse(saved) as { age?: AgeBand; language?: Language };
-    if (!['3-5', '6-8', '9-12'].includes(value.age ?? '') || !['en', 'hi'].includes(value.language ?? '')) return null;
+    if (!['3-5', '6-8', '9-12'].includes(value.age ?? '') || !['en', 'hi', 'mr'].includes(value.language ?? '')) return null;
     return { age: value.age!, language: value.language! };
   } catch { return null; }
 }
@@ -214,7 +216,9 @@ function chooseQuestionRound(questions: Question[], game: Game, age: AgeBand, la
   const variants = questions.flatMap((question) => {
     const prompts = language === 'hi'
       ? [question.prompt, `संकेत पढ़ो: ${question.hint} कौन-सा जवाब सही है?`, `सही जवाब चुनो: ${question.prompt}`, `खोजकर्ता सवाल: ${question.prompt}`, `ध्यान से सोचो: ${question.hint} सही विकल्प चुनो।`]
-      : [question.prompt, `Clue time: ${question.hint} Which answer fits?`, `Choose the best answer: ${question.prompt}`, `Explorer challenge: ${question.prompt}`, `Think carefully: ${question.hint} Pick the right choice.`];
+      : language === 'mr'
+        ? [question.prompt, `संकेत: ${question.hint} याला कोणते उत्तर योग्य आहे?`, `योग्य उत्तर निवडा: ${question.prompt}`, `शोधकाचे आव्हान: ${question.prompt}`, `विचार करून योग्य उत्तर निवडा: ${question.hint}`]
+        : [question.prompt, `Clue time: ${question.hint} Which answer fits?`, `Choose the best answer: ${question.prompt}`, `Explorer challenge: ${question.prompt}`, `Think carefully: ${question.hint} Pick the right choice.`];
     const correctChoice = question.answerValue ?? question.choices[question.answerIndex ?? 0];
     return prompts.map((prompt, index) => {
       const choices = shuffleItems(question.choices);
@@ -222,7 +226,7 @@ function chooseQuestionRound(questions: Question[], game: Game, age: AgeBand, la
         ...question,
         id: `${question.id}~v${index}`,
         prompt,
-        hint: index === 0 ? question.hint : language === 'hi' ? `एक और संकेत: ${question.hint}` : `Another clue: ${question.hint}`,
+        hint: index === 0 ? question.hint : language === 'hi' ? `एक और संकेत: ${question.hint}` : language === 'mr' ? `आणखी एक संकेत: ${question.hint}` : `Another clue: ${question.hint}`,
         choices,
         answerIndex: question.answerValue === undefined ? choices.indexOf(correctChoice) : undefined,
       };
@@ -366,17 +370,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = language === 'hi' ? 'hi' : 'en';
+    document.documentElement.lang = language;
     const title = page === 'game' && activeGame
       ? localizedGame(language, activeGame).title
       : page === 'games' && subject !== 'all'
         ? `${localizedSubject(language, subject)} · WonderSprout`
-        : language === 'hi' ? 'WonderSprout — खेलो, सीखो, बढ़ो!' : 'WonderSprout — Play, discover, grow!';
+        : localizedText(language, 'WonderSprout — Play, discover, grow!', 'WonderSprout — खेलो, सीखो, बढ़ो!');
     document.title = title;
     const description = document.querySelector('meta[name="description"]');
-    description?.setAttribute('content', language === 'hi'
-      ? '3 से 12 साल के बच्चों के लिए मज़ेदार खेल, पहेलियाँ और सीखने के रोमांच।'
-      : 'A playful learning arcade with games and adventures for curious kids ages 3 to 12.');
+    description?.setAttribute('content', localizedText(language, 'A playful learning arcade with games and adventures for curious kids ages 3 to 12.', '3 से 12 साल के बच्चों के लिए मज़ेदार खेल, पहेलियाँ और सीखने के रोमांच।'));
   }, [language, page, activeGame, subject]);
 
   useEffect(() => {
@@ -458,7 +460,7 @@ export default function App() {
     if (!parentPreferences.readAloud || page !== 'game' || !currentQuestion || !('speechSynthesis' in window)) return undefined;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(`${currentQuestion.prompt}. ${currentQuestion.hint}`);
-    utterance.lang = language === 'hi' ? 'hi-IN' : 'en-US';
+    utterance.lang = language === 'hi' ? 'hi-IN' : language === 'mr' ? 'mr-IN' : 'en-US';
     window.speechSynthesis.speak(utterance);
     return () => window.speechSynthesis.cancel();
   }, [parentPreferences.readAloud, language, page, currentQuestion?.id]);
@@ -519,7 +521,7 @@ export default function App() {
   }
 
   function saveArtwork(image: string) {
-    const next = [{ id: `art-${Date.now()}`, title: language === 'hi' ? `मेरी कला ${artworks.length + 1}` : `My artwork ${artworks.length + 1}`, image, savedAt: new Date().toISOString() }, ...artworks].slice(0, 12);
+    const next = [{ id: `art-${Date.now()}`, title: language === 'hi' ? `मेरी कला ${artworks.length + 1}` : language === 'mr' ? `माझी कलाकृती ${artworks.length + 1}` : `My artwork ${artworks.length + 1}`, image, savedAt: new Date().toISOString() }, ...artworks].slice(0, 12);
     setArtworks(next);
     try { localStorage.setItem(artworkStorageKey, JSON.stringify(next)); } catch { /* The download still succeeds if browser storage is full. */ }
   }
@@ -582,9 +584,12 @@ export default function App() {
       }
       if (game.mode === 'memory') {
         const response = await fetch(`/api/games/${game.id}/memory-cards?ageBand=${age}`);
-        setMemoryCards(await readJson<MemoryCard[]>(response));
+        const cards = await readJson<MemoryCard[]>(response);
+        setMemoryCards(cards.map((card) => ({ ...card, label: tr(language, card.label), fact: tr(language, card.fact) })));
       } else if (language === 'hi') {
         setQuestions(chooseQuestionRound(hindiQuestionRound(game.subject, game.id, age), game, age, language));
+      } else if (language === 'mr') {
+        setQuestions(chooseQuestionRound(marathiQuestionRound(game.subject, game.id, age), game, age, language));
       } else {
         const response = await fetch(`/api/games/${game.id}/questions?ageBand=${age}`);
         setQuestions(chooseQuestionRound(await readJson<Question[]>(response), game, age, language));
@@ -642,7 +647,7 @@ export default function App() {
     }
     try {
       const displayChoiceIndex = currentQuestion.choices.indexOf(choice);
-      const submittedChoice = originalChoice ?? (language === 'hi' && displayChoiceIndex >= 0
+      const submittedChoice = originalChoice ?? (language !== 'en' && displayChoiceIndex >= 0
         ? rawCurrentQuestion?.choices[displayChoiceIndex] ?? choice
         : choice);
       const response = await fetch(`/api/games/${activeGame.id}/answer`, {
@@ -656,7 +661,7 @@ export default function App() {
         ...result,
         correctAnswer: answerIndex >= 0 && currentQuestion.choices[answerIndex] ? currentQuestion.choices[answerIndex] : tr(language, result.correctAnswer),
         lesson: localizedLesson(language, activeGame.subject, currentQuestion.id, result.lesson),
-        encouragement: language === 'hi' ? result.correct ? 'बहुत बढ़िया सोच!' : 'अच्छी कोशिश!' : result.encouragement,
+        encouragement: language === 'hi' ? result.correct ? 'बहुत बढ़िया सोच!' : 'अच्छी कोशिश!' : language === 'mr' ? result.correct ? 'छान विचार!' : 'पुन्हा प्रयत्न कर!' : result.encouragement,
       });
       setCheckingAnswer(false);
       recordAnswer(result.correct);
@@ -665,7 +670,7 @@ export default function App() {
       if (rawCurrentQuestion?.answerValue !== undefined) {
         const correct = (originalChoice ?? choice) === rawCurrentQuestion.answerValue;
         const answerText = rawCurrentQuestion.answerValue;
-        setAnswerResult({ correct, correctAnswer: answerText, lesson: rawCurrentQuestion.lesson ?? '', encouragement: language === 'hi' ? 'शाबाश, खोजी!' : 'Brilliant thinking, explorer!' });
+        setAnswerResult({ correct, correctAnswer: answerText, lesson: rawCurrentQuestion.lesson ?? '', encouragement: localizedText(language, 'Brilliant thinking, explorer!', 'शाबाश, खोजी!') });
         setCheckingAnswer(false);
         recordAnswer(correct);
         if (correct) setRoundStars((value) => value + 1);
@@ -780,7 +785,7 @@ export default function App() {
           <a href="/" aria-label={tr(language, 'Change age or language')} onClick={(event) => { event.preventDefault(); setSetupAge(age); navigate('/'); }}>{tr(language, 'Change age or language')}</a>
         </nav>
         <a className="header-stars" href="#rewards" aria-label={`${progress.stars} ${tr(language, 'stars collected')}`}>
-          <span aria-hidden="true">⭐</span> {progress.stars} <span className="star-word">{language === 'hi' ? 'सितारे' : 'stars'}</span>
+          <span aria-hidden="true">⭐</span> {progress.stars} <span className="star-word">{localizedText(language, 'stars', 'सितारे')}</span>
         </a>
       </header>
 
@@ -788,11 +793,11 @@ export default function App() {
         {playLimitReached && <div className="session-break-banner section-wrap" role="status">🌱 {tr(language, 'Take a little screen break. Your games and progress will be here when you come back.')} <a href="/club#club-grownup" onClick={(event) => { event.preventDefault(); openClubSection('grownup'); }}>{tr(language, 'Grown-up corner')} →</a></div>}
         <section className="hero section-wrap" id="top" hidden={subject !== 'all'}>
           <div className="hero-copy">
-            <div className="eyebrow"><span className="eyebrow-dot" /> {language === 'hi' ? 'तुम्हारा गेमिंग संसार' : 'YOUR GAME WORLD'}</div>
+            <div className="eyebrow"><span className="eyebrow-dot" /> {localizedText(language, 'YOUR GAME WORLD', 'तुम्हारा गेमिंग संसार')}</div>
             <div className="hero-player-hud">
               <span className="hero-player-avatar" aria-hidden="true">{clubData.avatar}</span>
-              <span className="hero-player-level"><small>{language === 'hi' ? 'खोजकर्ता लेवल' : 'EXPLORER LEVEL'}</small><strong>{String(explorerLevel).padStart(2, '0')}</strong></span>
-              <span className="hero-player-xp"><span>{language === 'hi' ? `${progress.stars} स्टार XP` : `${progress.stars} STAR XP`}</span><i><b style={{ width: `${badgeProgress}%` }} /></i></span>
+              <span className="hero-player-level"><small>{localizedText(language, 'EXPLORER LEVEL', 'खोजकर्ता लेवल')}</small><strong>{String(explorerLevel).padStart(2, '0')}</strong></span>
+              <span className="hero-player-xp"><span>{language === 'hi' ? `${progress.stars} स्टार XP` : language === 'mr' ? `${progress.stars} तारा XP` : `${progress.stars} STAR XP`}</span><i><b style={{ width: `${badgeProgress}%` }} /></i></span>
               <span className="hero-player-missions">🎮 {progress.games}</span>
             </div>
             <h1>{tr(language, 'Play big.')}<br /><span>{tr(language, 'Grow curious.')}</span></h1>
@@ -801,12 +806,12 @@ export default function App() {
               <a className="button button-primary" href="#adventures"><span aria-hidden="true">▶</span> {tr(language, 'Let’s play')}</a>
               <a className="text-link" href="#rewards">{tr(language, 'See my star garden')} <span aria-hidden="true">↓</span></a>
             </div>
-            <div className="hero-footnote"><span aria-hidden="true">🕹️</span> {language === 'hi' ? 'खेलो · मिशन पूरे करो · सितारे कमाओ' : 'PLAY · COMPLETE MISSIONS · EARN STARS'}</div>
+            <div className="hero-footnote"><span aria-hidden="true">🕹️</span> {localizedText(language, 'PLAY · COMPLETE MISSIONS · EARN STARS', 'खेलो · मिशन पूरे करो · सितारे कमाओ')}</div>
           </div>
           <div className="hero-visual">
             <img className="hero-art-image" src="/wonder-world-hero.png" alt={tr(language, 'A fox, rabbit, and turtle setting off on a colorful adventure.')} width="1672" height="1024" fetchPriority="high" />
-            <div className="hero-world-stamp"><span>🗺️</span><div><small>{language === 'hi' ? 'दुनिया 01' : 'WORLD 01'}</small><strong>{language === 'hi' ? 'सपनों का जंगल' : 'Wonder Woods'}</strong></div></div>
-            {featuredGame && <button className="hero-mission-button" type="button" onClick={() => void startGame(featuredGame)}><span className="hero-mission-icon">{featuredGame.icon}</span><span className="hero-mission-copy"><small>{language === 'hi' ? 'आज का मिशन' : 'TODAY’S MISSION'}</small><strong>{localizedGame(language, featuredGame).title}</strong></span><span className="hero-mission-play">▶</span></button>}
+            <div className="hero-world-stamp"><span>🗺️</span><div><small>{localizedText(language, 'WORLD 01', 'दुनिया 01')}</small><strong>{localizedText(language, 'Wonder Woods', 'सपनों का जंगल')}</strong></div></div>
+            {featuredGame && <button className="hero-mission-button" type="button" onClick={() => void startGame(featuredGame)}><span className="hero-mission-icon">{featuredGame.icon}</span><span className="hero-mission-copy"><small>{localizedText(language, 'TODAY’S MISSION', 'आज का मिशन')}</small><strong>{localizedGame(language, featuredGame).title}</strong></span><span className="hero-mission-play">▶</span></button>}
             <div className="hero-art-badge"><span aria-hidden="true">🌟</span><div><strong>{games.length || 80}</strong><small>{tr(language, 'games to discover')}</small></div></div>
           </div>
         </section>
@@ -829,7 +834,7 @@ export default function App() {
                 }}
               >
                 <span className="portal-icon" aria-hidden="true"><span>{portal.icon}</span></span>
-                <span className="portal-copy"><small>{tr(language, 'OPEN A WORLD')}</small><strong>{localizedSubject(language, portal.subject)}</strong><span>{portal.description[language === 'hi' ? 1 : 0]}</span></span>
+                <span className="portal-copy"><small>{tr(language, 'OPEN A WORLD')}</small><strong>{localizedSubject(language, portal.subject)}</strong><span>{localizedPair(language, portal.description)}</span></span>
                 <span className="portal-arrow" aria-hidden="true">↗</span>
               </a>
             ))}
@@ -857,7 +862,7 @@ export default function App() {
                 aria-pressed={age === band.id}
               >
                 <span aria-hidden="true">{band.icon}</span>
-                <span className="age-option-copy"><strong>{language === 'hi' ? ageCopyHi[band.name] : band.name}</strong><small>{language === 'hi' ? ageCopyHi[band.label] : band.label}</small></span>
+                <span className="age-option-copy"><strong>{localizedAgeCopy(language, band.name)}</strong><small>{localizedAgeCopy(language, band.label)}</small></span>
                 {age === band.id && <span className="age-check" aria-hidden="true">✓</span>}
               </button>
             ))}
@@ -878,11 +883,11 @@ export default function App() {
                   }}
                   aria-current={subject === category.id ? 'page' : undefined}
                 >
-                  <span aria-hidden="true">{category.icon}</span> {language === 'hi' ? subjectsHi[category.id] ?? category.label : category.label}
+                  <span aria-hidden="true">{category.icon}</span> {localizedSubject(language, category.id)}
                 </a>
               ))}
             </nav>
-            <span className="round-length"><span aria-hidden="true">⏱</span> {language === 'hi' ? 'हर खेल 8–10 मिनट' : '8–10 min each'}</span>
+            <span className="round-length"><span aria-hidden="true">⏱</span> {localizedText(language, '8–10 min each', 'हर खेल 8–10 मिनट')}</span>
           </aside>
 
           {gamesLoading && <div className="state-card" role="status"><span className="loading-sparkle">✦</span> {tr(language, 'Finding your adventures…')}</div>}
@@ -895,10 +900,10 @@ export default function App() {
             <div className="game-grid">
               {visibleGames.map((game, index) => (
                 <article className={`game-card ${game.theme}`} key={game.id}>
-                  <div className="card-topline"><span className="card-number">{language === 'hi' ? `मिशन ${String(index + 1).padStart(2, '0')}` : `MISSION ${String(index + 1).padStart(2, '0')}`}</span><span className="card-age">{language === 'hi' ? ageCopyHi[currentAge.label] : currentAge.label}</span></div>
+                  <div className="card-topline"><span className="card-number">{localizedText(language, `MISSION ${String(index + 1).padStart(2, '0')}`, `मिशन ${String(index + 1).padStart(2, '0')}`)}</span><span className="card-age">{localizedAgeCopy(language, currentAge.label)}</span></div>
                   <div className="game-art" aria-hidden="true">
                     <span className="art-halo" />
-                    <span className="game-art-label">{language === 'hi' ? 'खेल शुरू करो' : 'PLAY QUEST'}</span>
+                    <span className="game-art-label">{localizedText(language, 'PLAY QUEST', 'खेल शुरू करो')}</span>
                     <span className="game-icon">{game.icon}</span>
                     <span className="art-sparkle art-sparkle-a">✦</span>
                     <span className="art-sparkle art-sparkle-b">✧</span>
@@ -908,9 +913,9 @@ export default function App() {
                     <button className={`favorite-toggle ${clubData.favorites.includes(game.id) ? 'is-favorite' : ''}`} type="button" aria-label={tr(language, clubData.favorites.includes(game.id) ? 'Remove favorite' : 'Add to favorites')} aria-pressed={clubData.favorites.includes(game.id)} onClick={() => updateClubData((previous) => ({ ...previous, favorites: previous.favorites.includes(game.id) ? previous.favorites.filter((id) => id !== game.id) : [...previous.favorites, game.id] }))}>{clubData.favorites.includes(game.id) ? '♥' : '♡'}</button>
                     <h3>{localizedGame(language, game).title}</h3>
                     <p>{localizedGame(language, game).description}</p>
-                    <div className="game-arcade-meta"><span>{game.mode === 'adventure' ? '🧭' : game.mode === 'memory' ? '🧠' : game.mode === 'puzzle' || game.mode === 'sudoku' ? '🧩' : game.mode === 'creative' || game.mode === 'monster' || game.mode === 'pixel' ? '🎨' : game.mode === 'maze3d' || game.mode === 'space3d' ? '🕹️' : '✨'} {language === 'hi' ? 'मिशन तैयार' : 'MISSION READY'}</span>{progress.performance[game.id] && <span>🎯 {Math.round(progress.performance[game.id].correct / progress.performance[game.id].attempts * 100)}%</span>}</div>
+                    <div className="game-arcade-meta"><span>{game.mode === 'adventure' ? '🧭' : game.mode === 'memory' ? '🧠' : game.mode === 'puzzle' || game.mode === 'sudoku' ? '🧩' : game.mode === 'creative' || game.mode === 'monster' || game.mode === 'pixel' ? '🎨' : game.mode === 'maze3d' || game.mode === 'space3d' ? '🕹️' : '✨'} {localizedText(language, 'MISSION READY', 'मिशन तैयार')}</span>{progress.performance[game.id] && <span>🎯 {Math.round(progress.performance[game.id].correct / progress.performance[game.id].attempts * 100)}%</span>}</div>
                     <div className="card-bottom">
-                      <span className="game-time"><span aria-hidden="true">◷</span> {language === 'hi' ? '8–10 मिनट' : '8–10 min'}</span>
+                      <span className="game-time"><span aria-hidden="true">◷</span> {localizedText(language, '8–10 min', '8–10 मिनट')}</span>
                       <button className="play-button" type="button" onClick={() => void startGame(game)} aria-label={`${tr(language, 'Play')} ${localizedGame(language, game).title}`}>
                         {tr(language, 'Play')} <span aria-hidden="true">→</span>
                       </button>
@@ -922,7 +927,7 @@ export default function App() {
             </div>
           )}
           {!gamesLoading && !gamesError && filteredGames.length > 12 && (
-            <div className="show-games-wrap"><button className="show-games-button" type="button" onClick={() => setShowMoreGames((value) => !value)}>{showMoreGames ? `${tr(language, 'Show fewer games')} ↑` : language === 'hi' ? `सभी ${filteredGames.length} खेल देखें ↓` : `Browse all ${filteredGames.length} games ↓`}</button></div>
+            <div className="show-games-wrap"><button className="show-games-button" type="button" onClick={() => setShowMoreGames((value) => !value)}>{showMoreGames ? `${tr(language, 'Show fewer games')} ↑` : language === 'hi' ? `सभी ${filteredGames.length} खेल देखें ↓` : language === 'mr' ? `सर्व ${filteredGames.length} खेळ पहा ↓` : `Browse all ${filteredGames.length} games ↓`}</button></div>
           )}
         </section>
 
@@ -940,10 +945,10 @@ export default function App() {
             </div>
             <div className="badge-panel">
               <div className="badge-orbit"><span className="badge-icon" aria-hidden="true">{badge.icon}</span><span className="badge-spark badge-spark-one">✦</span><span className="badge-spark badge-spark-two">✧</span></div>
-              <div className="badge-caption"><span>{tr(language, 'Your garden badge')}</span><strong>{language === 'hi' ? ({ 'Superstar Scholar': 'सुपरस्टार विद्वान', 'Shooting Star': 'टूटता सितारा', 'Curious Caterpillar': 'जिज्ञासु इल्ली', 'Little Sprout': 'नन्हा अंकुर' } as Record<string, string>)[badge.title] : badge.title}</strong></div>
+              <div className="badge-caption"><span>{tr(language, 'Your garden badge')}</span><strong>{language === 'hi' ? ({ 'Superstar Scholar': 'सुपरस्टार विद्वान', 'Shooting Star': 'टूटता सितारा', 'Curious Caterpillar': 'जिज्ञासु इल्ली', 'Little Sprout': 'नन्हा अंकुर' } as Record<string, string>)[badge.title] : localizedText(language, badge.title, badge.title)}</strong></div>
               <div className="badge-progress" aria-label={badge.next ? `${starsToNext} more stars until ${badge.next}` : 'All badges unlocked'}>
                 <div className="badge-progress-track"><span style={{ width: `${badgeProgress}%` }} /></div>
-                <small>{badge.next ? language === 'hi' ? `अगले ${tr(language, badge.next)} बैज के लिए ${starsToNext} सितारे और चाहिए` : `${starsToNext} more ${starsToNext === 1 ? 'star' : 'stars'} to ${badge.next}` : tr(language, 'All badges unlocked — amazing!')}</small>
+                <small>{badge.next ? language === 'hi' ? `अगले ${tr(language, badge.next)} बैज के लिए ${starsToNext} सितारे और चाहिए` : language === 'mr' ? `${badge.next} हे पुढचे बॅज मिळवण्यासाठी आणखी ${starsToNext} तारे हवे आहेत` : `${starsToNext} more ${starsToNext === 1 ? 'star' : 'stars'} to ${badge.next}` : tr(language, 'All badges unlocked — amazing!')}</small>
               </div>
             </div>
           </div>
@@ -999,7 +1004,7 @@ export default function App() {
                 <div className="finish-confetti" aria-hidden="true">✨ 🌼 🎉 ⭐ ✨</div>
                 <div className="finish-score">⭐ <strong>{roundStars}</strong></div>
                 <h3>{tr(language, 'Wonderful work, explorer!')}</h3>
-                <p>{activeGame.mode === 'adventure' ? language === 'hi' ? `तुमने ${questions.length} जगहें देखीं और ${adventureItems.length} खज़ाने पाए। हर संकेत से कुछ नया सीखा।` : `You explored all ${questions.length} places and collected ${adventureItems.length} treasures. Every clue helped you learn.` : activeGame.mode === 'memory' ? language === 'hi' ? `तुमने ${memoryCards.length / 2} जोड़े ढूँढ़े। तुम्हारी याददाश्त कमाल की है!` : `You found every pair in ${memoryCards.length / 2} matches. Your memory did a great job!` : activeGame.mode === 'creative' || activeGame.mode === 'monster' || activeGame.mode === 'pixel' ? tr(language, 'Your imagination made something wonderful. Come back and create something new!') : activeGame.mode === 'coding' || activeGame.mode === 'loop' ? tr(language, 'Your command sequence guided the critter all the way home. Nice debugging!') : language === 'hi' ? `तुमने ${localizedGame(language, activeGame).title} चुनौती पूरी की। हर कोशिश से कुछ नया सीखा।` : `You finished your ${activeGame.title} challenge. Every try helped you learn.`}</p>
+                <p>{activeGame.mode === 'adventure' ? language === 'hi' ? `तुमने ${questions.length} जगहें देखीं और ${adventureItems.length} खज़ाने पाए। हर संकेत से कुछ नया सीखा।` : language === 'mr' ? `तू ${questions.length} ठिकाणे पाहिली आणि ${adventureItems.length} खजिने गोळा केलेस. प्रत्येक संकेताने तुला काहीतरी नवीन शिकवले.` : `You explored all ${questions.length} places and collected ${adventureItems.length} treasures. Every clue helped you learn.` : activeGame.mode === 'memory' ? language === 'hi' ? `तुमने ${memoryCards.length / 2} जोड़े ढूँढ़े। तुम्हारी याददाश्त कमाल की है!` : language === 'mr' ? `तू ${memoryCards.length / 2} जोड्या शोधल्यास. तुझी स्मरणशक्ती छान आहे!` : `You found every pair in ${memoryCards.length / 2} matches. Your memory did a great job!` : activeGame.mode === 'creative' || activeGame.mode === 'monster' || activeGame.mode === 'pixel' ? tr(language, 'Your imagination made something wonderful. Come back and create something new!') : activeGame.mode === 'coding' || activeGame.mode === 'loop' ? tr(language, 'Your command sequence guided the critter all the way home. Nice debugging!') : language === 'hi' ? `तुमने ${localizedGame(language, activeGame).title} चुनौती पूरी की। हर कोशिश से कुछ नया सीखा।` : language === 'mr' ? `तू ${localizedGame(language, activeGame).title} हे आव्हान पूर्ण केलेस. प्रत्येक प्रयत्नातून काहीतरी नवीन शिकायला मिळाले.` : `You finished your ${activeGame.title} challenge. Every try helped you learn.`}</p>
                 <div className="finish-actions"><button className="button button-primary" type="button" onClick={() => void startGame(activeGame)}>{tr(language, 'Play again')} <span aria-hidden="true">↻</span></button><button className="button button-quiet" type="button" onClick={closeGame}>{tr(language, 'Choose another quest')}</button></div>
               </div>
             )}
@@ -1108,7 +1113,7 @@ export default function App() {
                     </div>
                     <div className="adventure-vignette">
                       <span className="adventure-landmark" aria-hidden="true">{adventureScene.landmark}</span>
-                      <div><span className="adventure-location">{language === 'hi' ? `पड़ाव ${questionIndex + 1} · ${tr(language, adventureScene.place)}` : `STOP ${questionIndex + 1} · ${adventureScene.place}`}</span><p>{tr(language, adventureScene.story)}</p></div>
+                      <div><span className="adventure-location">{language === 'hi' ? `पड़ाव ${questionIndex + 1} · ${tr(language, adventureScene.place)}` : language === 'mr' ? `थांबा ${questionIndex + 1} · ${tr(language, adventureScene.place)}` : `STOP ${questionIndex + 1} · ${adventureScene.place}`}</span><p>{tr(language, adventureScene.story)}</p></div>
                     </div>
                     <div className="adventure-backpack"><span className="backpack-label">🎒 {tr(language, 'Backpack')}</span>{adventureItems.length ? adventureItems.map((item) => <span className="backpack-item" key={item}>{tr(language, item)}</span>) : <span className="backpack-empty">{tr(language, 'Ready for treasures!')}</span>}</div>
                   </div>
@@ -1122,23 +1127,23 @@ export default function App() {
                   <div className="emotion-prompt" aria-label={tr(language, 'Friendly feelings clue')}><span aria-hidden="true">{emotionFace(currentQuestion.prompt)}</span><p>{tr(language, 'Feelings can look different for everyone. Pick the answer that best fits the clue.')}</p></div>
                 )}
                 {activeGame.mode === 'readaloud' && (
-                  <div className="readaloud-card"><span aria-hidden="true">📖</span><p>{language === 'hi' ? 'मीना ने छाता लिया क्योंकि आसमान में काले बादल छाए थे। उसने हाथ हिलाकर विदा कहा और बस स्टॉप की ओर जल्दी चली।' : 'Mina packed an umbrella because dark clouds filled the sky. She waved goodbye and hurried to the bus stop.'}</p><button type="button" className="small-game-button" onClick={() => { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(language === 'hi' ? 'मीना ने छाता लिया क्योंकि आसमान में काले बादल छाए थे। उसने हाथ हिलाकर विदा कहा और बस स्टॉप की ओर जल्दी चली।' : 'Mina packed an umbrella because dark clouds filled the sky. She waved goodbye and hurried to the bus stop.'); utterance.lang = language === 'hi' ? 'hi-IN' : 'en-US'; window.speechSynthesis.speak(utterance); } }}>{tr(language, 'Read the story aloud')}</button></div>
+                  <div className="readaloud-card"><span aria-hidden="true">📖</span><p>{localizedText(language, 'Mina packed an umbrella because dark clouds filled the sky. She waved goodbye and hurried to the bus stop.', 'मीना ने छाता लिया क्योंकि आसमान में काले बादल छाए थे। उसने हाथ हिलाकर विदा कहा और बस स्टॉप की ओर जल्दी चली।')}</p><button type="button" className="small-game-button" onClick={() => { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(localizedText(language, 'Mina packed an umbrella because dark clouds filled the sky. She waved goodbye and hurried to the bus stop.', 'मीना ने छाता लिया क्योंकि आसमान में काले बादल छाए थे। उसने हाथ हिलाकर विदा कहा और बस स्टॉप की ओर जल्दी चली।')); utterance.lang = language === 'hi' ? 'hi-IN' : language === 'mr' ? 'mr-IN' : 'en-US'; window.speechSynthesis.speak(utterance); } }}>{tr(language, 'Read the story aloud')}</button></div>
                 )}
                 {activeGame.mode === 'spell' && (
                   <div className="word-builder" aria-label={tr(language, 'Build the word from letter tiles')}>
-                    <div className="word-slots" aria-label={language === 'hi' ? `तुम्हारा शब्द: ${selectedTiles.map((index) => currentQuestion.choices[index]).join('') || 'खाली'}` : `Your word so far: ${selectedTiles.map((index) => currentQuestion.choices[index]).join('') || 'empty'}`}>
+                    <div className="word-slots" aria-label={language === 'hi' ? `तुम्हारा शब्द: ${selectedTiles.map((index) => currentQuestion.choices[index]).join('') || 'खाली'}` : language === 'mr' ? `तुझा तयार होणारा शब्द: ${selectedTiles.map((index) => currentQuestion.choices[index]).join('') || 'रिकामा'}` : `Your word so far: ${selectedTiles.map((index) => currentQuestion.choices[index]).join('') || 'empty'}`}>
                       {currentQuestion.choices.map((_, index) => {
                         const tileIndex = selectedTiles[index];
                         return tileIndex === undefined
                           ? <span className="word-slot" key={`slot-${index}`} aria-hidden="true">·</span>
-                          : <button className="word-slot filled" type="button" key={`slot-${index}`} onClick={() => removeLetter(tileIndex)} disabled={checkingAnswer || !!answerResult} aria-label={language === 'hi' ? `${currentQuestion.choices[tileIndex]} हटाएँ` : `Remove ${currentQuestion.choices[tileIndex]}`}>
+                          : <button className="word-slot filled" type="button" key={`slot-${index}`} onClick={() => removeLetter(tileIndex)} disabled={checkingAnswer || !!answerResult} aria-label={language === 'hi' ? `${currentQuestion.choices[tileIndex]} हटाएँ` : language === 'mr' ? `${currentQuestion.choices[tileIndex]} काढा` : `Remove ${currentQuestion.choices[tileIndex]}`}>
                               {currentQuestion.choices[tileIndex]}
                             </button>;
                       })}
                     </div>
                     <div className="letter-tiles" role="group" aria-label={tr(language, 'Letter tiles')}>
                       {currentQuestion.choices.map((letter, index) => (
-                        <button className={`letter-tile ${usedTiles.has(index) ? 'tile-used' : ''}`} key={`tile-${index}`} type="button" onClick={() => chooseLetter(index)} disabled={usedTiles.has(index) || checkingAnswer || !!answerResult} aria-label={language === 'hi' ? `${letter} अक्षर चुनें` : `Use letter ${letter}`}>
+                        <button className={`letter-tile ${usedTiles.has(index) ? 'tile-used' : ''}`} key={`tile-${index}`} type="button" onClick={() => chooseLetter(index)} disabled={usedTiles.has(index) || checkingAnswer || !!answerResult} aria-label={language === 'hi' ? `${letter} अक्षर चुनें` : language === 'mr' ? `${letter} अक्षर वापरा` : `Use letter ${letter}`}>
                           {letter}
                         </button>
                       ))}
@@ -1248,7 +1253,7 @@ export default function App() {
                     <button className="feedback-continue" type="button" onClick={continueRound}>{gentleRetryMode && !answerResult.correct ? tr(language, 'Try again') : questionIndex + 1 === questions.length ? tr(language, activeGame.mode === 'adventure' ? 'Finish quest' : 'Finish') : tr(language, activeGame.mode === 'adventure' ? 'Go onward' : 'Next')} <span aria-hidden="true">→</span></button>
                   </div>
                 )}
-                <div className="dialog-footer"><span><span aria-hidden="true">⭐</span> {roundStars} {language === 'hi' ? 'सितारे' : roundStars === 1 ? 'star' : 'stars'} {tr(language, 'this quest')}</span><span>{tr(language, 'Keep trying — that’s how brains grow!')}</span></div>
+                <div className="dialog-footer"><span><span aria-hidden="true">⭐</span> {roundStars} {language === 'hi' ? 'सितारे' : language === 'mr' ? 'तारे' : roundStars === 1 ? 'star' : 'stars'} {tr(language, 'this quest')}</span><span>{tr(language, 'Keep trying — that’s how brains grow!')}</span></div>
               </>
             )}
           </section>
@@ -1525,7 +1530,7 @@ function SequenceGame({ title, age, language, onFinish }: { title: string; age: 
     const next = [...picked, item];
     setPicked(next);
     if (next.length === sequence.length) onFinish();
-    else setMessage(language === 'hi' ? `${sequence.length} में से ${next.length} सही क्रम में!` : `${next.length} of ${sequence.length} in the right order!`);
+    else setMessage(language === 'hi' ? `${sequence.length} में से ${next.length} सही क्रम में!` : language === 'mr' ? `${sequence.length} पैकी ${next.length} योग्य क्रमाने!` : `${next.length} of ${sequence.length} in the right order!`);
   }
   function replay() {
     setPicked([]);
@@ -1621,8 +1626,8 @@ function MiniPiano({ language, onFinish }: { language: Language; onFinish: () =>
   const [played, setPlayed] = useState(0);
   const notes = [262, 294, 330, 349, 392, 440, 494];
   return <div className="activity-card piano-activity"><div className="activity-heading"><span aria-hidden="true">🎹</span><div><strong>{tr(language, 'Make a little tune!')}</strong><small>{tr(language, 'Tap any keys to hear notes. Play five keys to complete your mini concert.')}</small></div></div>
-    <div className="piano-keys" role="group" aria-label={tr(language, 'Piano keys')}>{notes.map((note, index) => <button type="button" key={note} onClick={() => { playNote(note); setPlayed((value) => Math.min(5, value + 1)); }} aria-label={`${tr(language, 'Play note')} ${index + 1}`}><span>{(language === 'hi' ? ['सा', 'रे', 'ग', 'म', 'प', 'ध', 'नि'] : ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'])[index]}</span></button>)}</div>
-    <p className="activity-message" role="status">{played < 5 ? language === 'hi' ? `5 में से ${played} सुर बजे` : `${played} of 5 notes played` : tr(language, 'Lovely tune! You can finish your concert.')}</p><button className="button button-primary" type="button" disabled={played < 5} onClick={onFinish}>{tr(language, 'Finish my mini concert')} ♪</button>
+    <div className="piano-keys" role="group" aria-label={tr(language, 'Piano keys')}>{notes.map((note, index) => <button type="button" key={note} onClick={() => { playNote(note); setPlayed((value) => Math.min(5, value + 1)); }} aria-label={`${tr(language, 'Play note')} ${index + 1}`}><span>{(language === 'hi' ? ['सा', 'रे', 'ग', 'म', 'प', 'ध', 'नि'] : language === 'mr' ? ['सा', 'रे', 'ग', 'म', 'प', 'ध', 'नि'] : ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'])[index]}</span></button>)}</div>
+    <p className="activity-message" role="status">{played < 5 ? language === 'hi' ? `5 में से ${played} सुर बजे` : language === 'mr' ? `5 पैकी ${played} स्वर वाजवले` : `${played} of 5 notes played` : tr(language, 'Lovely tune! You can finish your concert.')}</p><button className="button button-primary" type="button" disabled={played < 5} onClick={onFinish}>{tr(language, 'Finish my mini concert')} ♪</button>
   </div>;
 }
 
@@ -1640,10 +1645,10 @@ function RhythmGame({ language, onFinish }: { age: AgeBand; language: Language; 
     if (beat !== rhythm[index]) { setEntered([]); setMessage(tr(language, 'Almost! Listen once more, then try again.')); return; }
     const next = [...entered, beat]; setEntered(next);
     if (next.length === rhythm.length) onFinish();
-    else setMessage(language === 'hi' ? `${rhythm.length} में से ${next.length} ताल — जारी रखो!` : `Beat ${next.length} of ${rhythm.length} — keep going!`);
+    else setMessage(language === 'hi' ? `${rhythm.length} में से ${next.length} ताल — जारी रखो!` : language === 'mr' ? `${rhythm.length} पैकी ${next.length} ठेका — असेच करत राहा!` : `Beat ${next.length} of ${rhythm.length} — keep going!`);
   }
   return <div className="activity-card rhythm-activity"><div className="activity-heading"><span aria-hidden="true">🥁</span><div><strong>{tr(language, 'Listen and tap the beat!')}</strong><small>{tr(language, 'Copy the four-beat rhythm in the same order.')}</small></div></div>
-    <div className="rhythm-display" aria-label={language === 'hi' ? `चार में से ${entered.length} ताल दोहराईं` : `${entered.length} of four beats copied`}>{rhythm.map((_, index) => <span key={index} className={entered[index] ? 'rhythm-done' : ''}>{entered[index] ? '●' : '·'}</span>)}</div>
+    <div className="rhythm-display" aria-label={language === 'hi' ? `चार में से ${entered.length} ताल दोहराईं` : language === 'mr' ? `चारपैकी ${entered.length} ठेके पुन्हा वाजवले` : `${entered.length} of four beats copied`}>{rhythm.map((_, index) => <span key={index} className={entered[index] ? 'rhythm-done' : ''}>{entered[index] ? '●' : '·'}</span>)}</div>
     <button type="button" className="small-game-button rhythm-listen" onClick={() => void playRhythm()}>🔊 {tr(language, 'Play the rhythm')}</button>
     <div className="rhythm-buttons"><button type="button" onClick={() => tapBeat('clap')}>👏 {tr(language, 'Clap')}</button><button type="button" onClick={() => tapBeat('tap')}>👆 {tr(language, 'Tap')}</button><button type="button" onClick={() => tapBeat('stomp')}>🦶 {tr(language, 'Stomp')}</button></div><p className="activity-message" role="status">{tr(language, message)}</p>
   </div>;
@@ -1668,7 +1673,7 @@ function SoundGuessGame({ title, language, onFinish }: { title: string; age: Age
     else setMessage(tr(language, 'Not quite. Listen again and try another one!'));
   }
   function next() { if (round === rounds.length - 1) onFinish(); else { setRound((value) => value + 1); setChosen(''); setMessage(tr(language, 'Tap the speaker, listen, and guess!')); } }
-  return <div className="activity-card sound-activity"><div className="activity-heading"><span aria-hidden="true">{instruments ? '🎼' : '🐾'}</span><div><strong>{tr(language, instruments ? 'Which instrument do you hear?' : 'Who made that sound?')}</strong><small>{language === 'hi' ? `${rounds.length} में से दौर ${round + 1} · संकेत सुनो।` : `Round ${round + 1} of ${rounds.length} · listen for the clue.`}</small></div></div>
+  return <div className="activity-card sound-activity"><div className="activity-heading"><span aria-hidden="true">{instruments ? '🎼' : '🐾'}</span><div><strong>{tr(language, instruments ? 'Which instrument do you hear?' : 'Who made that sound?')}</strong><small>{language === 'hi' ? `${rounds.length} में से दौर ${round + 1} · संकेत सुनो।` : language === 'mr' ? `${rounds.length} पैकी फेरी ${round + 1} · आवाज ओळख.` : `Round ${round + 1} of ${rounds.length} · listen for the clue.`}</small></div></div>
     <button className="sound-button" type="button" onClick={playClue} aria-label={tr(language, 'Play sound clue')}>🔊<span>{tr(language, 'Play sound')}</span></button>
     <div className="activity-choices">{clue.choices.map((choice) => <button key={choice} type="button" className={chosen === choice ? choice === clue.answer ? 'choice-correct' : 'choice-wrong' : ''} onClick={() => choose(choice)}>{tr(language, choice)}</button>)}</div>
     <p className="activity-message" role="status">{message}</p>{chosen === clue.answer && <button className="button button-primary" type="button" onClick={next}>{tr(language, round === rounds.length - 1 ? 'Finish game ✓' : 'Next sound →')}</button>}
@@ -1692,7 +1697,7 @@ function SortGame({ title, language, onFinish }: { title: string; language: Lang
     if (index === tasks.length - 1) onFinish();
     else { setIndex((value) => value + 1); setSelected(''); setMessage(tr(language, 'Nice sorting! Choose the next picture.')); }
   }
-  return <div className="activity-card sort-activity"><div className="activity-heading"><span aria-hidden="true">🧺</span><div><strong>{tr(language, isNeeds ? 'Need or want?' : isRoom ? 'Tidy-up sort!' : 'Everyday or sometimes?')}</strong><small>{language === 'hi' ? `${tasks.length} में से चित्र ${index + 1}` : `Picture ${index + 1} of ${tasks.length}`}</small></div></div>
+  return <div className="activity-card sort-activity"><div className="activity-heading"><span aria-hidden="true">🧺</span><div><strong>{tr(language, isNeeds ? 'Need or want?' : isRoom ? 'Tidy-up sort!' : 'Everyday or sometimes?')}</strong><small>{language === 'hi' ? `${tasks.length} में से चित्र ${index + 1}` : language === 'mr' ? `${tasks.length} पैकी चित्र ${index + 1}` : `Picture ${index + 1} of ${tasks.length}`}</small></div></div>
     <button type="button" className={`sort-item ${selected ? 'sort-selected' : ''}`} onClick={() => setSelected(tasks[index].name)}><span>{tasks[index].icon}</span><strong>{tr(language, tasks[index].name)}</strong><small>{tr(language, 'Tap to pick up')}</small></button>
     <p className="activity-message" role="status">{message}</p><div className="sort-bins">{groups.map((group) => <button type="button" key={group} onClick={() => selected && place(group)} disabled={!selected}>{group === 'Need' ? '💧 ' : group === 'Want' ? '🎁 ' : '📦 '}{tr(language, group)}</button>)}</div>
   </div>;
@@ -1744,8 +1749,8 @@ function BalanceGame({ language, onFinish }: { language: Language; onFinish: () 
 
 type KartTrackItem = { id: number; lane: number; top: number; kind: 'star' | 'puddle' };
 
-function gameText(language: Language, english: string, hindi: string) {
-  return language === 'hi' ? hindi : english;
+function gameText(language: Language, english: string, hindi: string, marathi?: string) {
+  return language === 'mr' && marathi ? marathi : localizedText(language, english, hindi);
 }
 
 function WonderKartRace({ age, language, minutes, onFinish }: { age: AgeBand; language: Language; minutes: number; onFinish: () => void }) {
@@ -1823,10 +1828,10 @@ function WonderKartRace({ age, language, minutes, onFinish }: { age: AgeBand; la
   const world = stars < 10 ? gameText(language, 'Cloud Circuit', 'बादलों का रास्ता') : stars < 20 ? gameText(language, 'Rainbow Ridge', 'इंद्रधनुषी पहाड़ी') : gameText(language, 'Comet Coast', 'धूमकेतु तट');
 
   return <section className="activity-card arcade-game kart-race" aria-label={gameText(language, 'Wonder Kart Rally game', 'वंडर कार्ट रैली खेल')}>
-    <div className="arcade-game-top"><div><span className="arcade-world-tag">🏁 {world}</span><strong>{gameText(language, 'Star Rally', 'तारा रैली')}</strong></div><div className="arcade-hud"><span>⭐ {stars}</span><span aria-label={gameText(language, `Time remaining ${minutesLeft} minutes ${seconds} seconds`, `बाकी समय ${minutesLeft} मिनट ${seconds} सेकंड`)}>⏱ {minutesLeft}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
+    <div className="arcade-game-top"><div><span className="arcade-world-tag">🏁 {world}</span><strong>{gameText(language, 'Star Rally', 'तारा रैली')}</strong></div><div className="arcade-hud"><span>⭐ {stars}</span><span aria-label={gameText(language, `Time remaining ${minutesLeft} minutes ${seconds} seconds`, `बाकी समय ${minutesLeft} मिनट ${seconds} सेकंड`, `उरलेला वेळ ${minutesLeft} मिनिटे ${seconds} सेकंद`)}>⏱ {minutesLeft}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
     <p className="arcade-instruction">{gameText(language, 'Steer between three lanes. Collect ⭐ stars, and dodge 🟤 puddles. Arrow keys or tap a lane.', 'तीन लेनों में कार चलाओ। ⭐ तारे लो और 🟤 पानी के गड्ढों से बचो। तीर वाले बटन या लेन टैप करो।')}</p>
     <div className={`kart-road ${paused ? 'is-paused' : ''}`}>
-      {[0, 1, 2].map((trackLane) => <button className={`kart-lane ${lane === trackLane ? 'lane-selected' : ''}`} key={trackLane} type="button" disabled={paused} onClick={() => moveTo(trackLane)} aria-label={gameText(language, `Steer into lane ${trackLane + 1}`, `${trackLane + 1}वीं लेन में जाओ`)}>
+      {[0, 1, 2].map((trackLane) => <button className={`kart-lane ${lane === trackLane ? 'lane-selected' : ''}`} key={trackLane} type="button" disabled={paused} onClick={() => moveTo(trackLane)} aria-label={gameText(language, `Steer into lane ${trackLane + 1}`, `${trackLane + 1}वीं लेन में जाओ`, `${trackLane + 1} व्या मार्गावर वळा`)}>
         {items.filter((item) => item.lane === trackLane).map((item) => <span className={`kart-pickup ${item.kind}`} key={item.id} style={{ top: `${item.top}%` }} aria-hidden="true">{item.kind === 'star' ? '⭐' : '🟤'}</span>)}
         {lane === trackLane && <span className="kart-player" aria-hidden="true">🏎️</span>}
         <span className="kart-lane-label">{trackLane + 1}</span>
@@ -1839,16 +1844,16 @@ function WonderKartRace({ age, language, minutes, onFinish }: { age: AgeBand; la
   </section>;
 }
 
-type ShapeTarget = { id: string; glyph: string; english: string; hindi: string; colorName: string; colorHi: string; color: string; sides: number; fact: string; factHi: string };
+type ShapeTarget = { id: string; glyph: string; english: string; hindi: string; marathi: string; colorName: string; colorHi: string; colorMr: string; color: string; sides: number; fact: string; factHi: string; factMr: string };
 type BlasterRound = { targets: ShapeTarget[]; goal: ShapeTarget };
 
 const blasterShapes: ShapeTarget[] = [
-  { id: 'circle', glyph: '●', english: 'circle', hindi: 'गोला', colorName: 'red', colorHi: 'लाल', color: '#ff7383', sides: 0, fact: 'A circle has one curved edge and no corners.', factHi: 'गोले का एक घुमावदार किनारा होता है और कोई कोना नहीं होता।' },
-  { id: 'triangle', glyph: '▲', english: 'triangle', hindi: 'त्रिभुज', colorName: 'yellow', colorHi: 'पीला', color: '#ffbe4f', sides: 3, fact: 'A triangle has 3 sides and 3 corners.', factHi: 'त्रिभुज की 3 भुजाएँ और 3 कोने होते हैं।' },
-  { id: 'square', glyph: '■', english: 'square', hindi: 'वर्ग', colorName: 'green', colorHi: 'हरा', color: '#61cfa6', sides: 4, fact: 'A square has 4 equal sides.', factHi: 'वर्ग की 4 बराबर भुजाएँ होती हैं।' },
-  { id: 'pentagon', glyph: '⬟', english: 'pentagon', hindi: 'पंचभुज', colorName: 'purple', colorHi: 'बैंगनी', color: '#8f83f5', sides: 5, fact: 'A pentagon has 5 sides.', factHi: 'पंचभुज की 5 भुजाएँ होती हैं।' },
-  { id: 'hexagon', glyph: '⬢', english: 'hexagon', hindi: 'षट्भुज', colorName: 'blue', colorHi: 'नीला', color: '#44b9da', sides: 6, fact: 'A honeycomb cell is often shaped like a hexagon.', factHi: 'मधुमक्खी के छत्ते की एक कोठरी अक्सर षट्भुज जैसी होती है।' },
-  { id: 'octagon', glyph: '⯃', english: 'octagon', hindi: 'अष्टभुज', colorName: 'orange', colorHi: 'नारंगी', color: '#f39151', sides: 8, fact: 'An octagon has 8 sides. Stop signs are often octagons.', factHi: 'अष्टभुज की 8 भुजाएँ होती हैं। रुकने के संकेत अक्सर अष्टभुज होते हैं।' },
+  { id: 'circle', glyph: '●', english: 'circle', hindi: 'गोला', marathi: 'वर्तुळ', colorName: 'red', colorHi: 'लाल', colorMr: 'लाल', color: '#ff7383', sides: 0, fact: 'A circle has one curved edge and no corners.', factHi: 'गोले का एक घुमावदार किनारा होता है और कोई कोना नहीं होता।', factMr: 'वर्तुळाला एक वक्र कडा असते आणि कोपरे नसतात.' },
+  { id: 'triangle', glyph: '▲', english: 'triangle', hindi: 'त्रिभुज', marathi: 'त्रिकोण', colorName: 'yellow', colorHi: 'पीला', colorMr: 'पिवळा', color: '#ffbe4f', sides: 3, fact: 'A triangle has 3 sides and 3 corners.', factHi: 'त्रिभुज की 3 भुजाएँ और 3 कोने होते हैं।', factMr: 'त्रिकोणाला ३ बाजू आणि ३ कोन असतात.' },
+  { id: 'square', glyph: '■', english: 'square', hindi: 'वर्ग', marathi: 'चौरस', colorName: 'green', colorHi: 'हरा', colorMr: 'हिरवा', color: '#61cfa6', sides: 4, fact: 'A square has 4 equal sides.', factHi: 'वर्ग की 4 बराबर भुजाएँ होती हैं।', factMr: 'चौरसाच्या चारही बाजू समान असतात.' },
+  { id: 'pentagon', glyph: '⬟', english: 'pentagon', hindi: 'पंचभुज', marathi: 'पंचकोन', colorName: 'purple', colorHi: 'बैंगनी', colorMr: 'जांभळा', color: '#8f83f5', sides: 5, fact: 'A pentagon has 5 sides.', factHi: 'पंचभुज की 5 भुजाएँ होती हैं।', factMr: 'पंचकोनाला ५ बाजू असतात.' },
+  { id: 'hexagon', glyph: '⬢', english: 'hexagon', hindi: 'षट्भुज', marathi: 'षट्कोन', colorName: 'blue', colorHi: 'नीला', colorMr: 'निळा', color: '#44b9da', sides: 6, fact: 'A honeycomb cell is often shaped like a hexagon.', factHi: 'मधुमक्खी के छत्ते की एक कोठरी अक्सर षट्भुज जैसी होती है।', factMr: 'मधाच्या पोळ्यातील कप्पे अनेकदा षट्कोनाच्या आकाराचे असतात.' },
+  { id: 'octagon', glyph: '⯃', english: 'octagon', hindi: 'अष्टभुज', marathi: 'अष्टकोन', colorName: 'orange', colorHi: 'नारंगी', colorMr: 'नारिंगी', color: '#f39151', sides: 8, fact: 'An octagon has 8 sides. Stop signs are often octagons.', factHi: 'अष्टभुज की 8 भुजाएँ होती हैं। रुकने के संकेत अक्सर अष्टभुज होते हैं।', factMr: 'अष्टकोनाला ८ बाजू असतात. थांबण्याचे फलक अनेकदा अष्टकोनी असतात.' },
 ];
 
 function shuffled<T>(items: T[]) {
@@ -1886,14 +1891,14 @@ function SparkleTargetBlaster({ age, language, minutes, onFinish }: { age: AgeBa
     return () => window.clearInterval(timer);
   }, [paused]);
 
-  const goalName = language === 'hi' ? round.goal.hindi : round.goal.english;
+  const goalName = language === 'hi' ? round.goal.hindi : language === 'mr' ? round.goal.marathi : round.goal.english;
   const clue = age === '3-5'
-    ? gameText(language, `Aim for the ${language === 'hi' ? round.goal.colorHi : round.goal.colorName} sparkle!`, `${round.goal.colorHi} चमक पर निशाना लगाओ!`)
+    ? gameText(language, `Aim for the ${language === 'hi' ? round.goal.colorHi : round.goal.colorName} sparkle!`, `${round.goal.colorHi} चमक पर निशाना लगाओ!`, `${round.goal.colorMr} चमकेवर निशाणा साध!`)
     : age === '6-8'
-      ? gameText(language, `Find the ${goalName} shape!`, `${goalName} वाली आकृति ढूँढो!`)
+      ? gameText(language, `Find the ${goalName} shape!`, `${goalName} वाली आकृति ढूँढो!`, `${goalName} आकार शोध!`)
       : round.goal.sides === 0
         ? gameText(language, 'Find the shape with no corners!', 'बिना कोनों वाली आकृति ढूँढो!')
-        : gameText(language, `Find the shape with ${round.goal.sides} sides!`, `${round.goal.sides} भुजाओं वाली आकृति ढूँढो!`);
+        : gameText(language, `Find the shape with ${round.goal.sides} sides!`, `${round.goal.sides} भुजाओं वाली आकृति ढूँढो!`, `${round.goal.sides} बाजू असलेली आकृती शोध!`);
   const minutesLeft = Math.floor(timeLeft / 60).toString().padStart(2, '0');
   const seconds = (timeLeft % 60).toString().padStart(2, '0');
 
@@ -1903,7 +1908,7 @@ function SparkleTargetBlaster({ age, language, minutes, onFinish }: { age: AgeBa
     window.setTimeout(() => setFiring(false), 460);
     setShots((count) => count + 1);
     if (aimed === round.goal.id) {
-      setMessage(language === 'hi' ? round.goal.factHi : round.goal.fact);
+      setMessage(language === 'hi' ? round.goal.factHi : language === 'mr' ? round.goal.factMr : round.goal.fact);
       setRound(makeBlasterRound(round.goal.id));
       setAimed('');
     } else {
@@ -1912,13 +1917,13 @@ function SparkleTargetBlaster({ age, language, minutes, onFinish }: { age: AgeBa
   }
 
   return <section className="activity-card arcade-game sparkle-blaster" aria-label={gameText(language, 'Sparkle Target Blaster game', 'चमकता लक्ष्य ब्लास्टर खेल')}>
-    <div className="arcade-game-top"><div><span className="arcade-world-tag">✨ {gameText(language, 'Starry practice range', 'तारों वाला अभ्यास मैदान')}</span><strong>{gameText(language, 'Shape Safari', 'आकृति सफारी')}</strong></div><div className="arcade-hud"><span>🎯 {shots}</span><span aria-label={gameText(language, `Time remaining ${minutesLeft} minutes ${seconds} seconds`, `बाकी समय ${minutesLeft} मिनट ${seconds} सेकंड`)}>⏱ {minutesLeft}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
+    <div className="arcade-game-top"><div><span className="arcade-world-tag">✨ {gameText(language, 'Starry practice range', 'तारों वाला अभ्यास मैदान')}</span><strong>{gameText(language, 'Shape Safari', 'आकृति सफारी')}</strong></div><div className="arcade-hud"><span>🎯 {shots}</span><span aria-label={gameText(language, `Time remaining ${minutesLeft} minutes ${seconds} seconds`, `बाकी समय ${minutesLeft} मिनट ${seconds} सेकंड`, `उरलेला वेळ ${minutesLeft} मिनिटे ${seconds} सेकंद`)}>⏱ {minutesLeft}:{seconds}</span><button type="button" onClick={() => setPaused((value) => !value)}>{paused ? gameText(language, '▶ Continue', '▶ जारी रखें') : gameText(language, 'Ⅱ Pause', 'Ⅱ रोकें')}</button></div></div>
     <p className="arcade-instruction">{gameText(language, 'A friendly aim-and-pop game: match the clue to a shape. No enemies, just sparkles!', 'एक प्यारा निशाना लगाने वाला खेल: संकेत को आकृति से मिलाओ। यहाँ कोई दुश्मन नहीं, बस चमक है!')}</p>
     <div className={`blaster-range ${paused ? 'is-paused' : ''} ${firing ? 'is-firing' : ''}`}>
       <div className="blaster-clue"><span>🔎</span><strong>{clue}</strong></div>
       <div className="blaster-target-grid" role="group" aria-label={gameText(language, 'Choose a shape to aim at', 'निशाना लगाने के लिए आकृति चुनो')}>
-        {round.targets.map((target, index) => <button key={target.id} type="button" disabled={paused} className={`blaster-target ${aimed === target.id ? 'is-aimed' : ''}`} onClick={() => { setAimed(target.id); setMessage(gameText(language, 'Nice aim! Press launch to send a sparkle.', 'अच्छा निशाना! चमक छोड़ने के लिए लॉन्च दबाओ।')); }} aria-pressed={aimed === target.id} aria-label={gameText(language, `${target.english}, target ${index + 1}`, `${target.hindi}, लक्ष्य ${index + 1}`)} style={{ '--target-color': target.color } as CSSProperties}>
-          <span className="target-shape" aria-hidden="true">{target.glyph}</span><span className="target-label">{language === 'hi' ? target.hindi : target.english}</span><span className="target-star" aria-hidden="true">✦</span>
+        {round.targets.map((target, index) => <button key={target.id} type="button" disabled={paused} className={`blaster-target ${aimed === target.id ? 'is-aimed' : ''}`} onClick={() => { setAimed(target.id); setMessage(gameText(language, 'Nice aim! Press launch to send a sparkle.', 'अच्छा निशाना! चमक छोड़ने के लिए लॉन्च दबाओ।')); }} aria-pressed={aimed === target.id} aria-label={gameText(language, `${target.english}, target ${index + 1}`, `${target.hindi}, लक्ष्य ${index + 1}`, `${target.marathi}, लक्ष्य ${index + 1}`)} style={{ '--target-color': target.color } as CSSProperties}>
+          <span className="target-shape" aria-hidden="true">{target.glyph}</span><span className="target-label">{language === 'hi' ? target.hindi : language === 'mr' ? target.marathi : target.english}</span><span className="target-star" aria-hidden="true">✦</span>
         </button>)}
       </div>
       <div className="blaster-launch-deck"><span className="blaster-wand" aria-hidden="true">🪄</span><span className="blaster-shot-path" aria-hidden="true">✨ · · · · · · ·</span><button type="button" className="blaster-launch" disabled={paused} onClick={launch}>✨ {gameText(language, 'Launch sparkle!', 'चमक छोड़ो!')}</button></div>
@@ -1943,13 +1948,14 @@ function WelcomePage({ language, age, onAge, onLanguage, onContinue }: { languag
       <h2>{tr(language, 'Choose your age group')}</h2>
       <div className="welcome-age-options" role="group" aria-label={tr(language, 'Choose your age group')}>
         {ageBands.map((band) => <button key={band.id} type="button" className={`welcome-age-option ${age === band.id ? 'selected' : ''}`} onClick={() => onAge(band.id)} aria-pressed={age === band.id}>
-          <span className="welcome-age-icon" aria-hidden="true">{band.icon}</span><strong>{language === 'hi' ? ageCopyHi[band.name] : band.name}</strong><small>{language === 'hi' ? ageCopyHi[band.label] : band.label}</small>
+          <span className="welcome-age-icon" aria-hidden="true">{band.icon}</span><strong>{localizedAgeCopy(language, band.name)}</strong><small>{localizedAgeCopy(language, band.label)}</small>
         </button>)}
       </div>
       <h2>{tr(language, 'Choose a language')}</h2>
       <div className="welcome-language-options" role="group" aria-label={tr(language, 'Choose a language')}>
         <button type="button" className={language === 'en' ? 'selected' : ''} onClick={() => onLanguage('en')} aria-pressed={language === 'en'}><span>🇬🇧</span> English</button>
         <button type="button" className={language === 'hi' ? 'selected' : ''} onClick={() => onLanguage('hi')} aria-pressed={language === 'hi'}><span>🇮🇳</span> हिन्दी</button>
+        <button type="button" className={language === 'mr' ? 'selected' : ''} onClick={() => onLanguage('mr')} aria-pressed={language === 'mr'}><span>🇮🇳</span> मराठी</button>
       </div>
       <button className="button button-primary welcome-continue" type="button" disabled={!age} onClick={onContinue}>{tr(language, 'Continue to games')} <span aria-hidden="true">→</span></button>
       {!age && <small className="welcome-hint">{tr(language, 'Select an age group to continue.')}</small>}

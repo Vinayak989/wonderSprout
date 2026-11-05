@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import type { Language } from './i18n';
+import { localizedPair, localizedText, type Language } from './i18n';
 
 type AgeBand = '3-5' | '6-8' | '9-12';
 type ThreeMode = 'maze3d' | 'space3d';
@@ -8,7 +8,7 @@ type Cell = { x: number; z: number };
 type Props = { mode: ThreeMode; age: AgeBand; language: Language; onFinish: () => void };
 
 const cellKey = (x: number, z: number) => `${x},${z}`;
-const say = (language: Language, en: string, hi: string) => language === 'hi' ? hi : en;
+const say = (language: Language, en: string, hi: string, mr?: string) => language === 'mr' && mr ? mr : localizedText(language, en, hi);
 
 function makeMaze(roomCount: number, crystalCount: number) {
   const size = roomCount * 2 + 1;
@@ -304,20 +304,20 @@ function CrystalMaze({ age, language, onFinish }: Omit<Props, 'mode'>) {
       setCollected(nextCollected);
       setMessage(nextCollected.length === layout.crystals.length
         ? say(language, 'All crystals found! The portal is glowing.', 'सारे क्रिस्टल मिल गए! पोर्टल चमक रहा है।')
-        : say(language, `Crystal found! ${nextCollected.length} of ${layout.crystals.length}.`, `क्रिस्टल मिल गया! ${layout.crystals.length} में से ${nextCollected.length}।`));
+        : say(language, `Crystal found! ${nextCollected.length} of ${layout.crystals.length}.`, `क्रिस्टल मिल गया! ${layout.crystals.length} में से ${nextCollected.length}।`, `क्रिस्टल मिळाले! ${layout.crystals.length} पैकी ${nextCollected.length}.`));
     }
     if (next.x === layout.exit.x && next.z === layout.exit.z) {
       if (nextCollected.length === layout.crystals.length) {
         finishedRef.current = true;
         if (mission < 3) {
           setStageCleared(true);
-          setMessage(say(language, `Mission ${mission} complete!`, `मिशन ${mission} पूरा हुआ!`));
+          setMessage(say(language, `Mission ${mission} complete!`, `मिशन ${mission} पूरा हुआ!`, `मिशन ${mission} पूर्ण!`));
         } else {
           setMessage(say(language, 'You rescued the firefly and escaped the cave!', 'तुमने जुगनू को बचाकर गुफा से बाहर निकाला!'));
           window.setTimeout(onFinish, 450);
         }
       } else {
-        setMessage(say(language, `Find ${layout.crystals.length - nextCollected.length} more crystal(s) first.`, `पहले ${layout.crystals.length - nextCollected.length} और क्रिस्टल खोजो।`));
+        setMessage(say(language, `Find ${layout.crystals.length - nextCollected.length} more crystal(s) first.`, `पहले ${layout.crystals.length - nextCollected.length} और क्रिस्टल खोजो।`, `आणखी ${layout.crystals.length - nextCollected.length} क्रिस्टल शोध.`));
       }
     }
   };
@@ -349,9 +349,9 @@ function CrystalMaze({ age, language, onFinish }: Omit<Props, 'mode'>) {
   }
 
   return <div className="three-game-panel">
-    <div className="three-game-heading"><div><strong>{say(language, 'Crystal Cave 3D Campaign', '3D क्रिस्टल गुफा अभियान')}</strong><p>{missionObjective}</p></div><span className="three-progress-pill">{say(language, `Mission ${mission} / 3`, `मिशन ${mission} / 3`)} · 💎 {collected.length} / {layout.crystals.length}</span></div>
+    <div className="three-game-heading"><div><strong>{say(language, 'Crystal Cave 3D Campaign', '3D क्रिस्टल गुफा अभियान')}</strong><p>{missionObjective}</p></div><span className="three-progress-pill">{say(language, `Mission ${mission} / 3`, `मिशन ${mission} / 3`, `मिशन ${mission} / 3`)} · 💎 {collected.length} / {layout.crystals.length}</span></div>
     <MazeField language={language} layout={layout} player={player} collected={collected} mission={mission} onMove={move} />
-    {stageCleared && <div className="three-mission-clear"><strong>{say(language, `Mission ${mission} complete!`, `मिशन ${mission} पूरा हुआ!`)}</strong><p>{say(language, 'The cave path is safe. Your next mission is ready.', 'गुफा का रास्ता साफ़ है। अगला मिशन तैयार है।')}</p><button className="button button-primary" type="button" onClick={nextMission}>{say(language, 'Start next mission', 'अगला मिशन शुरू करो')} →</button></div>}
+    {stageCleared && <div className="three-mission-clear"><strong>{say(language, `Mission ${mission} complete!`, `मिशन ${mission} पूरा हुआ!`, `मिशन ${mission} पूर्ण!`)}</strong><p>{say(language, 'The cave path is safe. Your next mission is ready.', 'गुफा का रास्ता साफ़ है। अगला मिशन तैयार है।')}</p><button className="button button-primary" type="button" onClick={nextMission}>{say(language, 'Start next mission', 'अगला मिशन शुरू करो')} →</button></div>}
     <div className="three-game-bottom"><p className="three-game-message" role="status">{message}</p><div className="three-controls" aria-label={say(language, 'Maze movement controls', 'भूलभुलैया चलाने के बटन')}>
       <span />{arrow(say(language, 'Move forward', 'आगे चलो'), 0, -1, '↑')}<span />
       {arrow(say(language, 'Move left', 'बाएँ चलो'), -1, 0, '←')}<span className="three-move-count">{moves}</span>{arrow(say(language, 'Move right', 'दाएँ चलो'), 1, 0, '→')}
@@ -364,9 +364,9 @@ function CrystalMaze({ age, language, onFinish }: Omit<Props, 'mode'>) {
 type XY = { x: number; y: number };
 type SpaceMission = {
   id: string;
-  title: [string, string];
-  destination: [string, string];
-  cargo: [string, string];
+  title: [string, string, string?];
+  destination: [string, string, string?];
+  cargo: [string, string, string?];
   story: [string, string];
   fact: [string, string];
   planetId?: string;
@@ -378,21 +378,21 @@ type SpaceMission = {
 
 const spaceMissions: SpaceMission[] = [
   {
-    id: 'moon-relay', title: ['Moon Relay Rescue', 'चाँद रिले बचाव'], destination: ['Moon relay', 'चाँद का रिले'], cargo: ['signal cells', 'सिग्नल सेल'],
+    id: 'moon-relay', title: ['Moon Relay Rescue', 'चाँद रिले बचाव'], destination: ['Moon relay', 'चाँद का रिले', 'चंद्र संदेश केंद्र'], cargo: ['signal cells', 'सिग्नल सेल', 'सिग्नल सेल्स'],
     story: ['The Moon relay has gone quiet. Fly through the asteroid field, collect its signal cells, and dock at the relay.', 'चाँद का रिले बंद हो गया है। क्षुद्रग्रहों से बचो, सिग्नल सेल जमा करो और रिले तक पहुँचो।'],
     fact: ['The Moon travels around Earth and reflects sunlight.', 'चाँद पृथ्वी के चारों ओर घूमता है और सूरज की रोशनी लौटाता है।'],
     planetColor: '#bac8df', pickups: [{ x: -3.9, y: 1.95 }, { x: -1.3, y: -1.95 }, { x: 1.3, y: 1.3 }, { x: 3.25, y: -0.65 }],
     hazards: [{ x: -2.6, y: 0.65 }, { x: 0, y: -0.65 }, { x: 2.6, y: 1.3 }, { x: 3.9, y: -1.95 }], target: { x: 4.55, y: 2.6 },
   },
   {
-    id: 'mars-supplies', title: ['Mars Supply Run', 'मंगल पर सामान पहुँचाओ'], destination: ['Mars station', 'मंगल स्टेशन'], cargo: ['water pods', 'पानी के कैप्सूल'], planetId: 'mars', planetColor: '#d76b52',
+    id: 'mars-supplies', title: ['Mars Supply Run', 'मंगल पर सामान पहुँचाओ'], destination: ['Mars station', 'मंगल स्टेशन', 'मंगळ स्थानक'], cargo: ['water pods', 'पानी के कैप्सूल', 'पाण्याच्या कुप्या'], planetId: 'mars', planetColor: '#d76b52',
     story: ['The Mars crew needs water. Pick up the supply pods and steer around the rock field to reach their base.', 'मंगल पर मौजूद टीम को पानी चाहिए। पानी के कैप्सूल उठाओ और चट्टानों से बचते हुए उनके ठिकाने तक पहुँचो।'],
     fact: ['Mars looks red because its dusty soil contains iron.', 'मंगल की धूल भरी मिट्टी में लोहा होने से यह लाल दिखता है।'],
     pickups: [{ x: -3.9, y: -1.95 }, { x: -1.95, y: 2.6 }, { x: 0.65, y: -2.6 }, { x: 2.6, y: 0.65 }],
     hazards: [{ x: -2.6, y: -0.65 }, { x: 0, y: 1.3 }, { x: 1.95, y: -0.65 }, { x: 3.25, y: 1.95 }], target: { x: 4.55, y: -2.6 },
   },
   {
-    id: 'saturn-repair', title: ['Saturn Station Repair', 'शनि स्टेशन की मरम्मत'], destination: ['Saturn station', 'शनि स्टेशन'], cargo: ['repair kits', 'मरम्मत किट'], planetId: 'saturn', planetColor: '#d9bb7e',
+    id: 'saturn-repair', title: ['Saturn Station Repair', 'शनि स्टेशन की मरम्मत'], destination: ['Saturn station', 'शनि स्टेशन', 'शनी स्थानक'], cargo: ['repair kits', 'मरम्मत किट', 'दुरुस्ती संच'], planetId: 'saturn', planetColor: '#d9bb7e',
     story: ['A research station near Saturn is damaged. Gather repair kits, dodge the space rocks, and bring the tools to the station.', 'शनि के पास का शोध स्टेशन खराब है। मरम्मत किट जमा करो, अंतरिक्ष की चट्टानों से बचो और औज़ार स्टेशन तक पहुँचाओ।'],
     fact: ['Saturn’s bright rings are made mostly of ice and rock.', 'शनि के चमकीले छल्ले ज़्यादातर बर्फ़ और पत्थर से बने हैं।'],
     pickups: [{ x: -3.9, y: 1.95 }, { x: -1.95, y: -2.6 }, { x: 0.65, y: 2.6 }, { x: 2.6, y: -0.65 }],
@@ -625,7 +625,7 @@ function SolarExplorer({ age, language, onFinish }: Omit<Props, 'mode'>) {
         setPhase('failed');
         setMessage(say(language, 'Shields are empty. Retry this mission to take off again.', 'ढाल खत्म हो गई। फिर से उड़ान भरने के लिए यह मिशन दोबारा शुरू करो।'));
       } else {
-        setMessage(say(language, `Asteroid bump! ${remaining} shields left. Your shuttle returned to the launch pad.`, `क्षुद्रग्रह से टक्कर! ${remaining} ढाल बाकी। शटल फिर से शुरुआती जगह पर है।`));
+      setMessage(say(language, `Asteroid bump! ${remaining} shields left. Your shuttle returned to the launch pad.`, `क्षुद्रग्रह से टक्कर! ${remaining} ढाल बाकी। शटल फिर से शुरुआती जगह पर है।`, `लघुग्रहाची धडक! ${remaining} कवच शिल्लक. शटल पुन्हा सुरुवातीच्या जागी आले.`));
       }
       return;
     }
@@ -638,7 +638,7 @@ function SolarExplorer({ age, language, onFinish }: Omit<Props, 'mode'>) {
       nextCollected = [...nextCollected, pickupIndex];
       collectedRef.current = nextCollected;
       setCollected(nextCollected);
-      setMessage(say(language, `${mission.cargo[0]} collected: ${nextCollected.length} of ${needed}.`, `${mission.cargo[1]} मिले: ${needed} में से ${nextCollected.length}।`));
+      setMessage(say(language, `${mission.cargo[0]} collected: ${nextCollected.length} of ${needed}.`, `${mission.cargo[1]} मिले: ${needed} में से ${nextCollected.length}।`, `${mission.cargo[2] ?? mission.cargo[0]} गोळा केले: ${needed} पैकी ${nextCollected.length}.`));
     }
     if (Math.hypot(next.x - mission.target.x, next.y - mission.target.y) < 0.68) {
       if (nextCollected.length === needed) {
@@ -646,7 +646,7 @@ function SolarExplorer({ age, language, onFinish }: Omit<Props, 'mode'>) {
         setPhase('cleared');
         setMessage(say(language, 'Cargo delivered! Mission complete.', 'सामान पहुँच गया! मिशन पूरा हुआ।'));
       } else {
-        setMessage(say(language, `Docking bay needs ${needed - nextCollected.length} more ${mission.cargo[0]}.`, `डॉकिंग बे को ${mission.cargo[1]} में से ${needed - nextCollected.length} और चाहिए।`));
+        setMessage(say(language, `Docking bay needs ${needed - nextCollected.length} more ${mission.cargo[0]}.`, `डॉकिंग बे को ${mission.cargo[1]} में से ${needed - nextCollected.length} और चाहिए।`, `डॉकिंग बे ला आणखी ${needed - nextCollected.length} ${mission.cargo[2] ?? mission.cargo[0]} हवेत.`));
       }
     }
   }
@@ -654,7 +654,7 @@ function SolarExplorer({ age, language, onFinish }: Omit<Props, 'mode'>) {
   function launchMission() {
     phaseRef.current = 'playing';
     setPhase('playing');
-    setMessage(say(language, `Collect ${needed} ${mission.cargo[0]}, avoid asteroids, then dock at ${mission.destination[0]}.`, `${needed} ${mission.cargo[1]} जमा करो, क्षुद्रग्रहों से बचो और ${mission.destination[1]} पर डॉक करो।`));
+    setMessage(say(language, `Collect ${needed} ${mission.cargo[0]}, avoid asteroids, then dock at ${mission.destination[0]}.`, `${needed} ${mission.cargo[1]} जमा करो, क्षुद्रग्रहों से बचो और ${mission.destination[1]} पर डॉक करो।`, `${needed} ${mission.cargo[2] ?? mission.cargo[0]} गोळा करा, लघुग्रह टाळा आणि ${mission.destination[2] ?? mission.destination[0]} येथे थांबा.`));
   }
 
   function resetMission() {
@@ -683,7 +683,7 @@ function SolarExplorer({ age, language, onFinish }: Omit<Props, 'mode'>) {
     setCollected([]);
     setShields(shieldsRef.current);
     setPhase('briefing');
-    setMessage(say(language, `Mission ${nextIndex + 1} briefing is ready.`, `मिशन ${nextIndex + 1} की जानकारी तैयार है।`));
+    setMessage(say(language, `Mission ${nextIndex + 1} briefing is ready.`, `मिशन ${nextIndex + 1} की जानकारी तैयार है।`, `मिशन ${nextIndex + 1} ची माहिती तयार आहे.`));
   }
 
   const arrow = (label: string, dx: number, dy: number, symbol: string) => (
@@ -691,15 +691,15 @@ function SolarExplorer({ age, language, onFinish }: Omit<Props, 'mode'>) {
   );
 
   return <div className="three-game-panel space-mission-game">
-    <div className="three-game-heading"><div><strong>{say(language, 'Space Rescue: Mission Control', 'अंतरिक्ष बचाव: मिशन कंट्रोल')}</strong><p>{mission.title[language === 'hi' ? 1 : 0]}</p></div><span className="three-progress-pill">{say(language, `Mission ${missionIndex + 1} / 3`, `मिशन ${missionIndex + 1} / 3`)} · 📦 {collected.length} / {needed} · 🛡️ {shields}</span></div>
+    <div className="three-game-heading"><div><strong>{say(language, 'Space Rescue: Mission Control', 'अंतरिक्ष बचाव: मिशन कंट्रोल')}</strong><p>{localizedPair(language, mission.title)}</p></div><span className="three-progress-pill">{say(language, `Mission ${missionIndex + 1} / 3`, `मिशन ${missionIndex + 1} / 3`, `मिशन ${missionIndex + 1} / 3`)} · 📦 {collected.length} / {needed} · 🛡️ {shields}</span></div>
     <SpaceMissionField mission={mission} age={age} needed={needed} position={position} collected={collected} active={phase === 'playing'} language={language} onMove={movement} />
-    {phase === 'briefing' && <div className="space-mission-card"><span className="mission-eyebrow">🚀 {say(language, 'MISSION BRIEFING', 'मिशन की जानकारी')}</span><h3>{mission.title[language === 'hi' ? 1 : 0]}</h3><p>{mission.story[language === 'hi' ? 1 : 0]}</p><div className="mission-objective"><strong>{say(language, 'Your mission', 'तुम्हारा मिशन')}</strong><span>{say(language, `Collect ${needed} ${mission.cargo[0]} and dock at the ${mission.destination[0]}.`, `${needed} ${mission.cargo[1]} जमा करके ${mission.destination[1]} पर डॉक करो।`)}</span></div><small>🌎 {mission.fact[language === 'hi' ? 1 : 0]}</small><button type="button" className="button button-primary" onClick={launchMission}>{say(language, 'Launch mission', 'मिशन शुरू करो')} 🚀</button></div>}
+    {phase === 'briefing' && <div className="space-mission-card"><span className="mission-eyebrow">🚀 {say(language, 'MISSION BRIEFING', 'मिशन की जानकारी')}</span><h3>{localizedPair(language, mission.title)}</h3><p>{localizedPair(language, mission.story)}</p><div className="mission-objective"><strong>{say(language, 'Your mission', 'तुम्हारा मिशन')}</strong><span>{say(language, `Collect ${needed} ${mission.cargo[0]} and dock at the ${mission.destination[0]}.`, `${needed} ${mission.cargo[1]} जमा करके ${mission.destination[1]} पर डॉक करो।`, `${needed} ${mission.cargo[2]} गोळा करून ${mission.destination[2]} येथे थांबा.`)}</span></div><small>🌎 {localizedPair(language, mission.fact)}</small><button type="button" className="button button-primary" onClick={launchMission}>{say(language, 'Launch mission', 'मिशन शुरू करो')} 🚀</button></div>}
     {phase === 'playing' && <><div className="three-game-bottom"><p className="three-game-message" role="status">{message}</p><div className="three-controls" aria-label={say(language, 'Shuttle flight controls', 'शटल उड़ाने के बटन')}>
       <span />{arrow(say(language, 'Fly up', 'ऊपर उड़ो'), 0, 1, '↑')}<span />
       {arrow(say(language, 'Fly left', 'बाएँ उड़ो'), -1, 0, '←')}<span className="three-move-count">{collected.length}/{needed}</span>{arrow(say(language, 'Fly right', 'दाएँ उड़ो'), 1, 0, '→')}
       <span />{arrow(say(language, 'Fly down', 'नीचे उड़ो'), 0, -1, '↓')}<span />
     </div></div><small className="three-help-note">{say(language, 'Use arrow keys or WASD, avoid the asteroids, and dock after collecting the cargo.', 'तीर की कुंजियाँ या WASD दबाओ, क्षुद्रग्रहों से बचो और सामान जमा करके डॉक करो।')}</small></>}
-    {phase === 'cleared' && <div className="three-mission-clear"><strong>✅ {say(language, 'Mission complete!', 'मिशन पूरा हुआ!')}</strong><p>{say(language, `You delivered the cargo to ${mission.destination[0]}.`, `तुमने सामान ${mission.destination[1]} तक पहुँचा दिया।`)}</p><button className="button button-primary" type="button" onClick={nextMission}>{missionIndex === spaceMissions.length - 1 ? say(language, 'Complete campaign', 'अभियान पूरा करो') : say(language, 'Next mission', 'अगला मिशन')} →</button></div>}
+    {phase === 'cleared' && <div className="three-mission-clear"><strong>✅ {say(language, 'Mission complete!', 'मिशन पूरा हुआ!')}</strong><p>{say(language, `You delivered the cargo to ${mission.destination[0]}.`, `तुमने सामान ${mission.destination[1]} तक पहुँचा दिया।`, `तू ${mission.destination[2]} येथे सामान पोहोचवलेस.`)}</p><button className="button button-primary" type="button" onClick={nextMission}>{missionIndex === spaceMissions.length - 1 ? say(language, 'Complete campaign', 'अभियान पूरा करो') : say(language, 'Next mission', 'अगला मिशन')} →</button></div>}
     {phase === 'failed' && <div className="three-mission-clear mission-failed"><strong>🛟 {say(language, 'Shuttle needs a reset.', 'शटल को फिर से तैयार करना होगा।')}</strong><p>{say(language, 'Your mission is still waiting. Try a safer route around the asteroids.', 'मिशन अभी बाकी है। क्षुद्रग्रहों से बचने के लिए दूसरा रास्ता आज़माओ।')}</p><button className="button button-primary" type="button" onClick={resetMission}>{say(language, 'Retry mission', 'मिशन फिर से खेलो')} ↻</button></div>}
     {phase !== 'briefing' && phase !== 'playing' && <p className="three-game-message" role="status">{message}</p>}
   </div>;
