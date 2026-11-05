@@ -608,6 +608,135 @@ button.word-slot { border-style: solid; border-color: #d9c9f4; background: #f6f0
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
+/* Android-first touch layout: compact app bar, two-column game shelf, bottom navigation. */
+.mobile-bottom-nav { display: none; }
+
+@media (max-width: 700px) {
+  :root { font-family: Roboto, 'Noto Sans Devanagari', 'DM Sans', Arial, sans-serif; }
+  html { scroll-padding-top: 72px; scroll-padding-bottom: 96px; }
+  body { min-width: 320px; background: #f7f6fb; }
+  .section-wrap { width: min(calc(100% - 24px), 560px); }
+
+  .site-header { position: sticky; top: 0; z-index: 15; height: 62px; padding: 0 12px; gap: 7px; border: 0; background: #fbfaffed; box-shadow: 0 3px 18px #34304b0b; backdrop-filter: blur(16px); }
+  .brand { gap: 7px; }
+  .brand-mark { width: 35px; height: 35px; border-radius: 13px; font-size: 22px; }
+  .brand-name { font-size: 20px; }
+  .main-nav { display: flex; flex: 1; justify-content: flex-end; gap: 0; margin: 0; }
+  .main-nav a { display: none; }
+  .main-nav a:last-child { display: grid; width: 40px; min-height: 40px; place-items: center; padding: 0; border: 1px solid #e7e4ef; border-radius: 14px; background: white; color: transparent; font-size: 0; }
+  .main-nav a:last-child::before { color: #6e6384; content: '⚙️'; font-size: 18px; }
+  .header-stars { min-height: 40px; gap: 5px; margin-left: 2px; padding: 7px 10px; border-color: #f0e5bc; border-radius: 14px; font-size: 12px; }
+  .header-stars span:first-child { font-size: 15px; }
+
+  .hero { grid-template-columns: minmax(0, 1fr) 92px; align-items: center; gap: 5px; min-height: 0; margin-top: 12px; padding: 19px 14px 15px; border: 1px solid #fff; border-radius: 25px; background: linear-gradient(135deg, #fff4cf, #f4eaff 59%, #e7f8ed); box-shadow: 0 12px 30px #51486910; }
+  .hero-copy { min-width: 0; padding: 0; }
+  .hero-copy .eyebrow { gap: 7px; margin-bottom: 9px; font-size: 8px; letter-spacing: .75px; }
+  .hero h1 { max-width: 100%; font-size: clamp(29px, 8.6vw, 38px); line-height: 1.04; letter-spacing: -1.1px; }
+  .hero h1 span { color: #805ac4; }
+  .hero-description { margin: 8px 0 12px; font-size: 10px; line-height: 1.48; }
+  .hero-actions { align-items: stretch; flex-direction: column; gap: 6px; }
+  .hero-actions .button { width: 100%; min-height: 45px; padding-inline: 10px; border-radius: 15px; font-size: 12px; }
+  .hero-actions .text-link { justify-content: center; gap: 5px; font-size: 9px; }
+  .hero-footnote { gap: 5px; margin-top: 9px; font-size: 8px; }
+  .hero-visual { width: 92px; min-height: 112px; margin: 0; transform: none; }
+  .hero-sun { width: 78px; }
+  .hero-orbit { width: 105px; }
+  .hero-orbit-two { width: 121px; }
+  .hero-character { width: 72px; height: 72px; font-size: 46px; }
+  .floaty-star { top: 8px; left: 0; font-size: 20px; }
+  .floaty-flower { top: 13px; right: -1px; font-size: 20px; }
+  .floaty-sparkle { right: 0; bottom: 4px; font-size: 22px; }
+  .floaty-leaf { bottom: 7px; left: -1px; font-size: 18px; }
+  .hero-note { display: none; }
+
+  .adventures { row-gap: 0; padding-block: 24px 32px; border-top: 0; }
+  .section-heading { align-items: flex-start; gap: 8px; margin-bottom: 14px; }
+  .section-heading .eyebrow { margin-bottom: 8px; font-size: 8px; }
+  .section-heading h2 { font-size: clamp(27px, 7.8vw, 34px); letter-spacing: -.8px; }
+  .section-heading > p { max-width: 160px; font-size: 9px; line-height: 1.45; }
+  .age-picker { justify-content: space-between; gap: 6px; margin-bottom: 13px; padding: 0; border: 0; background: transparent; }
+  .picker-label { flex: 0 0 100%; margin: 0 0 2px 2px; font-size: 8px; letter-spacing: .65px; }
+  .age-option { min-width: 0; min-height: 67px; flex: 1 1 0; flex-direction: column; justify-content: center; gap: 2px; padding: 6px 3px; border: 1px solid #e9e6ef; border-radius: 17px; background: white; box-shadow: 0 4px 12px #37344b08; text-align: center; }
+  .age-option.selected { border-color: #bda9e6; background: #f2ecff; box-shadow: 0 5px 14px #8766ce18; }
+  .age-option > span:first-child { font-size: 21px; }
+  .age-option-copy { align-items: center; gap: 0; }
+  .age-option-copy strong { font-size: 8px; }
+  .age-option-copy small { font-size: 8px; }
+  .age-check { top: -5px; right: -3px; }
+
+  .game-toolbar.category-sidebar { position: sticky; top: 67px; z-index: 8; max-height: none; gap: 8px; margin: 0 0 12px; padding: 10px 11px 8px; border-color: #e7e3ef; border-radius: 18px; background: #fffefaed; box-shadow: 0 6px 18px #34304b10; backdrop-filter: blur(12px); }
+  .category-sidebar-title { font-size: 13px; }
+  .category-sidebar .category-tabs { width: calc(100% + 5px); flex-direction: row; flex-wrap: nowrap; gap: 6px; overflow-x: auto; margin-right: -5px; padding: 1px 5px 5px 0; scrollbar-width: none; }
+  .category-sidebar .category-tabs::-webkit-scrollbar { display: none; }
+  .category-sidebar .category-tab { width: auto; min-height: 37px; flex: 0 0 auto; padding: 6px 10px; border-radius: 13px; font-size: 9px; white-space: nowrap; }
+  .category-sidebar .category-tab span { flex-basis: auto; font-size: 13px; }
+  .category-sidebar .round-length { align-self: flex-start; margin: 0; padding: 0; border: 0; font-size: 8px; }
+
+  .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .game-card { display: flex; min-width: 0; flex-direction: column; border: 1px solid #ebe8f0; border-radius: 20px; background: #fff; box-shadow: 0 6px 15px #35314b0b; }
+  .game-card:active { transform: scale(.985); }
+  .card-topline { gap: 4px; padding: 8px 8px 0; }
+  .card-number { font-size: 7px; letter-spacing: .55px; }
+  .card-age { max-width: 76px; padding: 4px 6px; font-size: 7px; text-align: center; }
+  .game-art { height: clamp(95px, 31vw, 128px); min-height: 0; margin: 7px 7px 0; border-radius: 16px; }
+  .art-halo { width: 67px; height: 67px; box-shadow: 0 0 0 9px #ffffff3b, 0 0 0 17px #ffffff25; }
+  .game-icon { width: 62px; height: 62px; border-width: 3px; border-radius: 21px; font-size: 38px; }
+  .art-sparkle { font-size: 18px; }
+  .art-sparkle-a { top: 15px; left: 16%; }
+  .art-sparkle-b { right: 13%; bottom: 12px; font-size: 23px; }
+  .game-info { display: flex; min-width: 0; flex: 1; flex-direction: column; padding: 9px 9px 10px; }
+  .game-subject { font-size: 7px; letter-spacing: .55px; line-height: 1.35; }
+  .game-info h3 { min-height: 34px; margin: 4px 0 5px; font-size: clamp(13px, 3.8vw, 16px); line-height: 1.15; letter-spacing: -.2px; overflow-wrap: anywhere; }
+  .game-info > p { display: -webkit-box; min-height: 37px; overflow: hidden; font-size: 8px; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+  .card-bottom { align-items: stretch; flex-direction: column; gap: 7px; margin-top: auto; padding-top: 8px; }
+  .game-time { justify-content: center; font-size: 8px; }
+  .play-button { width: 100%; min-width: 0; min-height: 42px; gap: 6px; border-radius: 13px; background: #f6765f; box-shadow: 0 4px 10px #ee715426; color: white; font-size: 10px; }
+  .play-button:active { transform: scale(.97); }
+  .play-button span { font-size: 14px; }
+  .show-games-wrap { margin-top: 14px; }
+  .show-games-button { min-height: 45px; border-radius: 15px; font-size: 10px; }
+
+  .rewards-section { padding-bottom: 20px; }
+  .rewards-card { gap: 17px; padding: 22px 16px; border-radius: 23px; }
+  .rewards-copy h2 { font-size: 31px; }
+  .rewards-copy > p { font-size: 10px; }
+  .reward-stats { gap: 13px; }
+  .reward-stat { gap: 7px; }
+  .reward-stat strong { font-size: 18px; }
+  .reward-stat small { font-size: 8px; }
+  .badge-panel { width: 100%; max-width: 270px; }
+  .grownups { margin-bottom: 22px; border-radius: 19px; }
+  .site-footer { margin-bottom: 88px; }
+
+  .mobile-bottom-nav:not([hidden]) { position: fixed; z-index: 30; right: 12px; bottom: max(9px, env(safe-area-inset-bottom)); left: 12px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; padding: 6px; border: 1px solid #e6e3ef; border-radius: 23px; background: #fffefaf2; box-shadow: 0 10px 30px #2e2b4030; backdrop-filter: blur(18px); }
+  .mobile-nav-item { display: flex; min-width: 0; min-height: 51px; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border-radius: 16px; color: #89889a; transition: background .15s, color .15s, transform .15s; }
+  .mobile-nav-item span { font-size: 19px; line-height: 1.1; }
+  .mobile-nav-item small { font-size: 8px; font-weight: 800; }
+  .mobile-nav-item:active { transform: scale(.94); }
+  .mobile-nav-active { background: #f0eaff; color: #7054ad; }
+
+  .welcome-page { min-height: 100dvh; padding: max(72px, calc(env(safe-area-inset-top) + 58px)) 13px max(18px, env(safe-area-inset-bottom)); }
+  .welcome-brand { top: max(15px, env(safe-area-inset-top)); left: 16px; }
+  .welcome-card { border-radius: 25px; box-shadow: 0 16px 45px #44395816; }
+  .welcome-age-option { min-height: 99px; }
+  .welcome-continue { min-height: 52px; border-radius: 16px; }
+  .game-page-screen { padding: max(10px, env(safe-area-inset-top)) 10px max(14px, env(safe-area-inset-bottom)); }
+  .game-page-screen .game-dialog { width: 100%; margin: 4px 0; padding: 15px 12px; border-radius: 22px; }
+  .game-back-button { min-height: 42px; border-radius: 13px; }
+}
+
+@media (max-width: 360px) {
+  .section-wrap { width: calc(100% - 20px); }
+  .site-header { padding-inline: 9px; }
+  .brand-name { font-size: 18px; }
+  .hero { grid-template-columns: minmax(0, 1fr) 75px; padding-inline: 11px; }
+  .hero-visual { width: 75px; }
+  .hero-character { width: 63px; height: 63px; font-size: 40px; }
+  .game-grid { gap: 7px; }
+  .game-info { padding-inline: 7px; }
+  .game-info h3 { font-size: 12px; }
+}
+
 /* Expanded subject palette and the hands-on activity cards. */
 .category-tabs { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); flex: 1; }
 .category-tab { justify-content: flex-start; padding-inline: 11px; }

@@ -545,7 +545,7 @@ export default function App() {
           <a href="#adventures">{tr(language, 'Play zone')}</a>
           <a href="#rewards">{tr(language, 'My rewards')}</a>
           <a href="#grownups">{tr(language, 'For grown-ups')}</a>
-          <a href="/" onClick={(event) => { event.preventDefault(); setSetupAge(age); navigate('/'); }}>{tr(language, 'Change age or language')}</a>
+          <a href="/" aria-label={tr(language, 'Change age or language')} onClick={(event) => { event.preventDefault(); setSetupAge(age); navigate('/'); }}>{tr(language, 'Change age or language')}</a>
         </nav>
         <a className="header-stars" href="#rewards" aria-label={`${progress.stars} ${tr(language, 'stars collected')}`}>
           <span aria-hidden="true">⭐</span> {progress.stars} <span className="star-word">{language === 'hi' ? 'सितारे' : 'stars'}</span>
@@ -699,6 +699,21 @@ export default function App() {
         <span>{tr(language, 'Play a little. Learn a lot.')} <span aria-hidden="true">✦</span></span>
         <a href="#top" className="back-top">{tr(language, 'Back to top')} ↑</a>
       </footer>
+
+      <nav className="mobile-bottom-nav" aria-label={tr(language, 'Main navigation')} hidden={page === 'game'}>
+        <a className="mobile-nav-item" href="/games" onClick={(event) => { event.preventDefault(); navigate('/games'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+          <span aria-hidden="true">🏡</span><small>{tr(language, 'Home')}</small>
+        </a>
+        <a className="mobile-nav-item mobile-nav-active" href="#adventures">
+          <span aria-hidden="true">🎮</span><small>{tr(language, 'Games')}</small>
+        </a>
+        <a className="mobile-nav-item" href="#rewards">
+          <span aria-hidden="true">🌟</span><small>{tr(language, 'Stars')}</small>
+        </a>
+        <a className="mobile-nav-item" href="#grownups">
+          <span aria-hidden="true">💛</span><small>{tr(language, 'About')}</small>
+        </a>
+      </nav>
 
       {page === 'game' && !activeGame && <div className="game-page-loading"><span>{tr(language, 'Opening your game…')}</span><button type="button" onClick={closeGame}>{tr(language, 'Back to games')}</button></div>}
       {activeGame && (

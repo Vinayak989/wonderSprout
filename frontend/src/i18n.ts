@@ -221,7 +221,7 @@ const moreTextHi: Record<string, string> = {
   'Drag me to a habitat—or tap a home to help!': 'मुझे मेरे घर तक ले जाओ या सही घर दबाओ!', 'Find the missing piece and complete the pattern!': 'खाली टुकड़ा ढूँढ़ो और पैटर्न पूरा करो!', 'Tap the right answer bubble to pop it!': 'सही जवाब वाला बुलबुला फोड़ो!', 'Drop here': 'यहाँ रखो',
   'The clue says: “I have keys but open no locks.” What am I?': 'पहेली कहती है: “मेरे पास कुंजियाँ हैं, पर ताले नहीं खोलता।” मैं क्या हूँ?',
   'Your choice can be changed later.': 'तुम अपना चुनाव बाद में बदल सकते हो।', 'First, tell us your age group': 'पहले अपनी उम्र चुनो', 'Your games will be picked just for your age and shown in your chosen language.': 'तुम्हारी उम्र के अनुसार खेल दिखेंगे और चुनी भाषा में होंगे।',
-  'WonderSprout home': 'WonderSprout का मुख्य पन्ना', 'Main navigation': 'मुख्य मेन्यू', 'Little steps': 'छोटे कदम', 'BIG magic': 'बड़ा कमाल',
+  'WonderSprout home': 'WonderSprout का मुख्य पन्ना', 'Main navigation': 'मुख्य मेन्यू', 'Home': 'घर', 'Games': 'खेल', 'Stars': 'सितारे', 'About': 'जानकारी', 'Little steps': 'छोटे कदम', 'BIG magic': 'बड़ा कमाल',
   'All badges unlocked — amazing!': 'सारे बैज मिल गए—कमाल!', 'Superstar Scholar': 'सुपरस्टार विद्वान', 'Shooting Star': 'टूटता सितारा', 'Curious Caterpillar': 'जिज्ञासु इल्ली', 'Little Sprout': 'नन्हा अंकुर',
   'Glowgrass Gate': 'चमकती घास का द्वार', 'Sparkle Stream': 'चमकती धारा', 'Whispering Ferns': 'फुसफुसाते फर्न', 'Crystal Cave': 'स्फटिक की गुफा', 'The Sky Tree': 'आकाश का पेड़',
   'Lost Map Lookout': 'खोए नक्शे की चौकी', 'Vine Gate': 'बेलों का द्वार', 'Mango River': 'आमों की नदी', 'Canopy Camp': 'पेड़ों की छतरी वाला पड़ाव', 'Hidden Temple': 'छिपा मंदिर',
