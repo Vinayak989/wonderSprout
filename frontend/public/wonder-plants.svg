@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-label="Flowers and a happy sprout growing in a colorful garden">
+  <defs>
+    <linearGradient id="gardenSky" x2="0" y2="1"><stop stop-color="#c9f6e5"/><stop offset="1" stop-color="#fff8d5"/></linearGradient>
+    <linearGradient id="soil" x2="0" y2="1"><stop stop-color="#a86f55"/><stop offset="1" stop-color="#754d50"/></linearGradient>
+  </defs>
+  <style>
+    .sun { transform-box:fill-box;transform-origin:center;animation:sun-spin 22s linear infinite }
+    .sunflower-head { transform-box:fill-box;transform-origin:50% 92%;animation:flower-sway 3s ease-in-out infinite }
+    .sprout { transform-box:fill-box;transform-origin:50% 100%;animation:sprout-bob 2.5s ease-in-out infinite }
+    .leaf-left { transform-box:fill-box;transform-origin:100% 100%;animation:leaf-sway 2.4s ease-in-out infinite alternate }
+    .leaf-right { transform-box:fill-box;transform-origin:0 100%;animation:leaf-sway 2.8s ease-in-out infinite alternate-reverse }
+    .bee { animation:bee-fly 4s ease-in-out infinite alternate }
+    @keyframes sun-spin { to{transform:rotate(360deg)} }
+    @keyframes flower-sway { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+    @keyframes sprout-bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+    @keyframes leaf-sway { to{transform:rotate(9deg)} }
+    @keyframes bee-fly { to{transform:translate(24px,-16px)} }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation:none!important} }
+  </style>
+  <rect width="520" height="320" rx="26" fill="url(#gardenSky)"/>
+  <g class="sun" fill="#ffc95e"><path d="M423 23h8v21h-8zm0 70h8v21h-8zm-35-35h-21v8h21zm79 0h21v8h-21zM396 38l-6 6 15 15 6-6zm50 50-6 6 15 15 6-6zm9-35 15-15 6 6-15 15zm-50 50-15 15-6-6 15-15z"/><circle cx="427" cy="68" r="26"/></g>
+  <circle cx="427" cy="68" r="20" fill="#ffe684"/>
+  <g fill="#fff" opacity=".85"><circle cx="114" cy="66" r="22"/><circle cx="143" cy="62" r="28"/><circle cx="171" cy="69" r="20"/><rect x="110" y="70" width="63" height="17" rx="8"/></g>
+  <path d="M0 210Q112 177 226 206T520 196V320H0Z" fill="#a9df92"/>
+  <path d="M0 246Q133 211 250 244T520 231V320H0Z" fill="url(#soil)"/>
+  <path d="M0 244q133-32 250 0t270-12" fill="none" stroke="#d39a69" stroke-width="11"/>
+  <g class="sunflower-head">
+    <path d="M126 237q2-71 1-111" fill="none" stroke="#3d9c63" stroke-width="12" stroke-linecap="round"/>
+    <path d="M125 186q-36-36-62-17 14 33 59 32" fill="#69bd6c" stroke="#398b5a" stroke-width="3"/>
+    <g transform="translate(127 104)" fill="#ffb94f">
+      <ellipse cy="-25" rx="11" ry="19"/><ellipse cy="-25" rx="11" ry="19" transform="rotate(45)"/><ellipse cy="-25" rx="11" ry="19" transform="rotate(90)"/><ellipse cy="-25" rx="11" ry="19" transform="rotate(135)"/><ellipse cy="-25" rx="11" ry="19" transform="rotate(180)"/><ellipse cy="-25" rx="11" ry="19" transform="rotate(225)"/><ellipse cy="-25" rx="11" ry="19" transform="rotate(270)"/><ellipse cy="-25" rx="11" ry="19" transform="rotate(315)"/>
+      <circle r="20" fill="#80503a"/><circle cx="-6" cy="-3" r="2" fill="#f5d47c"/><circle cx="5" cy="4" r="2" fill="#f5d47c"/>
+    </g>
+  </g>
+  <g class="sprout">
+    <path d="M294 244q0-58 3-91" fill="none" stroke="#398b5a" stroke-width="10" stroke-linecap="round"/>
+    <path class="leaf-left" d="M297 185q-46-41-70-11 20 34 69 24" fill="#62bf78" stroke="#358858" stroke-width="3"/>
+    <path class="leaf-right" d="M298 159q36-47 64-22-11 38-62 42" fill="#7bd37b" stroke="#358858" stroke-width="3"/>
+    <circle cx="298" cy="142" r="19" fill="#8ee07f"/><circle cx="291" cy="141" r="2.5" fill="#39545a"/><circle cx="305" cy="141" r="2.5" fill="#39545a"/><path d="M292 150q6 7 12 0" fill="none" stroke="#398b5a" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(384 229)"><path d="M0 0v-43" stroke="#438c57" stroke-width="7"/><g fill="#f19ac5"><circle cy="-53" r="10"/><circle cx="11" cy="-43" r="10"/><circle cy="-33" r="10"/><circle cx="-11" cy="-43" r="10"/></g><circle cy="-43" r="8" fill="#ffcf55"/></g>
+  <g class="bee" transform="translate(229 95)"><ellipse cx="-5" cy="-7" rx="8" ry="11" fill="#fff" opacity=".8"/><ellipse cx="5" cy="-7" rx="8" ry="11" fill="#fff" opacity=".8"/><ellipse cy="0" rx="14" ry="9" fill="#ffd451" stroke="#855c43" stroke-width="2"/><path d="M-4-8v16m9-15v14" stroke="#855c43" stroke-width="3"/><circle cx="10" r="2" fill="#493d48"/></g>
+  <g fill="#ffe57d"><circle cx="52" cy="211" r="4"/><circle cx="463" cy="193" r="4"/><circle cx="337" cy="220" r="3"/></g>
+</svg>

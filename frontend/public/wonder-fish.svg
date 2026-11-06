@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-label="Colorful fish swimming around coral under the sea">
+  <defs>
+    <linearGradient id="ocean" x2="0" y2="1"><stop stop-color="#7dd9ef"/><stop offset=".55" stop-color="#3ca8ce"/><stop offset="1" stop-color="#2878ad"/></linearGradient>
+    <linearGradient id="fishGold" x2="0" y2="1"><stop stop-color="#ffe678"/><stop offset="1" stop-color="#ff9d68"/></linearGradient>
+  </defs>
+  <style>
+    .swim-a { animation: swim 7s ease-in-out infinite alternate }
+    .swim-b { animation: swim-back 8s ease-in-out infinite alternate }
+    .swim-c { animation: swim 6s ease-in-out infinite alternate-reverse }
+    .tail { transform-box:fill-box;transform-origin:0 50%;animation:tail-swish .45s ease-in-out infinite alternate }
+    .bubble { animation: bubble-rise 3.5s ease-in infinite }
+    .weed { transform-box:fill-box;transform-origin:50% 100%;animation:weed-sway 3s ease-in-out infinite alternate }
+    @keyframes swim { to{transform:translateX(42px)} }
+    @keyframes swim-back { to{transform:translateX(-35px)} }
+    @keyframes tail-swish { to{transform:rotate(18deg)} }
+    @keyframes bubble-rise { from{transform:translateY(20px);opacity:.25} to{transform:translateY(-30px);opacity:.85} }
+    @keyframes weed-sway { to{transform:rotate(5deg)} }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation:none!important} }
+  </style>
+  <rect width="520" height="320" rx="26" fill="url(#ocean)"/>
+  <path d="M0 57q90 15 175 0t170 0 175 0" fill="none" stroke="#b6f4ef" stroke-width="5" opacity=".65"/>
+  <path d="M0 69q90 15 175 0t170 0 175 0" fill="none" stroke="#d3fff5" stroke-width="2" opacity=".8"/>
+  <circle class="bubble" cx="83" cy="203" r="9" fill="none" stroke="#cfffff" stroke-width="3"/><circle class="bubble" cx="100" cy="176" r="5" fill="none" stroke="#d5ffff" stroke-width="2" style="animation-delay:-1.1s"/>
+  <circle class="bubble" cx="408" cy="170" r="7" fill="none" stroke="#cfffff" stroke-width="2" style="animation-delay:-.6s"/><circle class="bubble" cx="429" cy="202" r="4" fill="none" stroke="#d5ffff" stroke-width="2" style="animation-delay:-2s"/>
+  <path d="M0 257q100-24 208 2t312-3v64H0Z" fill="#f1c77a"/>
+  <path d="M0 279q117-17 233 5t287-6v42H0Z" fill="#d9aa68"/>
+  <g class="weed" fill="none" stroke="#39bd9b" stroke-width="12" stroke-linecap="round"><path d="M72 278q-8-50 12-84m-8 51q-31-23-37-44m43 27q27-29 23-53"/></g>
+  <g class="weed" fill="none" stroke="#37a982" stroke-width="10" stroke-linecap="round" style="animation-delay:-1s"><path d="M470 277q-8-48 9-76m-6 47q-29-17-34-39m38 25q24-22 22-44"/></g>
+  <g class="swim-a" transform="translate(137 138)">
+    <path d="M-35 0q30-42 82 0-52 42-82 0Z" fill="url(#fishGold)" stroke="#d47a55" stroke-width="3"/>
+    <path class="tail" d="M-33 0l-31-25v50z" fill="#ffb454" stroke="#d47a55" stroke-width="3"/>
+    <path d="M0-8q13-28 30-20l-4 28m-13 1q12 18 28 14l-4-21" fill="#f58c77" stroke="#d47a55" stroke-width="2"/>
+    <path d="M-7-13v27m13-28v29" stroke="#fff8d0" stroke-width="4" opacity=".9"/><circle cx="35" cy="-5" r="4" fill="#384b63"/><circle cx="36" cy="-6" r="1.5" fill="#fff"/>
+  </g>
+  <g class="swim-b" transform="translate(337 186)">
+    <path d="M-30 0q28-36 73 0-45 36-73 0Z" fill="#ff86ad" stroke="#c45887" stroke-width="3"/>
+    <path class="tail" d="M-28 0l-27-21v42z" fill="#f2b6e3" stroke="#c45887" stroke-width="3"/>
+    <path d="M-2-7q12-22 26-15l-3 22m-13 0q12 15 25 11l-3-17" fill="#ffc75e" stroke="#c45887" stroke-width="2"/>
+    <path d="M-5-12v24m13-25v26" stroke="#fff" stroke-width="3"/><circle cx="35" cy="-4" r="3.5" fill="#384b63"/><circle cx="36" cy="-5" r="1.3" fill="#fff"/>
+  </g>
+  <g class="swim-c" transform="translate(237 90) scale(.63)">
+    <path d="M-35 0q30-42 82 0-52 42-82 0Z" fill="#a7efc7" stroke="#338f96" stroke-width="3"/>
+    <path class="tail" d="M-33 0l-31-25v50z" fill="#66c9d6" stroke="#338f96" stroke-width="3"/>
+    <circle cx="35" cy="-5" r="4" fill="#384b63"/><circle cx="36" cy="-6" r="1.5" fill="#fff"/>
+  </g>
+  <g fill="#ff8b87"><circle cx="141" cy="268" r="13"/><circle cx="157" cy="268" r="13"/><circle cx="149" cy="251" r="13"/></g><circle cx="149" cy="263" r="7" fill="#ffe27d"/>
+  <g fill="#ffdc82"><circle cx="393" cy="248" r="4"/><circle cx="380" cy="260" r="3"/><circle cx="203" cy="280" r="4"/></g>
+</svg>

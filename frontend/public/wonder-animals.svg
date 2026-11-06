@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-label="A cheerful elephant, giraffe and butterfly in a sunny meadow">
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#bceeff"/><stop offset="1" stop-color="#f7fff2"/></linearGradient>
+    <linearGradient id="elephant" x2="0" y2="1"><stop stop-color="#a8b8e8"/><stop offset="1" stop-color="#7789c8"/></linearGradient>
+  </defs>
+  <style>
+    .elephant { transform-box: fill-box; transform-origin: center bottom; animation: bounce 2.8s ease-in-out infinite; }
+    .giraffe { transform-box: fill-box; transform-origin: 50% 100%; animation: sway 3.3s ease-in-out infinite; }
+    .butterfly { animation: flutter 5s ease-in-out infinite alternate; }
+    .wing { transform-box: fill-box; transform-origin: 50% 80%; animation: flap .32s ease-in-out infinite alternate; }
+    .cloud { animation: cloud-drift 10s ease-in-out infinite alternate; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+    @keyframes sway { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+    @keyframes flutter { from{transform:translate(0,0)} to{transform:translate(30px,-18px)} }
+    @keyframes flap { to{transform:rotateY(65deg)} }
+    @keyframes cloud-drift { to{transform:translateX(22px)} }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after{animation:none!important} }
+  </style>
+  <rect width="520" height="320" rx="26" fill="url(#sky)"/>
+  <circle cx="424" cy="62" r="32" fill="#ffd76c"/>
+  <g class="cloud" fill="#fff" opacity=".92"><circle cx="102" cy="76" r="23"/><circle cx="132" cy="68" r="31"/><circle cx="164" cy="78" r="22"/><rect x="99" y="77" width="66" height="20" rx="10"/></g>
+  <path d="M0 206Q102 154 205 206T420 194T520 203V320H0Z" fill="#b8e69b"/>
+  <path d="M0 246Q112 201 237 243T520 234V320H0Z" fill="#83cf83"/>
+  <g class="giraffe" stroke="#8b643e" stroke-width="4" stroke-linejoin="round">
+    <path d="M352 155Q355 109 365 73L398 78Q399 121 414 153L421 232H343Z" fill="#ffc968"/>
+    <ellipse cx="375" cy="70" rx="28" ry="23" fill="#ffd781"/>
+    <path d="M360 51l-2-14m33 14 4-14" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="366" cy="68" r="3.5" fill="#493957" stroke="none"/><circle cx="386" cy="68" r="3.5" fill="#493957" stroke="none"/>
+    <path d="M370 81q7 6 14 0" fill="none" stroke="#b67250" stroke-width="3"/>
+    <path d="M352 105l13-5 6 13-13 6zm28 24 13-5 6 13-13 6zm-27 48 14-5 6 13-14 6zm34 28 14-5 6 13-14 6z" fill="#cf8a3c" stroke="none"/>
+    <path d="M351 228v40m26-40v40m27-40v40m15-40v40" stroke="#d3934d" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <g class="elephant" stroke="#6675b2" stroke-width="4" stroke-linejoin="round">
+    <path d="M89 183Q87 147 116 132Q160 112 198 139Q218 153 215 199L207 243H105Z" fill="url(#elephant)"/>
+    <circle cx="110" cy="166" r="28" fill="#889bd4"/><circle cx="111" cy="166" r="15" fill="#f5a9c6" stroke="none"/>
+    <path d="M191 158q20 8 18 33l-4 35q-2 18-15 14-8-3-4-14l4-31" fill="#aab9e7"/>
+    <circle cx="178" cy="158" r="4" fill="#3d3962" stroke="none"/>
+    <path d="M112 238v31m29-29v30m40-30v30" stroke="#7889c8" stroke-width="12" stroke-linecap="round"/>
+    <path d="M105 191q10-10 20 0" fill="none" stroke="#e8a1bb" stroke-width="3"/>
+  </g>
+  <g class="butterfly" transform="translate(247 120)" fill="#ff8fb5" stroke="#fff" stroke-width="2">
+    <ellipse class="wing" cx="-10" cy="-7" rx="11" ry="15"/><ellipse class="wing" cx="10" cy="-7" rx="11" ry="15"/>
+    <ellipse class="wing" cx="-8" cy="9" rx="8" ry="11" fill="#ffc95f"/><ellipse class="wing" cx="8" cy="9" rx="8" ry="11" fill="#ffc95f"/>
+    <path d="M0-10v24" stroke="#58416d" stroke-width="3"/><path d="M0-8q-9-13-11-11m11 11q9-13 11-11" fill="none" stroke="#58416d"/>
+  </g>
+  <g fill="#fff7b0"><circle cx="58" cy="202" r="4"/><circle cx="280" cy="224" r="5"/><circle cx="459" cy="173" r="4"/></g>
+  <path d="M34 277q8-18 16 0m7 0q7-14 14 0m393 0q8-18 16 0" fill="none" stroke="#4fbd76" stroke-width="4" stroke-linecap="round"/>
+</svg>

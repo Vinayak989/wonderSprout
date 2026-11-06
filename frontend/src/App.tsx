@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
 import { hindiQuestionRound, localizedAgeCopy, localizedGame, localizedLesson, localizedQuestion, localizedSubject, localizedText, marathiQuestionRound, tr, type Language } from './i18n';
+import { wonderFacts, type WonderCategoryId } from './wonder-facts';
 import ClubPage, { type ClubGame } from './ClubPage';
 import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readClubData, readParentPreferences, type ClubData, type GalleryArtwork, type GamePerformance, type ParentPreferences } from './club';
 
@@ -10,7 +11,6 @@ type Page = 'welcome' | 'games' | 'game' | 'club';
 type Subject = 'all' | 'Math magic' | 'Word adventures' | 'Science wonders' | 'Adventure & Treasure Hunt' | 'Memory Games' | 'Puzzle & Logic' | 'Art & Creativity' | 'Geography & World Explorer' | 'Animals & Nature' | 'Music & Rhythm' | 'Coding & Computational Thinking' | 'Life Skills & Good Habits' | 'Emotions & Social Skills' | 'Time & Calendar' | 'History & Culture' | 'Money & Financial Literacy' | 'Sports & Movement' | 'Interactive Stories & Reading';
 type GameMode = 'quiz' | 'bubble' | 'spell' | 'match' | 'adventure' | 'memory' | 'puzzle' | 'creative' | 'scavenger' | 'coding' | 'sequence' | 'missing' | 'sudoku' | 'monster' | 'pixel' | 'piano' | 'rhythm' | 'sound' | 'sort' | 'clock' | 'shop' | 'balance' | 'emotion' | 'loop' | 'readaloud' | 'maze3d' | 'space3d' | 'racing' | 'shooting';
 type LocalizedLine = readonly [string, string, string];
-type WonderFact = { kind: LocalizedLine; title: LocalizedLine; fact: LocalizedLine; icon: string; tone: string };
 
 type AdventureScene = { place: string; story: string; landmark: string; reward: string; node: string };
 
@@ -134,22 +134,6 @@ const categories: { id: Subject; label: string; icon: string }[] = [
   { id: 'Money & Financial Literacy', label: 'Money & Financial Literacy', icon: '🪙' },
   { id: 'Sports & Movement', label: 'Sports & Movement', icon: '⚽' },
   { id: 'Interactive Stories & Reading', label: 'Interactive Stories & Reading', icon: '📖' },
-];
-
-const wonderFacts: WonderFact[] = [
-  { kind: ['Plant', 'पौधा', 'वनस्पती'], title: ['Sunflower', 'सूरजमुखी', 'सूर्यफूल'], fact: ['Young sunflowers can turn their heads to follow the Sun.', 'सूरजमुखी के छोटे फूल सूरज की दिशा में अपना सिर घुमा सकते हैं।', 'लहान सूर्यफुले सूर्याकडे आपले डोके वळवू शकतात.'], icon: '🌻', tone: 'sunflower' },
-  { kind: ['Plant', 'पौधा', 'वनस्पती'], title: ['Plant roots', 'पौधों की जड़ें', 'वनस्पतीची मुळे'], fact: ['Roots hold a plant in place and take water from the soil.', 'जड़ें पौधे को थामती हैं और मिट्टी से पानी लेती हैं।', 'मुळे वनस्पतीला घट्ट धरून ठेवतात आणि मातीतून पाणी घेतात.'], icon: '🌱', tone: 'roots' },
-  { kind: ['Plant', 'पौधा', 'वनस्पती'], title: ['Cactus', 'कैक्टस', 'कॅक्टस'], fact: ['Many cacti store water in their thick stems to live in dry places.', 'कई कैक्टस सूखी जगहों में रहने के लिए अपने मोटे तने में पानी जमा करते हैं।', 'कोरड्या ठिकाणी जगण्यासाठी अनेक कॅक्टस त्यांच्या जाड खोडात पाणी साठवतात.'], icon: '🌵', tone: 'cactus' },
-  { kind: ['Animal', 'जानवर', 'प्राणी'], title: ['Elephant', 'हाथी', 'हत्ती'], fact: ['An elephant uses its trunk to smell, breathe, and pick things up.', 'हाथी अपनी सूँड़ से सूँघता, साँस लेता और चीज़ें उठाता है।', 'हत्ती सोंडेने वास घेतो, श्वास घेतो आणि वस्तू उचलतो.'], icon: '🐘', tone: 'elephant' },
-  { kind: ['Animal', 'जानवर', 'प्राणी'], title: ['Butterfly', 'तितली', 'फुलपाखरू'], fact: ['A butterfly can taste with tiny sensors on its feet.', 'तितली अपने पैरों के छोटे सेंसर से स्वाद चख सकती है।', 'फुलपाखरू पायांवरील छोट्या संवेदकांनी चव ओळखू शकते.'], icon: '🦋', tone: 'butterfly' },
-  { kind: ['Animal', 'जानवर', 'प्राणी'], title: ['Fox', 'लोमड़ी', 'कोल्हा'], fact: ['A fox can hear small animals moving beneath snow.', 'लोमड़ी बर्फ के नीचे हिलते छोटे जानवरों की आवाज़ सुन सकती है।', 'कोल्हा बर्फाखाली हालचाल करणाऱ्या लहान प्राण्यांचे आवाज ऐकू शकतो.'], icon: '🦊', tone: 'fox' },
-  { kind: ['Fish', 'मछली', 'मासा'], title: ['Fish gills', 'मछली के गलफड़े', 'माशांचे कल्ले'], fact: ['Gills help fish take oxygen from water.', 'गलफड़े मछलियों को पानी से ऑक्सीजन लेने में मदद करते हैं।', 'कल्ल्यांमुळे माशांना पाण्यातील प्राणवायू घेता येतो.'], icon: '🐟', tone: 'gills' },
-  { kind: ['Fish', 'मछली', 'मासा'], title: ['Clownfish', 'क्लाउनफ़िश', 'क्लाउनफिश'], fact: ['Clownfish can shelter among sea anemones.', 'क्लाउनफ़िश समुद्री एनीमोन के बीच छिपकर रह सकती हैं।', 'क्लाउनफिश समुद्री अॅनिमोनमध्ये आसरा घेऊ शकतात.'], icon: '🐠', tone: 'clownfish' },
-  { kind: ['Fish', 'मछली', 'मासा'], title: ['Pufferfish', 'पफरफ़िश', 'पफरफिश'], fact: ['Some pufferfish puff up when they feel threatened.', 'कुछ पफरफ़िश को खतरा लगे तो वे अपना शरीर फुला लेती हैं।', 'धोका जाणवल्यावर काही पफरफिश आपले शरीर फुगवतात.'], icon: '🐡', tone: 'pufferfish' },
-  { kind: ['Planet', 'ग्रह', 'ग्रह'], title: ['Earth', 'पृथ्वी', 'पृथ्वी'], fact: ['Earth is the only planet we know of with life.', 'पृथ्वी ही एकमात्र ज्ञात ग्रह है जहाँ जीवन है।', 'जीवन असलेला पृथ्वी हा आपल्याला माहीत असलेला एकमेव ग्रह आहे.'], icon: '🌍', tone: 'earth' },
-  { kind: ['Planet', 'ग्रह', 'ग्रह'], title: ['Mars', 'मंगल', 'मंगळ'], fact: ['Mars looks red because rusty iron dust covers much of it.', 'मंगल लाल दिखता है क्योंकि उसकी सतह पर जंग जैसा लोहा धूल के रूप में फैला है।', 'मंगळ लाल दिसतो कारण त्याच्या पृष्ठभागावर गंजासारखी लोखंडी धूळ पसरलेली आहे.'], icon: '🔴', tone: 'mars' },
-  { kind: ['Planet', 'ग्रह', 'ग्रह'], title: ['Jupiter', 'बृहस्पति', 'गुरू'], fact: ['Jupiter is the biggest planet in our solar system.', 'बृहस्पति हमारे सौर मंडल का सबसे बड़ा ग्रह है।', 'गुरू हा आपल्या सूर्यमालेतील सर्वात मोठा ग्रह आहे.'], icon: '🪐', tone: 'jupiter' },
-  { kind: ['Planet', 'ग्रह', 'ग्रह'], title: ['Saturn', 'शनि', 'शनी'], fact: ['Saturn’s rings are made mostly of ice and bits of rock.', 'शनि के छल्ले अधिकतर बर्फ और चट्टानों के छोटे टुकड़ों से बने हैं।', 'शनीची कडी मुख्यतः बर्फ आणि खडकांच्या छोट्या तुकड्यांनी बनलेली आहे.'], icon: '🪐', tone: 'saturn' },
 ];
 
 function factCopy(language: Language, line: LocalizedLine) {
@@ -301,6 +285,60 @@ function emotionFace(prompt: string) {
   return '💛';
 }
 
+type WonderCategoryInfo = {
+  id: WonderCategoryId;
+  title: LocalizedLine;
+  description: LocalizedLine;
+  image: string;
+};
+
+const wonderCategories: WonderCategoryInfo[] = [
+  { id: 'animals', title: ['Animals', 'जानवर', 'प्राणी'], description: ['Meet some amazing animal neighbors.', 'अनोखे जानवरों से मिलो।', 'मजेदार प्राण्यांना भेटा.'], image: '/wonder-animals.svg' },
+  { id: 'plants', title: ['Plants', 'पौधे', 'वनस्पती'], description: ['Explore the green world around us.', 'हमारे आसपास की हरी दुनिया जानो।', 'आपल्या भोवतालच्या हिरव्या जगाचा शोध घ्या.'], image: '/wonder-plants.svg' },
+  { id: 'fish', title: ['Fish', 'मछलियाँ', 'मासे'], description: ['Dive into colorful life under the water.', 'पानी के नीचे की रंगीन दुनिया में गोता लगाओ।', 'पाण्याखालील रंगीबेरंगी जगात डुबकी मारा.'], image: '/wonder-fish.svg' },
+  { id: 'planets', title: ['Planets', 'ग्रह', 'ग्रह'], description: ['Fly through our solar system and beyond.', 'सौर मंडल और उससे आगे की सैर करो।', 'आपल्या सूर्यमालेतून आणि त्यापलीकडे सफर करा.'], image: '/wonder-planets.svg' },
+];
+
+function WonderCardSection({ category, language }: { category: WonderCategoryInfo; language: Language }) {
+  const cards = wonderFacts[category.id];
+  const [index, setIndex] = useState(0);
+  const currentFact = cards[index];
+  const localized = (line: LocalizedLine) => factCopy(language, line);
+  const previousLabel = localized(['Previous card', 'पिछला कार्ड', 'मागील कार्ड']);
+  const nextLabel = localized(['Next card', 'अगला कार्ड', 'पुढील कार्ड']);
+
+  return (
+    <section className={'wonder-category wonder-category-' + category.id} aria-labelledby={'wonder-category-' + category.id}>
+      <header className="wonder-category-heading">
+        <div>
+          <span className="wonder-category-kicker">{localized(['WONDER CARDS', 'कमाल कार्ड', 'कुतूहल कार्ड'])}</span>
+          <h3 id={'wonder-category-' + category.id}>{localized(category.title)}</h3>
+          <p>{localized(category.description)}</p>
+        </div>
+        <span className="wonder-category-count">{cards.length} {localized(['cards', 'कार्ड', 'कार्डे'])}</span>
+      </header>
+      <article className="wonder-card" aria-live="polite">
+        <div className="wonder-card-picture">
+          <img src={category.image} alt="" draggable={false} />
+          <span className="wonder-picture-sparkle" aria-hidden="true">✦</span>
+        </div>
+        <div className="wonder-card-details">
+          <span className="wonder-card-label">{localized(['DID YOU KNOW?', 'क्या तुम्हें पता है?', 'तुम्हाला माहीत आहे का?'])}</span>
+          <p className="wonder-card-fact" key={index}>{currentFact[language === 'mr' ? 2 : language === 'hi' ? 1 : 0]}</p>
+          <div className="wonder-card-progress" role="progressbar" aria-label={localized(['Card progress', 'कार्ड की प्रगति', 'कार्डची प्रगती'])} aria-valuemin={1} aria-valuemax={cards.length} aria-valuenow={index + 1}>
+            <span style={{ width: ((index + 1) / cards.length * 100) + '%' }} />
+          </div>
+          <footer className="wonder-card-navigation">
+            <button type="button" onClick={() => setIndex((current) => (current - 1 + cards.length) % cards.length)} aria-label={previousLabel} title={previousLabel}>←</button>
+            <span>{index + 1} <i>/</i> {cards.length}</span>
+            <button type="button" onClick={() => setIndex((current) => (current + 1) % cards.length)} aria-label={nextLabel} title={nextLabel}>→</button>
+          </footer>
+        </div>
+      </article>
+    </section>
+  );
+}
+
 export default function App() {
   const [page, setPage] = useState<Page>(() => !readPreferences() && window.location.pathname !== '/' ? 'welcome' : pageFromPath(window.location.pathname));
   const [language, setLanguage] = useState<Language>(() => readPreferences()?.language ?? 'en');
@@ -333,7 +371,6 @@ export default function App() {
   const answerLock = useRef(false);
   const roundRecorded = useRef(false);
   const cataloguePath = useRef('/games');
-  const wonderFactsTrack = useRef<HTMLDivElement>(null);
 
   function navigate(path: string, replace = false) {
     if (replace) window.history.replaceState({}, '', path);
@@ -822,29 +859,17 @@ export default function App() {
           </div>
         </section>
 
-        <section className="wonder-facts section-wrap" hidden={subject !== 'all'} aria-labelledby="wonder-facts-title">
-          <header className="wonder-facts-heading">
+        <section className="wonder-explorer section-wrap" hidden={subject !== 'all'} aria-labelledby="wonder-explorer-title">
+          <header className="wonder-explorer-heading">
             <div>
-              <span className="wonder-facts-kicker">{factCopy(language, ['DISCOVERY DECK', 'खोज की दुनिया', 'शोधाची कार्डे'])}</span>
-              <h2 id="wonder-facts-title">{factCopy(language, ['Wonder Cards', 'रोचक कार्ड', 'कुतूहल कार्ड्स'])}</h2>
-              <p>{factCopy(language, ['Swipe through plants, animals, fish, and planets to learn a tiny new fact.', 'पौधों, जानवरों, मछलियों और ग्रहों के बारे में छोटी-सी नई बात जानने के लिए कार्ड सरकाएँ।', 'वनस्पती, प्राणी, मासे आणि ग्रहांबद्दल नवी गोष्ट जाणून घेण्यासाठी कार्डे सरकवा.'])}</p>
+              <span className="wonder-explorer-kicker">{factCopy(language, ['A LITTLE DISCOVERY EVERY DAY', 'हर दिन एक नई खोज', 'दररोज एक नवा शोध'])}</span>
+              <h2 id="wonder-explorer-title">{factCopy(language, ['Wonder Cards', 'कमाल के कार्ड', 'कुतूहल कार्ड'])}</h2>
+              <p>{factCopy(language, ['Pick a section and flip through one fun fact at a time.', 'एक भाग चुनो और एक-एक मजेदार तथ्य पढ़ो।', 'एक विभाग निवडा आणि एकावेळी एक मजेदार गोष्ट वाचा.'])}</p>
             </div>
-            <div className="wonder-facts-controls">
-              <button type="button" onClick={() => wonderFactsTrack.current?.scrollBy({ left: -300, behavior: 'smooth' })} aria-label={factCopy(language, ['Scroll cards left', 'कार्डों को बाएँ सरकाएँ', 'कार्डे डावीकडे सरकवा'])}>←</button>
-              <button type="button" onClick={() => wonderFactsTrack.current?.scrollBy({ left: 300, behavior: 'smooth' })} aria-label={factCopy(language, ['Scroll cards right', 'कार्डों को दाएँ सरकाएँ', 'कार्डे उजवीकडे सरकवा'])}>→</button>
-            </div>
+            <span className="wonder-explorer-total">100 <small>{factCopy(language, ['facts to explore', 'रोचक तथ्य', 'गमतीदार गोष्टी'])}</small></span>
           </header>
-          <div className="wonder-facts-track" ref={wonderFactsTrack} role="region" tabIndex={0} aria-label={factCopy(language, ['Scrollable nature and space facts', 'प्रकृति और अंतरिक्ष के तथ्य कार्ड', 'निसर्ग आणि अंतराळाविषयी सरकवता येणारी माहिती'])}>
-            {wonderFacts.map((fact) => (
-              <article className={`wonder-fact-card kind-${fact.kind[0].toLowerCase()} fact-${fact.tone}`} key={fact.title[0]}>
-                <div className="wonder-fact-art" aria-hidden="true"><span>{fact.icon}</span><i>✦</i></div>
-                <div className="wonder-fact-copy">
-                  <span className="wonder-fact-kind">{factCopy(language, fact.kind)}</span>
-                  <h3>{factCopy(language, fact.title)}</h3>
-                  <p>{factCopy(language, fact.fact)}</p>
-                </div>
-              </article>
-            ))}
+          <div className="wonder-category-list">
+            {wonderCategories.map((category) => <WonderCardSection key={category.id} category={category} language={language} />)}
           </div>
         </section>
 
