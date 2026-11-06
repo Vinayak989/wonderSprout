@@ -788,6 +788,11 @@ export default function App() {
           </div>
           <div className="hero-visual">
             <img className="hero-art-image" src="/wonder-world-hero.png" alt={tr(language, 'A fox, rabbit, and turtle setting off on a colorful adventure.')} width="1672" height="1024" fetchPriority="high" />
+            <div className="hero-movers" aria-hidden="true">
+              <span className="hero-mover hero-mover-star">✦</span>
+              <span className="hero-mover hero-mover-planet">🪐</span>
+              <span className="hero-mover hero-mover-bubble">🫧</span>
+            </div>
             <div className="hero-world-stamp"><span>🗺️</span><div><small>{localizedText(language, 'WORLD 01', 'दुनिया 01')}</small><strong>{localizedText(language, 'Wonder Woods', 'सपनों का जंगल')}</strong></div></div>
             {featuredGame && <button className="hero-mission-button" type="button" onClick={() => void startGame(featuredGame)}><span className="hero-mission-icon">{featuredGame.icon}</span><span className="hero-mission-copy"><small>{localizedText(language, 'TODAY’S MISSION', 'आज का मिशन')}</small><strong>{localizedGame(language, featuredGame).title}</strong></span><span className="hero-mission-play">▶</span></button>}
             <div className="hero-art-badge"><span aria-hidden="true">🌟</span><div><strong>{games.length || 80}</strong><small>{tr(language, 'games to discover')}</small></div></div>

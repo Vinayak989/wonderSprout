@@ -1574,6 +1574,27 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
 .category-directory-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 5px; }
 .category-directory-copy strong { color: #382854; font-family: 'Fredoka', 'Trebuchet MS', sans-serif; font-size: 15px; line-height: 1.15; }
 .category-directory-copy small { color: #76688c; font-size: 9px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; }
+.hero-movers { position: absolute; z-index: 1; inset: 0; overflow: visible; pointer-events: none; }
+.hero-mover { position: absolute; display: block; filter: drop-shadow(0 5px 5px #24143b55); line-height: 1; animation: wonder-wander 3.6s ease-in-out infinite; }
+.hero-mover-star { top: 24%; right: 14%; color: #ffe674; font-size: 33px; text-shadow: 0 0 15px #fff1a0; }
+.hero-mover-planet { top: 57%; right: 3%; font-size: 39px; animation-delay: -1.2s; }
+.hero-mover-bubble { top: 48%; left: 4%; font-size: 31px; animation-delay: -.6s; }
+.hero-art-badge { z-index: 2; }
+.hero-mission-play { animation: play-pulse 1.7s ease-in-out infinite; }
+.category-directory-icon { position: relative; animation: icon-bob 3.1s ease-in-out infinite; }
+.category-directory-icon::after { position: absolute; top: -8px; right: -9px; color: #fff7b8; content: '✦'; font-size: 17px; text-shadow: 0 1px 5px #8060bb88; animation: sparkle-twinkle 1.8s ease-in-out infinite; }
+.category-directory-card:nth-child(3n + 2) .category-directory-icon { animation-delay: -.7s; }
+.category-directory-card:nth-child(3n) .category-directory-icon { animation-delay: -1.4s; }
+.game-icon { animation: icon-bob 3.4s ease-in-out infinite; }
+.game-card:nth-child(3n + 2) .game-icon { animation-delay: -.9s; }
+.game-card:nth-child(3n) .game-icon { animation-delay: -1.8s; }
+.eyebrow-lilac .eyebrow-dot { animation: quest-pulse 2.2s ease-in-out infinite; }
+.catalogue-pagination button:not(:disabled):hover { transform: translateY(-3px); }
+@keyframes wonder-wander { 0%, 100% { translate: 0 0; rotate: -7deg; } 50% { translate: 0 -14px; rotate: 8deg; } }
+@keyframes icon-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+@keyframes sparkle-twinkle { 0%, 100% { scale: .75; rotate: 0deg; opacity: .65; } 50% { scale: 1.18; rotate: 35deg; opacity: 1; } }
+@keyframes play-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.1; } }
+@keyframes quest-pulse { 0%, 100% { box-shadow: 0 0 0 5px #70e0b132, 0 0 10px #70e0b176; } 50% { box-shadow: 0 0 0 8px #70e0b121, 0 0 18px #70e0b1; } }
 .catalogue-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 26px; }
 .catalogue-pagination button { min-height: 43px; padding: 0 16px; border: 2px solid white; border-radius: 13px; background: linear-gradient(120deg, #7450d5, #a24ec8); box-shadow: 0 4px 0 #49327f; color: white; cursor: pointer; font-size: 11px; font-weight: 900; }
 .catalogue-pagination button:disabled { cursor: default; opacity: .45; }
@@ -1594,4 +1615,8 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .catalogue-pagination { gap: 8px; margin-top: 19px; }
   .catalogue-pagination button { min-height: 39px; padding-inline: 10px; font-size: 9px; }
   .catalogue-pagination span { min-width: 77px; font-size: 9px; }
+  .hero-mover-star { top: 34%; right: 11%; font-size: 24px; }
+  .hero-mover-planet { top: 58%; right: 4%; font-size: 27px; }
+  .hero-mover-bubble { top: 50%; left: 4%; font-size: 24px; }
+  .game-icon { animation-duration: 4s; }
 }
