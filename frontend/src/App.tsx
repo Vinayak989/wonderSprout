@@ -853,28 +853,6 @@ export default function App() {
             ))}
           </div>
 
-          <aside className="game-toolbar category-sidebar" aria-label={tr(language, 'Game categories')}>
-            <h3 className="category-sidebar-title">{tr(language, 'Game categories')}</h3>
-            <nav className="category-tabs" aria-label={tr(language, 'Filter by subject')}>
-              {categories.map((category) => (
-                <a
-                  href={`/games/category/${categorySlug(category.id)}`}
-                  key={category.id}
-                  className={`category-tab ${subject === category.id ? 'active' : ''}`}
-                  onClick={(event) => {
-                    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                    event.preventDefault();
-                    navigate(`/games/category/${categorySlug(category.id)}`);
-                  }}
-                  aria-current={subject === category.id ? 'page' : undefined}
-                >
-                  <span aria-hidden="true">{category.icon}</span> {localizedSubject(language, category.id)}
-                </a>
-              ))}
-            </nav>
-            <span className="round-length"><span aria-hidden="true">⏱</span> {localizedText(language, '8–10 min each', 'हर खेल 8–10 मिनट')}</span>
-          </aside>
-
           {gamesLoading && <div className="state-card" role="status"><span className="loading-sparkle">✦</span> {tr(language, 'Finding your adventures…')}</div>}
           {!gamesLoading && gamesError && (
             <div className="state-card state-error" role="alert">

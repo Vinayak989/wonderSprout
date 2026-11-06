@@ -75,11 +75,10 @@ a { color: inherit; text-decoration: none; }
 @keyframes mascot-float { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-9px) rotate(-1deg); } }
 @keyframes bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-8px) rotate(5deg); } }
 
-.adventures { display: grid; grid-template-columns: minmax(205px, 245px) minmax(0, 1fr); column-gap: 25px; padding-block: 78px 84px; border-top: 1px solid #f2efe8; }
+.adventures { display: grid; grid-template-columns: minmax(0, 1fr); padding-block: 78px 84px; border-top: 1px solid #f2efe8; }
 .adventures > .section-heading, .adventures > .age-picker { grid-column: 1 / -1; }
-.adventures > .state-card, .adventures > .game-grid { grid-column: 2; grid-row: 3; }
-.adventures > .show-games-wrap { grid-column: 2; }
-.adventures > .catalogue-pagination { grid-column: 2; }
+.adventures > .state-card, .adventures > .game-grid { grid-column: 1; }
+.adventures > .catalogue-pagination { grid-column: 1; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 30px; }
 .eyebrow-lilac { margin-bottom: 13px; color: #8667c6; }
 .eyebrow-lilac .eyebrow-dot { background: #9b78dc; box-shadow: 0 0 0 4px #9b78dc1d; }
