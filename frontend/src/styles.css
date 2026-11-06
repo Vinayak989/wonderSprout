@@ -1580,6 +1580,8 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
 .hero-mover-planet { top: 57%; right: 3%; font-size: 39px; animation-delay: -1.2s; }
 .hero-mover-bubble { top: 48%; left: 4%; font-size: 31px; animation-delay: -.6s; }
 .hero-art-badge { z-index: 2; }
+.hero-art-image { animation: story-world-drift 11s ease-in-out infinite alternate; }
+.welcome-world-art { animation: welcome-world-drift 14s ease-in-out infinite alternate; }
 .hero-mission-play { animation: play-pulse 1.7s ease-in-out infinite; }
 .category-directory-icon { position: relative; animation: icon-bob 3.1s ease-in-out infinite; }
 .category-directory-icon::after { position: absolute; top: -8px; right: -9px; color: #fff7b8; content: '✦'; font-size: 17px; text-shadow: 0 1px 5px #8060bb88; animation: sparkle-twinkle 1.8s ease-in-out infinite; }
@@ -1595,6 +1597,8 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
 @keyframes sparkle-twinkle { 0%, 100% { scale: .75; rotate: 0deg; opacity: .65; } 50% { scale: 1.18; rotate: 35deg; opacity: 1; } }
 @keyframes play-pulse { 0%, 100% { scale: 1; } 50% { scale: 1.1; } }
 @keyframes quest-pulse { 0%, 100% { box-shadow: 0 0 0 5px #70e0b132, 0 0 10px #70e0b176; } 50% { box-shadow: 0 0 0 8px #70e0b121, 0 0 18px #70e0b1; } }
+@keyframes story-world-drift { from { transform: scale(1.01) translateX(0); } to { transform: scale(1.07) translateX(-5px); } }
+@keyframes welcome-world-drift { from { transform: scale(1) translateY(0); } to { transform: scale(1.045) translateY(-8px); } }
 .catalogue-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 26px; }
 .catalogue-pagination button { min-height: 43px; padding: 0 16px; border: 2px solid white; border-radius: 13px; background: linear-gradient(120deg, #7450d5, #a24ec8); box-shadow: 0 4px 0 #49327f; color: white; cursor: pointer; font-size: 11px; font-weight: 900; }
 .catalogue-pagination button:disabled { cursor: default; opacity: .45; }
