@@ -1735,3 +1735,62 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .wonder-card-picture img,.wonder-picture-sparkle,.wonder-card-fact { animation:none; }
   .wonder-card-navigation button { transition:none; }
 }
+.main-nav a[aria-current="page"] { color:#ffd65c; text-decoration:underline; text-underline-offset:7px; }
+.wonder-surprise-trigger { padding:0; border:0; background:transparent; cursor:pointer; }
+.wonder-surprise-trigger span { font-size:16px; }
+.wonder-cards-page { min-height:calc(100vh - 150px); padding-block:42px 76px; }
+.wonder-category-tabs { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:22px 0 20px; }
+.wonder-category-tab { display:flex; min-width:0; min-height:69px; align-items:center; gap:10px; padding:10px 15px; border:2px solid white; border-radius:18px; background:#fffdfa; box-shadow:0 4px 0 #d8d1e3; color:#53466a; cursor:pointer; text-align:left; transition:transform .16s ease,background .16s ease,box-shadow .16s ease; }
+.wonder-category-tab:hover { transform:translateY(-2px); }
+.wonder-category-tab > span { font-size:26px; }
+.wonder-category-tab strong { min-width:0; flex:1; font-family:'Fredoka','Trebuchet MS',sans-serif; font-size:16px; }
+.wonder-category-tab small { display:grid; width:28px; height:28px; flex:0 0 auto; place-items:center; border-radius:50%; background:#f2eef8; color:#746788; font-size:10px; font-weight:900; }
+.wonder-category-tab.selected { border-color:#fff; background:linear-gradient(125deg,#f0e9ff,#fff); box-shadow:0 5px 0 #b7a2df,0 8px 17px #4a337520; color:#57399c; }
+.wonder-category-tab.selected small { background:#7654c8; color:white; }
+.wonder-surprise-backdrop { position:fixed; z-index:60; inset:0; display:grid; place-items:center; overflow:auto; padding:20px; background:#211638bd; backdrop-filter:blur(7px); animation:fade-in .18s ease-out; }
+.wonder-surprise-dialog { --wonder-accent:#7250c6; --wonder-soft:#eee7ff; --wonder-shadow:#cec0ea; position:relative; display:grid; width:min(700px,100%); grid-template-columns:minmax(200px,.85fr) minmax(0,1.15fr); overflow:hidden; border:4px solid white; border-radius:28px; background:#fffefa; box-shadow:0 24px 70px #130d2680; animation:wonder-surprise-pop .28s cubic-bezier(.2,.8,.25,1.1) both; }
+.wonder-surprise-dialog.wonder-category-plants { --wonder-accent:#438f59; --wonder-soft:#e7f7dd; --wonder-shadow:#c1dda9; }
+.wonder-surprise-dialog.wonder-category-fish { --wonder-accent:#287eaa; --wonder-soft:#dff6fb; --wonder-shadow:#aadbe4; }
+.wonder-surprise-dialog.wonder-category-planets { --wonder-accent:#6554b5; --wonder-soft:#e9e8ff; --wonder-shadow:#c9c8ee; }
+.wonder-surprise-close { position:absolute; z-index:2; top:12px; right:12px; display:grid; width:39px; height:39px; place-items:center; border:2px solid white; border-radius:50%; background:#fffef3; box-shadow:0 3px 0 #4e3b6333; color:#53416d; cursor:pointer; font-size:25px; }
+.wonder-surprise-picture { display:grid; min-height:280px; place-items:center; overflow:hidden; background:var(--wonder-soft); }
+.wonder-surprise-picture img { display:block; width:100%; height:100%; min-height:280px; object-fit:cover; animation:wonder-picture-float 4s ease-in-out infinite alternate; }
+.wonder-surprise-copy { display:flex; flex-direction:column; justify-content:center; padding:34px 34px 26px; }
+.wonder-surprise-copy .wonder-category-kicker { font-size:9px; letter-spacing:1.2px; }
+.wonder-surprise-copy h2 { margin:10px 0 9px; color:#30204f; font-family:'Fredoka','Trebuchet MS',sans-serif; font-size:clamp(24px,4vw,33px); line-height:1.12; }
+.wonder-surprise-copy > p { margin:0; color:#514664; font-family:'Fredoka','Trebuchet MS',sans-serif; font-size:18px; font-weight:600; line-height:1.45; }
+.wonder-surprise-prompt { margin-top:13px; color:#827990; font-size:11px; line-height:1.4; }
+.wonder-surprise-actions { display:flex; grid-column:1 / -1; justify-content:flex-end; gap:10px; padding:14px 18px; border-top:1px solid #eee9f3; background:#fffdf8; }
+.wonder-surprise-actions .button { min-height:42px; padding-inline:15px; border-radius:13px; font-size:11px; }
+@keyframes wonder-surprise-pop { from{opacity:0;transform:translateY(15px) scale(.94)} to{opacity:1;transform:translateY(0) scale(1)} }
+@media (max-width:800px) {
+  .wonder-category-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+  .wonder-category-tab { min-height:59px; padding:8px 11px; }
+  .wonder-category-tab > span { font-size:23px; }
+  .wonder-category-tab strong { font-size:14px; }
+}
+@media (max-width:700px) {
+  .wonder-cards-page { min-height:calc(100vh - 125px); padding-block:23px 95px; }
+  .wonder-category-tabs { margin:14px 0; }
+  .wonder-category-tab { min-height:57px; gap:7px; padding:7px 9px; border-radius:15px; }
+  .wonder-category-tab > span { font-size:20px; }
+  .wonder-category-tab strong { font-size:12px; }
+  .wonder-category-tab small { width:24px; height:24px; font-size:9px; }
+  .wonder-surprise-backdrop { align-items:center; padding:12px; }
+  .wonder-surprise-dialog { width:min(460px,100%); grid-template-columns:1fr; border-width:3px; border-radius:23px; }
+  .wonder-surprise-picture,.wonder-surprise-picture img { min-height:145px; max-height:170px; }
+  .wonder-surprise-copy { padding:17px 19px 15px; }
+  .wonder-surprise-copy h2 { margin:6px 0; font-size:24px; }
+  .wonder-surprise-copy > p { font-size:16px; }
+  .wonder-surprise-prompt { margin-top:8px; font-size:10px; }
+  .wonder-surprise-actions { flex-direction:column-reverse; gap:7px; padding:10px 13px 13px; }
+  .wonder-surprise-actions .button { width:100%; min-height:42px; }
+  .mobile-bottom-nav:not([hidden]) { grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .mobile-nav-item small { font-size:7px; letter-spacing:-.2px; white-space:nowrap; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .wonder-surprise-backdrop,.wonder-surprise-dialog,.wonder-surprise-picture img { animation:none; }
+  .wonder-category-tab { transition:none; }
+}
+.wonder-surprise-young .wonder-surprise-copy > p { font-size:21px; line-height:1.5; }
+@media (max-width:700px) { .wonder-surprise-young .wonder-surprise-copy > p { font-size:18px; } }

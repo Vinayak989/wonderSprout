@@ -7,7 +7,7 @@ import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readC
 const ThreeArcade = lazy(() => import('./ThreeArcade'));
 
 type AgeBand = '3-5' | '6-8' | '9-12';
-type Page = 'welcome' | 'games' | 'game' | 'club';
+type Page = 'welcome' | 'games' | 'game' | 'club' | 'wonder';
 type Subject = 'all' | 'Math magic' | 'Word adventures' | 'Science wonders' | 'Adventure & Treasure Hunt' | 'Memory Games' | 'Puzzle & Logic' | 'Art & Creativity' | 'Geography & World Explorer' | 'Animals & Nature' | 'Music & Rhythm' | 'Coding & Computational Thinking' | 'Life Skills & Good Habits' | 'Emotions & Social Skills' | 'Time & Calendar' | 'History & Culture' | 'Money & Financial Literacy' | 'Sports & Movement' | 'Interactive Stories & Reading';
 type GameMode = 'quiz' | 'bubble' | 'spell' | 'match' | 'adventure' | 'memory' | 'puzzle' | 'creative' | 'scavenger' | 'coding' | 'sequence' | 'missing' | 'sudoku' | 'monster' | 'pixel' | 'piano' | 'rhythm' | 'sound' | 'sort' | 'clock' | 'shop' | 'balance' | 'emotion' | 'loop' | 'readaloud' | 'maze3d' | 'space3d' | 'racing' | 'shooting';
 type LocalizedLine = readonly [string, string, string];
@@ -174,6 +174,7 @@ function readPreferences(): { age: AgeBand; language: Language } | null {
 
 function pageFromPath(path: string): Page {
   if (path === '/club' || path.startsWith('/club/')) return 'club';
+  if (path === '/wonder-cards' || path.startsWith('/wonder-cards/')) return 'wonder';
   if (path === '/games' || path.startsWith('/games/category/')) return 'games';
   return path.startsWith('/games/') ? 'game' : 'welcome';
 }
@@ -290,13 +291,15 @@ type WonderCategoryInfo = {
   title: LocalizedLine;
   description: LocalizedLine;
   image: string;
+  icon: string;
 };
+type WonderSelection = { category: WonderCategoryId; index: number };
 
 const wonderCategories: WonderCategoryInfo[] = [
-  { id: 'animals', title: ['Animals', 'जानवर', 'प्राणी'], description: ['Meet some amazing animal neighbors.', 'अनोखे जानवरों से मिलो।', 'मजेदार प्राण्यांना भेटा.'], image: '/wonder-animals.svg' },
-  { id: 'plants', title: ['Plants', 'पौधे', 'वनस्पती'], description: ['Explore the green world around us.', 'हमारे आसपास की हरी दुनिया जानो।', 'आपल्या भोवतालच्या हिरव्या जगाचा शोध घ्या.'], image: '/wonder-plants.svg' },
-  { id: 'fish', title: ['Fish', 'मछलियाँ', 'मासे'], description: ['Dive into colorful life under the water.', 'पानी के नीचे की रंगीन दुनिया में गोता लगाओ।', 'पाण्याखालील रंगीबेरंगी जगात डुबकी मारा.'], image: '/wonder-fish.svg' },
-  { id: 'planets', title: ['Planets', 'ग्रह', 'ग्रह'], description: ['Fly through our solar system and beyond.', 'सौर मंडल और उससे आगे की सैर करो।', 'आपल्या सूर्यमालेतून आणि त्यापलीकडे सफर करा.'], image: '/wonder-planets.svg' },
+  { id: 'animals', title: ['Animals', 'जानवर', 'प्राणी'], description: ['Meet some amazing animal neighbors.', 'अनोखे जानवरों से मिलो।', 'मजेदार प्राण्यांना भेटा.'], image: '/wonder-animals.svg', icon: '🐾' },
+  { id: 'plants', title: ['Plants', 'पौधे', 'वनस्पती'], description: ['Explore the green world around us.', 'हमारे आसपास की हरी दुनिया जानो।', 'आपल्या भोवतालच्या हिरव्या जगाचा शोध घ्या.'], image: '/wonder-plants.svg', icon: '🌿' },
+  { id: 'fish', title: ['Fish', 'मछलियाँ', 'मासे'], description: ['Dive into colorful life under the water.', 'पानी के नीचे की रंगीन दुनिया में गोता लगाओ।', 'पाण्याखालील रंगीबेरंगी जगात डुबकी मारा.'], image: '/wonder-fish.svg', icon: '🐠' },
+  { id: 'planets', title: ['Planets', 'ग्रह', 'ग्रह'], description: ['Fly through our solar system and beyond.', 'सौर मंडल और उससे आगे की सैर करो।', 'आपल्या सूर्यमालेतून आणि त्यापलीकडे सफर करा.'], image: '/wonder-planets.svg', icon: '🪐' },
 ];
 
 function WonderCardSection({ category, language }: { category: WonderCategoryInfo; language: Language }) {
@@ -348,6 +351,8 @@ export default function App() {
   const [gamesError, setGamesError] = useState('');
   const [age, setAge] = useState<AgeBand>(() => readPreferences()?.age ?? '6-8');
   const [subject, setSubject] = useState<Subject>(() => subjectFromPath(window.location.pathname));
+  const [wonderCategory, setWonderCategory] = useState<WonderCategoryId>('animals');
+  const [surpriseCard, setSurpriseCard] = useState<WonderSelection | null>(null);
   const [cataloguePage, setCataloguePage] = useState(() => cataloguePageFromPath(`${window.location.pathname}${window.location.search}`));
   const [progress, setProgress] = useState<Progress>(readProgress);
   const [clubData, setClubData] = useState<ClubData>(readClubData);
@@ -371,6 +376,7 @@ export default function App() {
   const answerLock = useRef(false);
   const roundRecorded = useRef(false);
   const cataloguePath = useRef('/games');
+  const seenSurpriseCards = useRef<Set<string>>(new Set());
 
   function navigate(path: string, replace = false) {
     if (replace) window.history.replaceState({}, '', path);
@@ -381,6 +387,20 @@ export default function App() {
       setSubject(subjectFromPath(path));
       setCataloguePage(cataloguePageFromPath(path));
     }
+  }
+
+  function revealSurprise() {
+    const allCards = wonderCategories.flatMap((category) =>
+      wonderFacts[category.id].map((_, index) => ({ category: category.id, index })),
+    );
+    let unseen = allCards.filter((card) => !seenSurpriseCards.current.has(card.category + '-' + card.index));
+    if (unseen.length === 0) {
+      seenSurpriseCards.current.clear();
+      unseen = allCards.filter((card) => card.category !== surpriseCard?.category || card.index !== surpriseCard.index);
+    }
+    const card = unseen[Math.floor(Math.random() * unseen.length)];
+    seenSurpriseCards.current.add(card.category + '-' + card.index);
+    setSurpriseCard(card);
   }
 
   function choosePreferences() {
@@ -420,7 +440,9 @@ export default function App() {
     document.documentElement.lang = language;
     const title = page === 'game' && activeGame
       ? localizedGame(language, activeGame).title
-      : page === 'games' && subject !== 'all'
+      : page === 'wonder'
+        ? factCopy(language, ['Wonder Cards', 'कमाल के कार्ड', 'कुतूहल कार्ड']) + ' · WonderSprout'
+        : page === 'games' && subject !== 'all'
         ? `${localizedSubject(language, subject)} · WonderSprout`
         : localizedText(language, 'WonderSprout — Play, discover, grow!', 'WonderSprout — खेलो, सीखो, बढ़ो!');
     document.title = title;
@@ -489,11 +511,32 @@ export default function App() {
     };
   }, [activeGame]);
 
+  useEffect(() => {
+    if (!surpriseCard) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setSurpriseCard(null);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('keydown', closeOnEscape);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [surpriseCard]);
+
   const filteredGames = games.filter((game) => (subject === 'all' || game.subject === subject) && game.ageBands.includes(age));
   const gamesPerPage = 12;
   const cataloguePageCount = Math.max(1, Math.ceil(filteredGames.length / gamesPerPage));
   const currentCataloguePage = Math.min(cataloguePage, cataloguePageCount);
   const visibleGames = filteredGames.slice((currentCataloguePage - 1) * gamesPerPage, currentCataloguePage * gamesPerPage);
+  const surpriseCategory = surpriseCard ? wonderCategories.find((category) => category.id === surpriseCard.category) : null;
+  const surpriseFact = surpriseCard ? wonderFacts[surpriseCard.category][surpriseCard.index] : null;
+  const wonderPrompt = age === '3-5'
+    ? factCopy(language, ['Can you name something you see?', 'तस्वीर में दिखने वाली किसी चीज़ का नाम बताओ।', 'चित्रात दिसणाऱ्या एखाद्या गोष्टीचे नाव सांग.'])
+    : age === '6-8'
+      ? factCopy(language, ['Tell someone one new thing you learned.', 'किसी को एक नई बात बताओ जो तुमने सीखी।', 'तू शिकलेली एक नवीन गोष्ट कोणाला तरी सांग.'])
+      : factCopy(language, ['What else would you like to investigate?', 'तुम और क्या जानना चाहोगे?', 'तुला आणखी कशाचा शोध घ्यायला आवडेल?']);
   const cataloguePageLabel = language === 'hi'
     ? `पृष्ठ ${currentCataloguePage} / ${cataloguePageCount}`
     : language === 'mr'
@@ -817,18 +860,20 @@ export default function App() {
           <span className="brand-name">wonder<span>sprout</span></span>
         </a>
         <nav className="main-nav" aria-label={tr(language, 'Main navigation')}>
-          <a href={subject === 'all' ? '#category-directory' : '#adventures'}>{tr(language, 'Play zone')}</a>
+          <a href="/games" onClick={(event) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate('/games'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{tr(language, 'Play zone')}</a>
+          <a href="/wonder-cards" aria-current={page === 'wonder' ? 'page' : undefined} onClick={(event) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); setSurpriseCard(null); navigate('/wonder-cards'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{factCopy(language, ['Wonder Cards', 'कमाल के कार्ड', 'कुतूहल कार्ड'])}</a>
           <a href="/club" onClick={(event) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate('/club'); }}>{tr(language, 'Wonder Club')}</a>
-          <a href="#rewards">{tr(language, 'My rewards')}</a>
-          <a href="#grownups">{tr(language, 'For grown-ups')}</a>
+          <a href="/games#rewards" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })); }}>{tr(language, 'My rewards')}</a>
+          <a href="/games#grownups" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('grownups')?.scrollIntoView({ behavior: 'smooth' })); }}>{tr(language, 'For grown-ups')}</a>
           <a href="/" aria-label={tr(language, 'Change age or language')} onClick={(event) => { event.preventDefault(); setSetupAge(age); navigate('/'); }}>{tr(language, 'Change age or language')}</a>
         </nav>
-        <a className="header-stars" href="#rewards" aria-label={`${progress.stars} ${tr(language, 'stars collected')}`}>
+        <a className="header-stars" href="/games#rewards" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })); }} aria-label={`${progress.stars} ${tr(language, 'stars collected')}`}>
           <span aria-hidden="true">⭐</span> {progress.stars} <span className="star-word">{localizedText(language, 'stars', 'सितारे')}</span>
         </a>
       </header>
 
       <main id="main" hidden={page === 'game'}>
+        <div hidden={page === 'wonder'}>
         <section className="hero section-wrap" id="top" hidden={subject !== 'all'}>
           <div className="hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> {localizedText(language, 'YOUR GAME WORLD', 'तुम्हारा गेमिंग संसार')}</div>
@@ -843,6 +888,7 @@ export default function App() {
             <div className="hero-actions">
               <a className="button button-primary" href="#category-directory"><span aria-hidden="true">▶</span> {tr(language, 'Let’s play')}</a>
               <a className="text-link" href="#rewards">{tr(language, 'See my star garden')} <span aria-hidden="true">↓</span></a>
+              <button className="text-link wonder-surprise-trigger" type="button" onClick={revealSurprise}><span aria-hidden="true">✨</span> {factCopy(language, ['Surprise me!', 'मुझे चौंकाओ!', 'मला आश्चर्य द्या!'])}</button>
             </div>
             <div className="hero-footnote"><span aria-hidden="true">🕹️</span> {localizedText(language, 'PLAY · COMPLETE MISSIONS · EARN STARS', 'खेलो · मिशन पूरे करो · सितारे कमाओ')}</div>
           </div>
@@ -856,20 +902,6 @@ export default function App() {
             <div className="hero-world-stamp"><span>🗺️</span><div><small>{localizedText(language, 'WORLD 01', 'दुनिया 01')}</small><strong>{localizedText(language, 'Wonder Woods', 'सपनों का जंगल')}</strong></div></div>
             {featuredGame && <button className="hero-mission-button" type="button" onClick={() => void startGame(featuredGame)}><span className="hero-mission-icon">{featuredGame.icon}</span><span className="hero-mission-copy"><small>{localizedText(language, 'TODAY’S MISSION', 'आज का मिशन')}</small><strong>{localizedGame(language, featuredGame).title}</strong></span><span className="hero-mission-play">▶</span></button>}
             <div className="hero-art-badge"><span aria-hidden="true">🌟</span><div><strong>{games.length || 80}</strong><small>{tr(language, 'games to discover')}</small></div></div>
-          </div>
-        </section>
-
-        <section className="wonder-explorer section-wrap" hidden={subject !== 'all'} aria-labelledby="wonder-explorer-title">
-          <header className="wonder-explorer-heading">
-            <div>
-              <span className="wonder-explorer-kicker">{factCopy(language, ['A LITTLE DISCOVERY EVERY DAY', 'हर दिन एक नई खोज', 'दररोज एक नवा शोध'])}</span>
-              <h2 id="wonder-explorer-title">{factCopy(language, ['Wonder Cards', 'कमाल के कार्ड', 'कुतूहल कार्ड'])}</h2>
-              <p>{factCopy(language, ['Pick a section and flip through one fun fact at a time.', 'एक भाग चुनो और एक-एक मजेदार तथ्य पढ़ो।', 'एक विभाग निवडा आणि एकावेळी एक मजेदार गोष्ट वाचा.'])}</p>
-            </div>
-            <span className="wonder-explorer-total">100 <small>{factCopy(language, ['facts to explore', 'रोचक तथ्य', 'गमतीदार गोष्टी'])}</small></span>
-          </header>
-          <div className="wonder-category-list">
-            {wonderCategories.map((category) => <WonderCardSection key={category.id} category={category} language={language} />)}
           </div>
         </section>
 
@@ -1005,31 +1037,75 @@ export default function App() {
           <div className="grownup-copy"><span className="grownup-kicker">{tr(language, 'A note for grown-ups')}</span><p>{tr(language, 'WonderSprout keeps play simple: no account needed, and your child’s stars stay in this browser.')}</p></div>
           <span className="grownup-sprout" aria-hidden="true">🌿</span>
         </section>
+
+        </div>
+        <section className="wonder-explorer wonder-cards-page section-wrap" hidden={page !== 'wonder'} aria-labelledby="wonder-explorer-title">
+          <header className="wonder-explorer-heading">
+            <div>
+              <span className="wonder-explorer-kicker">{factCopy(language, ['A LITTLE DISCOVERY EVERY DAY', 'हर दिन एक नई खोज', 'दररोज एक नवा शोध'])}</span>
+              <h2 id="wonder-explorer-title">{factCopy(language, ['Wonder Cards', 'कमाल के कार्ड', 'कुतूहल कार्ड'])}</h2>
+              <p>{factCopy(language, ['Choose a world and explore one wonder at a time.', 'एक दुनिया चुनो और एक-एक कमाल की बात जानो।', 'एक जग निवडा आणि एका वेळी एक आश्चर्यकारक गोष्ट जाणून घ्या.'])}</p>
+            </div>
+            <span className="wonder-explorer-total">100 <small>{factCopy(language, ['facts to explore', 'रोचक तथ्य', 'गमतीदार गोष्टी'])}</small></span>
+          </header>
+          <div className="wonder-category-tabs" role="group" aria-label={factCopy(language, ['Choose a Wonder Cards section', 'कमाल कार्ड का भाग चुनें', 'कुतूहल कार्डचा विभाग निवडा'])}>
+            {wonderCategories.map((category) => (
+              <button type="button" key={category.id} className={wonderCategory === category.id ? 'wonder-category-tab selected' : 'wonder-category-tab'} aria-pressed={wonderCategory === category.id} onClick={() => setWonderCategory(category.id)}>
+                <span aria-hidden="true">{category.icon}</span><strong>{factCopy(language, category.title)}</strong><small>{wonderFacts[category.id].length}</small>
+              </button>
+            ))}
+          </div>
+          <div className="wonder-category-list">
+            {wonderCategories.filter((category) => category.id === wonderCategory).map((category) => <WonderCardSection key={category.id} category={category} language={language} />)}
+          </div>
+        </section>
       </main>
 
       <footer className="site-footer section-wrap" hidden={page === 'game'}>
-        <a className="brand footer-brand" href="#top"><img className="brand-mark" src="/sprout-icon.svg" alt="" aria-hidden="true" /><span className="brand-name">wonder<span>sprout</span></span></a>
+        <a className="brand footer-brand" href="/games" onClick={(event) => { event.preventDefault(); navigate('/games'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}><img className="brand-mark" src="/sprout-icon.svg" alt="" aria-hidden="true" /><span className="brand-name">wonder<span>sprout</span></span></a>
         <span>{tr(language, 'Play a little. Learn a lot.')} <span aria-hidden="true">✦</span></span>
-        <a href="#top" className="back-top">{tr(language, 'Back to top')} ↑</a>
+        <a href={page === 'wonder' ? '#wonder-explorer-title' : '#top'} className="back-top">{tr(language, 'Back to top')} ↑</a>
       </footer>
 
       <nav className="mobile-bottom-nav" aria-label={tr(language, 'Main navigation')} hidden={page === 'game'}>
-        <a className="mobile-nav-item" href="/games" onClick={(event) => { event.preventDefault(); navigate('/games'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+        <a className={page === 'games' && subject === 'all' ? 'mobile-nav-item mobile-nav-active' : 'mobile-nav-item'} href="/games" onClick={(event) => { event.preventDefault(); navigate('/games'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
           <span aria-hidden="true">🏡</span><small>{tr(language, 'Home')}</small>
         </a>
-        <a className="mobile-nav-item mobile-nav-active" href={subject === 'all' ? '#category-directory' : '#adventures'}>
+        <a className={page === 'games' && subject !== 'all' ? 'mobile-nav-item mobile-nav-active' : 'mobile-nav-item'} href="/games#category-directory" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('category-directory')?.scrollIntoView({ behavior: 'smooth' })); }}>
           <span aria-hidden="true">🎮</span><small>{tr(language, 'Games')}</small>
         </a>
-        <a className="mobile-nav-item" href="/club" onClick={(event) => { event.preventDefault(); navigate('/club'); }}>
-          <span aria-hidden="true">🧭</span><small>{tr(language, 'Wonder Club')}</small>
+        <a className={page === 'wonder' ? 'mobile-nav-item mobile-nav-active' : 'mobile-nav-item'} href="/wonder-cards" onClick={(event) => { event.preventDefault(); setSurpriseCard(null); navigate('/wonder-cards'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+          <span aria-hidden="true">✨</span><small>{factCopy(language, ['Wonder', 'कमाल', 'कुतूहल'])}</small>
         </a>
-        <a className="mobile-nav-item" href="#rewards">
+        <a className="mobile-nav-item" href="/club" onClick={(event) => { event.preventDefault(); navigate('/club'); }}>
+          <span aria-hidden="true">🧭</span><small>{localizedText(language, 'Club', 'क्लब')}</small>
+        </a>
+        <a className="mobile-nav-item" href="/games#rewards" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })); }}>
           <span aria-hidden="true">🌟</span><small>{tr(language, 'Stars')}</small>
         </a>
-        <a className="mobile-nav-item" href="#grownups">
+        <a className="mobile-nav-item" href="/games#grownups" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('grownups')?.scrollIntoView({ behavior: 'smooth' })); }}>
           <span aria-hidden="true">💛</span><small>{tr(language, 'About')}</small>
         </a>
       </nav>
+
+      {surpriseCard && surpriseCategory && surpriseFact && (
+        <div className="wonder-surprise-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setSurpriseCard(null); }}>
+          <section className={'wonder-surprise-dialog wonder-category-' + surpriseCard.category + (age === '3-5' ? ' wonder-surprise-young' : '')} role="dialog" aria-modal="true" aria-labelledby="wonder-surprise-title">
+            <button className="wonder-surprise-close" type="button" autoFocus onClick={() => setSurpriseCard(null)} aria-label={factCopy(language, ['Close surprise', 'बंद करें', 'बंद करा'])}>×</button>
+            <div className="wonder-surprise-picture"><img src={surpriseCategory.image} alt="" /></div>
+            <div className="wonder-surprise-copy">
+              <span className="wonder-category-kicker">{factCopy(language, ['A LITTLE SURPRISE', 'एक छोटा-सा सरप्राइज़', 'एक छोटीशी गंमत'])} · {factCopy(language, surpriseCategory.title)}</span>
+              <h2 id="wonder-surprise-title">{factCopy(language, ['A wonder for you!', 'तुम्हारे लिए कमाल की बात!', 'तुझ्यासाठी एक कुतूहलाची गोष्ट!'])}</h2>
+              <p>{surpriseFact[language === 'mr' ? 2 : language === 'hi' ? 1 : 0]}</p>
+              <small className="wonder-surprise-prompt">{wonderPrompt}</small>
+            </div>
+            <footer className="wonder-surprise-actions">
+              <button className="button button-quiet" type="button" onClick={revealSurprise}>✨ {factCopy(language, ['Another surprise', 'एक और सरप्राइज़', 'आणखी एक गंमत'])}</button>
+              <button className="button button-primary" type="button" onClick={() => { setWonderCategory(surpriseCard.category); setSurpriseCard(null); navigate('/wonder-cards'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{factCopy(language, ['Explore all cards', 'सभी कार्ड देखो', 'सर्व कार्ड पाहा'])} <span aria-hidden="true">→</span></button>
+            </footer>
+          </section>
+        </div>
+      )}
 
       {page === 'game' && !activeGame && <div className="game-page-loading"><span>{tr(language, 'Opening your game…')}</span><button type="button" onClick={closeGame}>{tr(language, 'Back to games')}</button></div>}
       {activeGame && (
