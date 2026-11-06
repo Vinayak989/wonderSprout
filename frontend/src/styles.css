@@ -1556,6 +1556,35 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .kart-pickup.star, .kart-player { animation: none; }
 }
 
+.wonder-facts { margin-block: 8px 25px; padding: 20px 21px 13px; border: 3px solid white; border-radius: 31px; background: linear-gradient(125deg, #e9e2ff, #e7f8f2 52%, #fff0d5); box-shadow: 0 7px 0 #d0c6e5, 0 15px 25px #37285114; }
+.wonder-facts-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 13px; }
+.wonder-facts-kicker { color: #795cb1; font-size: 9px; font-weight: 950; letter-spacing: 1.6px; }
+.wonder-facts-heading h2 { margin: 3px 0 4px; color: #30204f; font-family: 'Fredoka', 'Trebuchet MS', sans-serif; font-size: clamp(25px, 3.4vw, 34px); }
+.wonder-facts-heading p { margin: 0; color: #706985; font-size: 11px; line-height: 1.45; }
+.wonder-facts-controls { display: flex; flex: 0 0 auto; gap: 7px; }
+.wonder-facts-controls button { display: grid; width: 38px; height: 38px; place-items: center; border: 2px solid white; border-radius: 13px; background: linear-gradient(140deg, #7952d0, #9d56d0); box-shadow: 0 4px 0 #553482; color: white; cursor: pointer; font-size: 18px; font-weight: 900; transition: transform .16s ease; }
+.wonder-facts-controls button:hover { transform: translateY(-2px); }
+.wonder-facts-track { display: grid; grid-auto-columns: minmax(220px, 245px); grid-auto-flow: column; gap: 13px; overflow-x: auto; padding: 5px 4px 16px; overscroll-behavior-inline: contain; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-color: #9a82cf #ffffff9c; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+.wonder-facts-track:focus-visible { outline: 3px solid #7160d4; outline-offset: 2px; border-radius: 15px; }
+.wonder-fact-card { position: relative; display: flex; min-width: 0; min-height: 245px; flex-direction: column; overflow: hidden; padding: 11px; border: 2px solid white; border-radius: 21px; background: #fffefb; box-shadow: 0 5px 0 #d5cde5, 0 9px 16px #34274a12; scroll-snap-align: start; transition: transform .18s ease, box-shadow .18s ease; }
+.wonder-fact-card:hover { transform: translateY(-4px); box-shadow: 0 8px 0 #c9bfdf, 0 13px 20px #34274a1c; }
+.wonder-fact-art { position: relative; display: grid; min-height: 98px; flex: 0 0 auto; place-items: center; overflow: hidden; border: 2px solid white; border-radius: 15px; background: linear-gradient(135deg, #fff0c8, #fff9e7); box-shadow: inset 0 -5px #39275110; }
+.kind-plant .wonder-fact-art { background: linear-gradient(135deg, #d9f3ce, #effada); }
+.kind-animal .wonder-fact-art { background: linear-gradient(135deg, #ffe2ee, #fff0d8); }
+.kind-fish .wonder-fact-art { background: linear-gradient(135deg, #d6f2ff, #dcfff4); }
+.kind-planet .wonder-fact-art { background: linear-gradient(135deg, #e3dcff, #dce9ff); }
+.wonder-fact-art::before { position: absolute; width: 69px; height: 69px; border: 1px dashed #ffffffd9; border-radius: 50%; box-shadow: 0 0 0 12px #ffffff55, 0 0 0 24px #ffffff35; content: ''; animation: halo-turn 28s linear infinite; }
+.wonder-fact-art > span { position: relative; z-index: 1; font-size: 55px; filter: drop-shadow(0 5px 3px #30204f22); animation: wonder-wander 3.8s ease-in-out infinite; }
+.wonder-fact-card:nth-child(3n + 2) .wonder-fact-art > span { animation-delay: -1.1s; }
+.wonder-fact-card:nth-child(3n) .wonder-fact-art > span { animation-delay: -2s; }
+.wonder-fact-art > i { position: absolute; top: 8px; right: 12px; color: #ffd75d; font-size: 19px; font-style: normal; animation: sparkle-twinkle 1.8s ease-in-out infinite; }
+.wonder-fact-copy { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 10px 4px 2px; }
+.wonder-fact-kind { padding: 4px 7px; border: 1px solid #e9e1f4; border-radius: 999px; background: #f4efff; color: #7659ad; font-size: 8px; font-weight: 950; letter-spacing: .6px; text-transform: uppercase; }
+.kind-plant .wonder-fact-kind { border-color: #d4ebc8; background: #f1f9ec; color: #578447; }
+.kind-animal .wonder-fact-kind { border-color: #f3d7e3; background: #fff2f6; color: #a45b78; }
+.kind-fish .wonder-fact-kind { border-color: #cbe9f0; background: #effbff; color: #428397; }
+.wonder-fact-copy h3 { margin: 7px 0 4px; color: #30204f; font-family: 'Fredoka', 'Trebuchet MS', sans-serif; font-size: 17px; }
+.wonder-fact-copy p { margin: 0; color: #68637a; font-size: 10px; line-height: 1.5; }
 .category-directory { padding-block: 30px 68px; scroll-margin-top: 90px; }
 .category-directory-heading { margin-bottom: 22px; text-align: center; }
 .category-directory-heading > span { color: #7255ad; font-size: 10px; font-weight: 950; letter-spacing: 1.8px; text-transform: uppercase; }
@@ -1608,6 +1637,20 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .category-directory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 700px) {
+  .wonder-facts { margin-block: 6px 19px; padding: 13px 11px 9px; border-width: 2px; border-radius: 23px; }
+  .wonder-facts-heading { align-items: center; gap: 9px; margin-bottom: 9px; }
+  .wonder-facts-kicker { font-size: 7px; letter-spacing: 1px; }
+  .wonder-facts-heading h2 { font-size: 24px; }
+  .wonder-facts-heading p { max-width: 315px; font-size: 9px; }
+  .wonder-facts-controls { gap: 5px; }
+  .wonder-facts-controls button { width: 32px; height: 32px; border-radius: 10px; font-size: 15px; }
+  .wonder-facts-track { grid-auto-columns: minmax(210px, 76vw); gap: 9px; padding: 3px 3px 12px; }
+  .wonder-fact-card { min-height: 217px; padding: 8px; border-radius: 17px; }
+  .wonder-fact-art { min-height: 82px; border-radius: 12px; }
+  .wonder-fact-art > span { font-size: 45px; }
+  .wonder-fact-copy { padding: 7px 3px 1px; }
+  .wonder-fact-copy h3 { margin-block: 5px 3px; font-size: 15px; }
+  .wonder-fact-copy p { font-size: 9px; }
   .category-directory { padding-block: 19px 42px; }
   .category-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
   .category-directory-card { min-height: 79px; gap: 9px; padding: 9px; border-width: 2px; border-radius: 17px; box-shadow: 0 4px 0 var(--category-shadow); }
