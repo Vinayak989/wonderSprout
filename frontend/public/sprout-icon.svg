@@ -1,7 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="48" fill="#8056d9"/>
-  <circle cx="96" cy="100" r="56" fill="#c5f4dc"/>
-  <path d="M96 149V84m0 30c-23 0-38-12-41-34 23 0 38 12 41 34Zm0-14c1-21 14-35 37-37-1 22-14 36-37 37Z" fill="none" stroke="#27836b" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
-  <circle cx="56" cy="56" r="8" fill="#ffd36d"/>
-  <circle cx="140" cy="49" r="6" fill="#fff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-labelledby="title">
+  <title id="title">WonderSprout</title>
+  <defs>
+    <linearGradient id="sky" x1="18" y1="10" x2="174" y2="184" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9B76FF"/>
+      <stop offset="1" stop-color="#5634B8"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="58" y1="48" x2="134" y2="146" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A1FFD5"/>
+      <stop offset="1" stop-color="#38C998"/>
+    </linearGradient>
+    <filter id="shadow" x="28" y="27" width="136" height="143" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#29145F" flood-opacity=".3"/>
+    </filter>
+  </defs>
+  <rect x="7" y="7" width="178" height="178" rx="54" fill="url(#sky)" stroke="#FFF" stroke-width="7"/>
+  <circle cx="44" cy="60" r="4" fill="#FFF" opacity=".82"/>
+  <circle cx="151" cy="132" r="3" fill="#FFF" opacity=".72"/>
+  <path d="m145 36 4.3 9.1 10 1.4-7.2 7 1.7 9.9-8.8-4.7-8.8 4.7 1.7-9.9-7.2-7 10-1.4L145 36Z" fill="#FFE477" stroke="#FFF4B8" stroke-linejoin="round" stroke-width="2"/>
+  <g filter="url(#shadow)">
+    <path d="M95 127V82" fill="none" stroke="#168A68" stroke-linecap="round" stroke-width="10"/>
+    <path d="M94 90c-22 0-35-12-38-33 21 0 35 11 38 33Z" fill="url(#leaf)" stroke="#FFF" stroke-linejoin="round" stroke-width="5"/>
+    <path d="M98 80c1-21 15-34 36-35-1 21-14 34-36 35Z" fill="#71E5B4" stroke="#FFF" stroke-linejoin="round" stroke-width="5"/>
+    <path d="M58 119c0-20 16-35 38-35s38 15 38 35-15 35-38 35-38-15-38-35Z" fill="url(#leaf)" stroke="#FFF" stroke-linejoin="round" stroke-width="5"/>
+    <ellipse cx="83" cy="119" rx="3.5" ry="4.8" fill="#263454"/>
+    <ellipse cx="109" cy="119" rx="3.5" ry="4.8" fill="#263454"/>
+    <path d="M87 131c5 6 13 6 18 0" fill="none" stroke="#263454" stroke-linecap="round" stroke-width="3.5"/>
+    <ellipse cx="72" cy="128" rx="5" ry="3" fill="#FF91A7" opacity=".8"/>
+    <ellipse cx="120" cy="128" rx="5" ry="3" fill="#FF91A7" opacity=".8"/>
+  </g>
 </svg>

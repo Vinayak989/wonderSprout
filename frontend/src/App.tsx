@@ -737,7 +737,7 @@ export default function App() {
       <a className="skip-link" href="#main" hidden={page === 'game'}>{tr(language, 'Skip to games')}</a>
       <header className="site-header" hidden={page === 'game'}>
         <a className="brand" href="#top" aria-label={tr(language, 'WonderSprout home')}>
-          <span className="brand-mark" aria-hidden="true">✿</span>
+          <img className="brand-mark" src="/sprout-icon.svg" alt="" aria-hidden="true" />
           <span className="brand-name">wonder<span>sprout</span></span>
         </a>
         <nav className="main-nav" aria-label={tr(language, 'Main navigation')}>
@@ -924,7 +924,7 @@ export default function App() {
       </main>
 
       <footer className="site-footer section-wrap" hidden={page === 'game'}>
-        <a className="brand footer-brand" href="#top"><span className="brand-mark" aria-hidden="true">✿</span><span className="brand-name">wonder<span>sprout</span></span></a>
+        <a className="brand footer-brand" href="#top"><img className="brand-mark" src="/sprout-icon.svg" alt="" aria-hidden="true" /><span className="brand-name">wonder<span>sprout</span></span></a>
         <span>{tr(language, 'Play a little. Learn a lot.')} <span aria-hidden="true">✦</span></span>
         <a href="#top" className="back-top">{tr(language, 'Back to top')} ↑</a>
       </footer>
@@ -1900,7 +1900,7 @@ function WelcomePage({ language, age, onAge, onLanguage, onContinue }: { languag
   return <main className="welcome-page">
     <img className="welcome-world-art" src="/wonder-world-hero.png" alt="" aria-hidden="true" width="1672" height="1024" fetchPriority="high" />
     <a className="brand welcome-brand" href="/" aria-label="WonderSprout">
-      <span className="brand-mark" aria-hidden="true">✿</span><span className="brand-name">wonder<span>sprout</span></span>
+      <img className="brand-mark" src="/sprout-icon.svg" alt="" aria-hidden="true" /><span className="brand-name">wonder<span>sprout</span></span>
     </a>
     <section className="welcome-card">
       <div className="welcome-decor" aria-hidden="true"><span>🌈</span><span>⭐</span><span>🦊</span><span>🌼</span></div>

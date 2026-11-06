@@ -29,7 +29,7 @@ a { color: inherit; text-decoration: none; }
 .section-wrap { width: min(1160px, calc(100% - 56px)); margin-inline: auto; }
 .site-header { height: 82px; padding-inline: max(28px, calc((100vw - 1160px) / 2)); display: flex; align-items: center; justify-content: space-between; gap: 32px; border-bottom: 1px solid #f1eee8; background: #fffdf9; }
 .brand { display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0; }
-.brand-mark { display: grid; place-items: center; width: 39px; height: 39px; border-radius: 13px; background: #e2f3e8; color: #38916d; font-size: 26px; line-height: 1; transform: rotate(-8deg); }
+.brand-mark { display: block; width: 44px; height: 44px; flex: 0 0 auto; object-fit: contain; }
 .brand-name { color: var(--ink); font-family: 'Fredoka', 'Trebuchet MS', sans-serif; font-size: 24px; font-weight: 600; letter-spacing: -.7px; }
 .brand-name span { color: #52a27e; }
 .main-nav { display: flex; align-items: center; gap: clamp(20px, 3vw, 42px); margin-left: auto; }
@@ -217,7 +217,7 @@ a { color: inherit; text-decoration: none; }
 .grownup-copy p { max-width: 720px; margin: 5px 0 0; color: #818494; font-size: 12px; line-height: 1.55; }
 .grownup-sprout { font-size: 31px; }
 .site-footer { display: flex; align-items: center; justify-content: space-between; min-height: 83px; border-top: 1px solid #f0eee8; }
-.footer-brand .brand-mark { width: 31px; height: 31px; border-radius: 10px; font-size: 21px; }
+.footer-brand .brand-mark { width: 36px; height: 36px; }
 .footer-brand .brand-name { font-size: 19px; }
 .site-footer > span { color: #a1a3ad; font-size: 11px; }
 .site-footer > span span { color: #ecc24d; }
@@ -455,7 +455,7 @@ button.word-slot { border-style: solid; border-color: #d9c9f4; background: #f6f0
   .section-wrap { width: min(100% - 34px, 560px); }
   .site-header { height: 70px; padding-inline: 17px; gap: 12px; }
   .brand { gap: 7px; }
-  .brand-mark { width: 34px; height: 34px; font-size: 22px; }
+  .brand-mark { width: 40px; height: 40px; }
   .brand-name { font-size: 21px; }
   .main-nav { gap: 0; }
   .main-nav a { display: none; }
@@ -620,7 +620,7 @@ button.word-slot { border-style: solid; border-color: #d9c9f4; background: #f6f0
 
   .site-header { position: sticky; top: 0; z-index: 15; height: 62px; padding: 0 12px; gap: 7px; border: 0; background: #fbfaffed; box-shadow: 0 3px 18px #34304b0b; backdrop-filter: blur(16px); }
   .brand { gap: 7px; }
-  .brand-mark { width: 35px; height: 35px; border-radius: 13px; font-size: 22px; }
+  .brand-mark { width: 39px; height: 39px; }
   .brand-name { font-size: 20px; }
   .main-nav { display: flex; flex: 1; justify-content: flex-end; gap: 0; margin: 0; }
   .main-nav a { display: none; }
@@ -925,7 +925,6 @@ button.word-slot { border-style: solid; border-color: #d9c9f4; background: #f6f0
 body { background: #f8f7ff; }
 .section-wrap { width: min(1240px, calc(100% - 64px)); }
 .site-header { position: sticky; top: 0; z-index: 20; height: 76px; border-bottom-color: #ece8f5; background: #ffffffed; box-shadow: 0 5px 24px #332a5b0c; backdrop-filter: blur(18px); }
-.brand-mark { border-radius: 15px; background: linear-gradient(145deg, #c5f4dc, #a9e7e2); color: #187e70; box-shadow: 0 5px 12px #44b89125; }
 .brand-name { color: #30264f; }
 .brand-name span { color: #4cae84; }
 .main-nav a, .back-top { color: #655d80; }
@@ -1032,7 +1031,6 @@ body { background: #f8f7ff; }
   body { background: #f8f7ff; }
   .section-wrap { width: min(calc(100% - 24px), 560px); }
   .site-header { background: #ffffffed; box-shadow: 0 4px 18px #32255012; }
-  .brand-mark { background: linear-gradient(145deg, #c5f4dc, #a9e7e2); }
   .hero { display: flex; flex-direction: column; gap: 12px; margin-top: 11px; padding: 10px 10px 17px; border-color: #ffffff; border-radius: 27px; background: linear-gradient(145deg, #fff4d7, #f1eaff 62%, #e4f8ed); box-shadow: 0 12px 26px #55417c17; }
   .hero-visual { order: -1; width: 100%; min-height: clamp(168px, 47vw, 225px); height: clamp(168px, 47vw, 225px); margin: 0; border-width: 4px; border-radius: 21px; }
   .hero-art-image { object-position: 69% center; }
@@ -1095,7 +1093,12 @@ body { background: #f8f7ff; }
 .club-page button, .club-page select, .club-page input { font: inherit; }
 .club-topbar { position: sticky; top: 0; z-index: 20; display: flex; width: min(1240px, 100%); height: 66px; align-items: center; justify-content: space-between; gap: 12px; margin: 0 auto; border-bottom: 1px solid #e8e2f0; background: #f9f8ffed; backdrop-filter: blur(14px); }
 .club-back, .club-secondary { display: inline-flex; min-height: 39px; align-items: center; justify-content: center; gap: 7px; padding: 8px 13px; border: 1px solid #e2d9f0; border-radius: 13px; background: white; color: #6e50ab; cursor: pointer; font-size: 11px; font-weight: 850; }
-.club-brand { color: #30264f; font-family: 'Fredoka', sans-serif; font-size: 17px; font-weight: 700; }
+.club-brand { display: inline-flex; align-items: center; gap: 7px; color: #30264f; font-family: 'Fredoka', sans-serif; font-size: 17px; font-weight: 700; white-space: nowrap; }
+.club-brand-mark { display: block; width: 34px; height: 34px; flex: 0 0 auto; object-fit: contain; }
+@media (max-width: 480px) {
+  .club-brand { gap: 4px; }
+  .club-brand-mark { width: 26px; height: 26px; }
+}
 .club-connection { padding: 7px 10px; border: 1px solid #d7eadf; border-radius: 999px; background: #f0faf3; color: #40815e; font-size: 9px; font-weight: 850; }
 .club-connection.is-offline { border-color: #ecdcb5; background: #fff8e5; color: #92712c; }
 .club-offline-note { width: min(1240px, 100%); margin: 9px auto 0; padding: 10px 13px; border-radius: 12px; background: #fff4df; color: #735d37; font-size: 11px; font-weight: 700; }
@@ -1226,7 +1229,6 @@ body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after 
 }
 body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%), radial-gradient(ellipse at 92% 60%, #ffe9f2 0, transparent 26%), #f2f0ff; }
 .site-header { height: 78px; border: 0; border-bottom: 4px solid var(--arcade-gold); background: linear-gradient(100deg, #20133e, #38205f 56%, #49317d); box-shadow: 0 7px 0 #291b4a, 0 11px 25px #29194425; }
-.brand-mark { border: 2px solid #ffffffb5; background: linear-gradient(145deg, #7de3bd, #ffd45a); color: #38205f; box-shadow: 0 4px 0 #3b2760; }
 .brand-name { color: white; text-shadow: 0 2px #271342; }
 .brand-name span { color: #83ecc0; }
 .main-nav a, .back-top { color: #e8ddff; }

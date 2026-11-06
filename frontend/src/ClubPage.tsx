@@ -253,7 +253,7 @@ export default function ClubPage({ age, language, games, progress, data, onDataC
 
   return (
     <main className="club-page">
-      <header className="club-topbar"><button className="club-back" type="button" onClick={onBack}>← {t(language, 'Back to games')}</button><span className="club-brand">🌿 WonderSprout</span><span className={`club-connection ${online ? 'is-online' : 'is-offline'}`}>{online ? `☁ ${t(language, 'Online (offline ready)')}` : `● ${localizedText(language, 'Offline', 'ऑफ़लाइन')}`}</span></header>
+      <header className="club-topbar"><button className="club-back" type="button" onClick={onBack}>← {t(language, 'Back to games')}</button><span className="club-brand"><img className="club-brand-mark" src="/sprout-icon.svg" alt="" aria-hidden="true" />WonderSprout</span><span className={`club-connection ${online ? 'is-online' : 'is-offline'}`}>{online ? `☁ ${t(language, 'Online (offline ready)')}` : `● ${localizedText(language, 'Offline', 'ऑफ़लाइन')}`}</span></header>
       {!online && <div className="club-offline-note">{t(language, 'Some games need an internet connection the first time you open them.')}</div>}
 
       <section className="club-hero">
