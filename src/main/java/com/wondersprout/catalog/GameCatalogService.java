@@ -118,7 +118,47 @@ public class GameCatalogService {
             game("wonder-kart-rally", "Wonder Kart Rally", "Sports & Movement", "racing",
                     "Race through colorful worlds, steer around puddles, and collect stars. Practice planning and counting.", "🏎️", "sports", 8),
             game("sparkle-target-blaster", "Sparkle Target Blaster", "Adventure & Treasure Hunt", "shooting",
-                    "Aim a friendly sparkle launcher at stars and shape targets. No enemies or combat.", "✨", "space", 8)
+                    "Aim a friendly sparkle launcher at stars and shape targets. No enemies or combat.", "✨", "space", 8),
+            game("dino-fossil-dig", "Dino Fossil Dig", "Animals & Nature", "scavenger",
+                    "Search a fossil dig site for clues and uncover prehistoric animals.", "🦴", "wildlife", 4),
+            game("design-a-pet", "Silly Creature Creator", "Art & Creativity", "monster",
+                    "Create a silly creature friend by choosing its colors, eyes, smile, and special features.", "🐾", "art", 4),
+            game("mini-golf-math", "Mini Golf Math", "Math magic", "quiz",
+                    "Solve a quick number challenge to line up each mini-golf putt.", "⛳", "sports", 4),
+            game("build-a-treehouse", "Build-a-Treehouse", "Art & Creativity", "creative",
+                    "Draw and decorate a treehouse for your favorite forest friends.", "🛖", "art", 5),
+            game("underwater-treasure-hunt", "Underwater Treasure Hunt", "Animals & Nature", "adventure",
+                    "Explore ocean habitats, follow clues, and find a sunken treasure.", "🐚", "ocean", 5),
+            game("garden-grower", "Garden Grower", "Life Skills & Good Habits", "sequence",
+                    "Put the steps in order and help a tiny garden grow.", "🌱", "life", 4),
+            game("robot-dance-party", "Robot Dance Party", "Music & Rhythm", "rhythm",
+                    "Watch a robot beat and tap the rhythm back to keep the dance going.", "🤖", "music", 4),
+            game("obstacle-dash", "Obstacle Dash", "Sports & Movement", "racing",
+                    "Steer through a cheerful course, dodge puddles, and collect stars.", "🏃", "sports", 5),
+            game("pizza-chef-shop", "Pizza Chef Shop", "Money & Financial Literacy", "shop",
+                    "Save coins toward a pretend pizza budget by adding coin values to reach the exact goal.", "🍕", "money", 4, AGE_6_12),
+            game("bridge-builder", "Bridge Builder", "Puzzle & Logic", "puzzle",
+                    "Solve simple pattern and planning clues to help travelers cross a river.", "🌉", "puzzle", 5, AGE_6_12),
+            game("color-mixing-lab", "Color Mixing Lab", "Science wonders", "quiz",
+                    "Answer playful color clues and discover what happens when paints mix.", "🎨", "mint", 4),
+            game("birdsong-mystery", "Birdsong Mystery", "Animals & Nature", "sound",
+                    "Listen to a nature sound clue and guess which bird is nearby.", "🐦", "wildlife", 3),
+            game("recycling-rescue", "Recycling Rescue", "Life Skills & Good Habits", "sort",
+                    "Sort everyday items into the right places to help clean up a park.", "♻️", "life", 4),
+            game("storybook-theater", "Storybook Theater", "Interactive Stories & Reading", "readaloud",
+                    "Listen to a short story, then answer a question about what happened.", "🎭", "story", 4),
+            game("moonbase-maze", "Moonbase Maze", "Adventure & Treasure Hunt", "maze3d",
+                    "Explore a 3D maze, collect glowing crystals, and find the exit portal.", "🌙", "lilac", 8),
+            game("arctic-habitat-match", "Arctic Habitat Match", "Animals & Nature", "match",
+                    "Match Arctic animals with the places and features that help them thrive.", "🧊", "ocean", 4),
+            game("clockwork-castle", "Clockwork Castle", "Time & Calendar", "clock",
+                    "Set the castle clocks to the time shown in each friendly challenge.", "🕰️", "puzzle", 4, AGE_6_12),
+            game("coin-collector-shop", "Coin Collector Shop", "Money & Financial Literacy", "shop",
+                    "Save pretend coins toward a goal by adding coin values until you reach the target.", "🪙", "money", 4, AGE_6_12),
+            game("balance-the-forest", "Balance the Forest", "Sports & Movement", "balance",
+                    "Use gentle taps to balance a friendly seesaw in a forest setting.", "🌳", "wildlife", 4),
+            game("pixel-creature-studio", "Pixel Creature Studio", "Art & Creativity", "pixel",
+                    "Paint a tiny creature one bright pixel at a time.", "🟪", "art", 4)
     );
 
     private final Map<String, Map<String, List<Question>>> questionBank = buildQuestionBank();
@@ -287,6 +327,68 @@ public class GameCatalogService {
 
     private List<Question> generatedQuestions(Game game, String ageBand) {
         String prefix = game.id() + "-" + ageBand + "-";
+        if (game.id().equals("mini-golf-math")) {
+            return switch (ageBand) {
+                case "3-5" -> List.of(
+                        q(prefix + "1", "Your ball is beside 2 flags. One more flag is ahead. How many flags?", "Count the flags together.", "2", "3", "4", "3", "Two flags and one more make three."),
+                        q(prefix + "2", "Which shape has 3 sides?", "Picture the shape on the putting green.", "Circle", "Triangle", "Square", "Triangle", "A triangle has three sides."),
+                        q(prefix + "3", "Count the golf balls: 🟡 🟡 🟡", "Point to each ball once.", "2", "3", "5", "3", "There are three golf balls."),
+                        q(prefix + "4", "You made 1 putt and then 1 more. How many?", "Count one, then one more.", "1", "2", "3", "2", "One plus one equals two."),
+                        q(prefix + "5", "Which number comes after 4?", "Count one step forward.", "3", "5", "6", "5", "Five comes after four."));
+                case "6-8" -> List.of(
+                        q(prefix + "1", "A course has 8 holes. You finish 3. How many are left?", "Take three away from eight.", "4", "5", "6", "5", "Eight minus three is five."),
+                        q(prefix + "2", "Three teams each have 2 golf balls. How many balls?", "Add 2 + 2 + 2.", "5", "6", "8", "6", "Three groups of two make six."),
+                        q(prefix + "3", "What comes next: 5, 10, 15, __?", "The pattern jumps by five.", "18", "20", "25", "20", "Adding five gives twenty."),
+                        q(prefix + "4", "A score drops from 12 to 9. How many fewer strokes?", "Find the difference.", "2", "3", "4", "3", "Twelve minus nine is three."),
+                        q(prefix + "5", "Which fraction means one half?", "Two equal pieces make a whole.", "1/2", "1/3", "1/4", "1/2", "One of two equal parts is one half."));
+                default -> List.of(
+                        q(prefix + "1", "A 24-meter putt is 3/4 complete. How many meters has the ball traveled?", "Find one quarter, then take three quarters.", "16 m", "18 m", "20 m", "18 m", "One quarter of 24 is 6, and three quarters is 18."),
+                        q(prefix + "2", "A course is 2.4 km long. How many meters is that?", "One kilometer is one thousand meters.", "240 m", "2,040 m", "2,400 m", "2,400 m", "2.4 kilometers equals 2,400 meters."),
+                        q(prefix + "3", "A score improves from 38 strokes to 31. By how many strokes?", "Subtract the new score from the old one.", "6", "7", "8", "7", "Thirty-eight minus thirty-one is seven."),
+                        q(prefix + "4", "A circular green has a diameter of 10 m. What is its radius?", "The radius is half the diameter.", "4 m", "5 m", "10 m", "5 m", "Half of ten meters is five meters."),
+                        q(prefix + "5", "A 15% discount on a 200-coin club pass saves how many coins?", "Find fifteen out of every one hundred.", "20", "30", "35", "30", "Ten percent is 20 and five percent is 10, so the saving is 30 coins."));
+            };
+        }
+        if (game.id().equals("color-mixing-lab")) {
+            return List.of(
+                    q(prefix + "1", "Which two paint colors mix to make green?", "Think of the colors in a leafy garden.", "Blue and yellow", "Red and blue", "Red and yellow", "Blue and yellow", "Blue and yellow paint can mix to make green."),
+                    q(prefix + "2", "What color can red and yellow paint make?", "Picture a bright citrus fruit.", "Purple", "Orange", "Green", "Orange", "Red and yellow paint mix to make orange."),
+                    q(prefix + "3", "Which pair can make purple paint?", "Mix a warm color with a cool color.", "Yellow and green", "Red and blue", "Blue and green", "Red and blue", "Red and blue paint can mix to make purple."),
+                    q(prefix + "4", "What do artists call a very light color mixed with white?", "It looks paler than the original color.", "A tint", "A shadow", "A pattern", "A tint", "Adding white makes a lighter tint of a color."),
+                    q(prefix + "5", "If you add more yellow to green paint, what might happen?", "The mixture shifts toward the color you add.", "It may look more yellow", "It becomes black", "It turns into water", "It may look more yellow", "Adding more yellow shifts the mixture toward yellow."));
+        }
+        if (game.id().equals("bridge-builder")) {
+            return List.of(
+                    q(prefix + "1", "A bridge pattern is plank, rope, plank, rope, __?", "The two pieces keep taking turns.", "Plank", "Rope", "Stone", "Plank", "The repeating pattern starts again with a plank."),
+                    q(prefix + "2", "A bridge needs 4 planks on each side. How many planks altogether?", "Add the two equal groups.", "6", "8", "10", "8", "Four plus four equals eight planks."),
+                    q(prefix + "3", "Which shape is often used in strong bridge frames?", "It has three straight sides.", "Triangle", "Circle", "Oval", "Triangle", "Triangles help make many bridge frames sturdy."),
+                    q(prefix + "4", "The river is 12 meters wide. A plank covers 3 meters. How many planks span it?", "Divide the full length into equal pieces.", "3", "4", "5", "4", "Twelve divided by three equals four planks."),
+                    q(prefix + "5", "If a bridge has 9 supports and 2 are repaired, how many still need repair?", "Take the repaired supports away from the total.", "6", "7", "8", "7", "Nine minus two leaves seven supports."));
+        }
+        if (game.id().equals("dino-fossil-dig")) {
+            return List.of(
+                    q(prefix + "1", "🦴 Find the dinosaur with three horns on its head!", "Its name means three-horned face.", "🦖 Triceratops", "🦕 Stegosaurus", "🦖 Tyrannosaurus", "🦖 Triceratops", "Triceratops had three horns on its frill and face."),
+                    q(prefix + "2", "🦴 Find the long-necked plant eater!", "It could reach high leaves.", "🦕 Brachiosaurus", "🦖 Velociraptor", "🦕 Ankylosaurus", "🦕 Brachiosaurus", "Brachiosaurus had a long neck and ate plants."),
+                    q(prefix + "3", "🦖 Which dinosaur had tiny arms and a huge bite?", "Its name is often shortened to T. rex.", "🦖 Tyrannosaurus rex", "🦕 Apatosaurus", "🦖 Triceratops", "🦖 Tyrannosaurus rex", "Tyrannosaurus rex had a powerful bite and short arms."),
+                    q(prefix + "4", "🪨 What can a fossil help us learn about?", "Fossils are clues from long ago.", "🦴 Past life", "🌦️ Tomorrow's weather", "🎵 A new song", "🦴 Past life", "Fossils preserve evidence about ancient life."),
+                    q(prefix + "5", "🔎 What is a paleontologist's job?", "They study fossils and ancient life.", "🔎 Study fossils", "🚤 Build boats", "🪧 Paint road signs", "🔎 Study fossils", "Paleontologists study fossils to learn about ancient life."));
+        }
+        if (game.id().equals("underwater-treasure-hunt")) {
+            return List.of(
+                    q(prefix + "1", "Which ocean animal breathes air at the surface?", "It is a mammal, not a fish.", "🐬 Dolphin", "🐟 Tuna", "🦀 Crab", "🐬 Dolphin", "Dolphins are mammals and come to the surface to breathe air."),
+                    q(prefix + "2", "Where do coral reefs grow?", "Think of a warm, salty habitat.", "🌊 Ocean", "🏜️ Desert", "🌲 Forest", "🌊 Ocean", "Coral reefs are ocean habitats, often in warm, shallow water."),
+                    q(prefix + "3", "How many hearts does an octopus have?", "It has more than one heart.", "1", "2", "3", "3", "An octopus has three hearts."),
+                    q(prefix + "4", "What helps a sea turtle hatchling swim?", "Look at its wide front limbs.", "Flippers", "Feathers", "Paws", "Flippers", "Sea turtles use flippers to swim through the water."),
+                    q(prefix + "5", "Which choice helps keep the ocean safer for wildlife?", "Less litter means fewer hazards in the water.", "Keep rubbish out of the water", "Leave plastic on the beach", "Pour paint into a stream", "Keep rubbish out of the water", "Keeping litter out of waterways helps protect ocean animals."));
+        }
+        if (game.id().equals("arctic-habitat-match")) {
+            return List.of(
+                    q(prefix + "1", "🧊 Which habitat best fits a polar bear?", "Polar bears hunt near the Arctic Ocean.", "🧊 Sea ice", "🌴 Tropical beach", "🏜️ Desert", "🧊 Sea ice", "Polar bears depend on sea ice for hunting."),
+                    q(prefix + "2", "🦊 What helps an Arctic fox stay warm?", "Think of its winter coat.", "🧥 Thick fur", "🪽 Wet wings", "🌿 Thin leaves", "🧥 Thick fur", "An Arctic fox's thick coat helps it stay warm."),
+                    q(prefix + "3", "🦭 Which animal lives in Arctic waters?", "It swims and rests on ice.", "🦭 Seal", "🦜 Parrot", "🦎 Lizard", "🦭 Seal", "Seals live in Arctic waters and use sea ice to rest."),
+                    q(prefix + "4", "🦉 Which bird can live in the Arctic?", "It has white feathers and hunts small animals.", "🦉 Snowy owl", "🦩 Flamingo", "🦚 Peacock", "🦉 Snowy owl", "Snowy owls are adapted to cold Arctic environments."),
+                    q(prefix + "5", "❄️ Why can white winter fur help some Arctic animals?", "It can help them blend into snowy surroundings.", "Camouflage", "Make flowers grow", "Help them breathe underwater", "Camouflage", "White fur can help animals blend into snowy habitats."));
+        }
         if (game.id().equals("guess-the-emotion")) {
             return List.of(
                     q(prefix + "1", "A friend dropped their snack and looks teary. What might they feel?", "Notice the tears and drooping face.", "Sad", "Excited", "Sleepy", "Sad", "People can feel sad when something disappointing happens."),

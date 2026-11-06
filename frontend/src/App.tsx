@@ -1625,6 +1625,8 @@ function SequenceGame({ title, age, language, onFinish }: { title: string; age: 
       ? ['🌞 Wake up', '🪥 Brush teeth', '👕 Get dressed', '🥣 Eat breakfast']
       : title === 'Follow the Movement'
         ? ['🙌 Clap', '🦶 Stomp', '👏 Clap twice', '🌀 Turn around']
+        : title === 'Garden Grower'
+          ? ['🌰 Plant a seed', '💧 Water it', '🌱 A sprout grows', '🌼 A flower blooms']
           : title === 'Arrange Story Pictures'
             ? ['🌱 Plant a seed', '💧 Water it', '🌿 A sprout grows', '🌼 A flower blooms']
             : ['🎈', '⭐', '🍎', '🐸'];
@@ -1774,9 +1776,12 @@ function RhythmGame({ language, onFinish }: { age: AgeBand; language: Language; 
 
 function SoundGuessGame({ title, language, onFinish }: { title: string; age: AgeBand; language: Language; onFinish: () => void }) {
   const instruments = title === 'Guess the Instrument';
+  const birds = title === 'Birdsong Mystery';
   const rounds = instruments
     ? [{ answer: 'Flute', icon: '🪈', sound: 660, choices: ['Flute', 'Drum', 'Guitar'], fact: 'A flute makes music when air moves across its opening.' }, { answer: 'Drum', icon: '🥁', sound: 220, choices: ['Piano', 'Drum', 'Flute'], fact: 'A drum skin vibrates when you tap it.' }, { answer: 'Guitar', icon: '🎸', sound: 392, choices: ['Guitar', 'Trumpet', 'Drum'], fact: 'A guitar uses vibrating strings to make sound.' }]
-    : [{ answer: 'Cow', icon: '🐮', sound: 'Moo!', choices: ['Cow', 'Duck', 'Sheep'], fact: 'Cows make a lowing sound, often written as “moo”.' }, { answer: 'Duck', icon: '🦆', sound: 'Quack!', choices: ['Horse', 'Duck', 'Dog'], fact: 'Ducks make a quacking sound.' }, { answer: 'Sheep', icon: '🐑', sound: 'Baa!', choices: ['Sheep', 'Cat', 'Cow'], fact: 'Sheep make a bleating sound, often written as “baa”.' }];
+    : birds
+      ? [{ answer: 'Robin', icon: '🐦', sound: 'Tweet-tweet!', choices: ['Robin', 'Owl', 'Duck'], fact: 'Robins sing bright, clear songs.' }, { answer: 'Owl', icon: '🦉', sound: 'Hoo-hoo!', choices: ['Crow', 'Owl', 'Sparrow'], fact: 'Many owls call with a soft hoot.' }, { answer: 'Duck', icon: '🦆', sound: 'Quack!', choices: ['Duck', 'Robin', 'Owl'], fact: 'Ducks make a quacking call.' }]
+      : [{ answer: 'Cow', icon: '🐮', sound: 'Moo!', choices: ['Cow', 'Duck', 'Sheep'], fact: 'Cows make a lowing sound, often written as “moo”.' }, { answer: 'Duck', icon: '🦆', sound: 'Quack!', choices: ['Horse', 'Duck', 'Dog'], fact: 'Ducks make a quacking sound.' }, { answer: 'Sheep', icon: '🐑', sound: 'Baa!', choices: ['Sheep', 'Cat', 'Cow'], fact: 'Sheep make a bleating sound, often written as “baa”.' }];
   const [round, setRound] = useState(0);
   const [chosen, setChosen] = useState('');
   const [message, setMessage] = useState(tr(language, 'Tap the speaker, listen, and guess!'));
@@ -1791,7 +1796,7 @@ function SoundGuessGame({ title, language, onFinish }: { title: string; age: Age
     else setMessage(tr(language, 'Not quite. Listen again and try another one!'));
   }
   function next() { if (round === rounds.length - 1) onFinish(); else { setRound((value) => value + 1); setChosen(''); setMessage(tr(language, 'Tap the speaker, listen, and guess!')); } }
-  return <div className="activity-card sound-activity"><div className="activity-heading"><span aria-hidden="true">{instruments ? '🎼' : '🐾'}</span><div><strong>{tr(language, instruments ? 'Which instrument do you hear?' : 'Who made that sound?')}</strong><small>{language === 'hi' ? `${rounds.length} में से दौर ${round + 1} · संकेत सुनो।` : language === 'mr' ? `${rounds.length} पैकी फेरी ${round + 1} · आवाज ओळख.` : `Round ${round + 1} of ${rounds.length} · listen for the clue.`}</small></div></div>
+  return <div className="activity-card sound-activity"><div className="activity-heading"><span aria-hidden="true">{instruments ? '🎼' : birds ? '🐦' : '🐾'}</span><div><strong>{tr(language, instruments ? 'Which instrument do you hear?' : birds ? 'Which bird do you hear?' : 'Who made that sound?')}</strong><small>{language === 'hi' ? `${rounds.length} में से दौर ${round + 1} · संकेत सुनो।` : language === 'mr' ? `${rounds.length} पैकी फेरी ${round + 1} · आवाज ओळख.` : `Round ${round + 1} of ${rounds.length} · listen for the clue.`}</small></div></div>
     <button className="sound-button" type="button" onClick={playClue} aria-label={tr(language, 'Play sound clue')}>🔊<span>{tr(language, 'Play sound')}</span></button>
     <div className="activity-choices">{clue.choices.map((choice) => <button key={choice} type="button" className={chosen === choice ? choice === clue.answer ? 'choice-correct' : 'choice-wrong' : ''} onClick={() => choose(choice)}>{tr(language, choice)}</button>)}</div>
     <p className="activity-message" role="status">{message}</p>{chosen === clue.answer && <button className="button button-primary" type="button" onClick={next}>{tr(language, round === rounds.length - 1 ? 'Finish game ✓' : 'Next sound →')}</button>}
@@ -1801,12 +1806,22 @@ function SoundGuessGame({ title, language, onFinish }: { title: string; age: Age
 function SortGame({ title, language, onFinish }: { title: string; language: Language; onFinish: () => void }) {
   const isNeeds = title === 'Needs vs Wants';
   const isRoom = title === 'Clean Your Room';
+  const isRecycling = title === 'Recycling Rescue';
   const tasks = isNeeds
     ? [{ icon: '💧', name: 'Clean water', group: 'Need' }, { icon: '🧸', name: 'Extra toy', group: 'Want' }, { icon: '🥣', name: 'Healthy food', group: 'Need' }, { icon: '🎮', name: 'New game', group: 'Want' }, { icon: '🏠', name: 'Safe home', group: 'Need' }]
     : isRoom
       ? [{ icon: '🧸', name: 'Teddy bear', group: 'Toy box' }, { icon: '📚', name: 'Story books', group: 'Bookshelf' }, { icon: '👕', name: 'Clean shirt', group: 'Drawer' }, { icon: '🚗', name: 'Toy car', group: 'Toy box' }, { icon: '📕', name: 'Picture book', group: 'Bookshelf' }]
-      : [{ icon: '🍎', name: 'Apple', group: 'Everyday food' }, { icon: '🍬', name: 'Candy', group: 'Sometimes food' }, { icon: '🥕', name: 'Carrot', group: 'Everyday food' }, { icon: '🍪', name: 'Cookie', group: 'Sometimes food' }, { icon: '🍌', name: 'Banana', group: 'Everyday food' }];
-  const groups = isNeeds ? ['Need', 'Want'] : isRoom ? ['Toy box', 'Bookshelf', 'Drawer'] : ['Everyday food', 'Sometimes food'];
+      : isRecycling
+        ? [{ icon: '📰', name: 'Newspaper', group: 'Paper' }, { icon: '🧴', name: 'Plastic bottle', group: 'Plastic' }, { icon: '🍌', name: 'Banana peel', group: 'Compost' }, { icon: '📦', name: 'Cardboard box', group: 'Paper' }, { icon: '🥛', name: 'Plastic cup', group: 'Plastic' }]
+        : [{ icon: '🍎', name: 'Apple', group: 'Everyday food' }, { icon: '🍬', name: 'Candy', group: 'Sometimes food' }, { icon: '🥕', name: 'Carrot', group: 'Everyday food' }, { icon: '🍪', name: 'Cookie', group: 'Sometimes food' }, { icon: '🍌', name: 'Banana', group: 'Everyday food' }];
+  const groups = isNeeds ? ['Need', 'Want'] : isRoom ? ['Toy box', 'Bookshelf', 'Drawer'] : isRecycling ? ['Paper', 'Plastic', 'Compost'] : ['Everyday food', 'Sometimes food'];
+  const recyclingCopy: Record<string, [string, string, string]> = {
+    Newspaper: ['अख़बार', 'वर्तमानपत्र', 'Newspaper'], 'Plastic bottle': ['प्लास्टिक की बोतल', 'प्लास्टिकची बाटली', 'Plastic bottle'],
+    'Banana peel': ['केले का छिलका', 'केळ्याचे साल', 'Banana peel'], 'Cardboard box': ['गत्ते का डिब्बा', 'पुठ्ठ्याचा खोका', 'Cardboard box'],
+    'Plastic cup': ['प्लास्टिक का कप', 'प्लास्टिकचा कप', 'Plastic cup'], Paper: ['कागज़', 'कागद', 'Paper'],
+    Plastic: ['प्लास्टिक', 'प्लास्टिक', 'Plastic'], Compost: ['खाद', 'कंपोस्ट', 'Compost'],
+  };
+  const label = (value: string) => isRecycling ? recyclingCopy[value]?.[language === 'hi' ? 0 : language === 'mr' ? 1 : 2] ?? value : tr(language, value);
   const [index, setIndex] = useState(0);
   const [message, setMessage] = useState(tr(language, 'Choose a picture, then pick the right group.'));
   const [selected, setSelected] = useState('');
@@ -1815,9 +1830,9 @@ function SortGame({ title, language, onFinish }: { title: string; language: Lang
     if (index === tasks.length - 1) onFinish();
     else { setIndex((value) => value + 1); setSelected(''); setMessage(tr(language, 'Nice sorting! Choose the next picture.')); }
   }
-  return <div className="activity-card sort-activity"><div className="activity-heading"><span aria-hidden="true">🧺</span><div><strong>{tr(language, isNeeds ? 'Need or want?' : isRoom ? 'Tidy-up sort!' : 'Everyday or sometimes?')}</strong><small>{language === 'hi' ? `${tasks.length} में से चित्र ${index + 1}` : language === 'mr' ? `${tasks.length} पैकी चित्र ${index + 1}` : `Picture ${index + 1} of ${tasks.length}`}</small></div></div>
-    <button type="button" className={`sort-item ${selected ? 'sort-selected' : ''}`} onClick={() => setSelected(tasks[index].name)}><span>{tasks[index].icon}</span><strong>{tr(language, tasks[index].name)}</strong><small>{tr(language, 'Tap to pick up')}</small></button>
-    <p className="activity-message" role="status">{message}</p><div className="sort-bins">{groups.map((group) => <button type="button" key={group} onClick={() => selected && place(group)} disabled={!selected}>{group === 'Need' ? '💧 ' : group === 'Want' ? '🎁 ' : '📦 '}{tr(language, group)}</button>)}</div>
+  return <div className="activity-card sort-activity"><div className="activity-heading"><span aria-hidden="true">🧺</span><div><strong>{isRecycling ? language === 'hi' ? 'रीसाइक्लिंग के लिए छाँटो!' : language === 'mr' ? 'पुनर्वापरासाठी वस्तू लावा!' : 'Sort it for recycling!' : tr(language, isNeeds ? 'Need or want?' : isRoom ? 'Tidy-up sort!' : 'Everyday or sometimes?')}</strong><small>{language === 'hi' ? `${tasks.length} में से चित्र ${index + 1}` : language === 'mr' ? `${tasks.length} पैकी चित्र ${index + 1}` : `Picture ${index + 1} of ${tasks.length}`}</small></div></div>
+    <button type="button" className={`sort-item ${selected ? 'sort-selected' : ''}`} onClick={() => setSelected(tasks[index].name)}><span>{tasks[index].icon}</span><strong>{label(tasks[index].name)}</strong><small>{tr(language, 'Tap to pick up')}</small></button>
+    <p className="activity-message" role="status">{message}</p><div className="sort-bins">{groups.map((group) => <button type="button" key={group} onClick={() => selected && place(group)} disabled={!selected}>{group === 'Need' ? '💧 ' : group === 'Want' ? '🎁 ' : isRecycling && group === 'Paper' ? '📄 ' : isRecycling && group === 'Plastic' ? '🧴 ' : isRecycling && group === 'Compost' ? '🍂 ' : '📦 '}{label(group)}</button>)}</div>
   </div>;
 }
 
