@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
-import { hindiQuestionRound, localizedAgeCopy, localizedGame, localizedLesson, localizedPair, localizedQuestion, localizedSubject, localizedText, marathiQuestionRound, tr, type Language } from './i18n';
+import { hindiQuestionRound, localizedAgeCopy, localizedGame, localizedLesson, localizedQuestion, localizedSubject, localizedText, marathiQuestionRound, tr, type Language } from './i18n';
 import ClubPage, { type ClubGame } from './ClubPage';
 import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readClubData, readParentPreferences, type ClubData, type GalleryArtwork, type GamePerformance, type ParentPreferences } from './club';
 
@@ -114,7 +114,6 @@ const ageBands: { id: AgeBand; name: string; label: string; icon: string }[] = [
 ];
 
 const categories: { id: Subject; label: string; icon: string }[] = [
-  { id: 'all', label: 'All games', icon: '✨' },
   { id: 'Math magic', label: 'Math', icon: '🔢' },
   { id: 'Word adventures', label: 'Words', icon: '📚' },
   { id: 'Science wonders', label: 'Science', icon: '🔭' },
@@ -135,13 +134,6 @@ const categories: { id: Subject; label: string; icon: string }[] = [
   { id: 'Interactive Stories & Reading', label: 'Interactive Stories & Reading', icon: '📖' },
 ];
 
-const portalCards: { subject: Subject; icon: string; className: string; description: [string, string] }[] = [
-  { subject: 'Adventure & Treasure Hunt', icon: '🧭', className: 'portal-adventure', description: ['Follow the map. Find the treasure.', 'नक्शे पर चलो और खज़ाना खोजो।'] },
-  { subject: 'Memory Games', icon: '🃏', className: 'portal-memory', description: ['Flip, match, and remember.', 'पलटो, जोड़ियाँ मिलाओ और याद रखो।'] },
-  { subject: 'Art & Creativity', icon: '🎨', className: 'portal-art', description: ['Make something wonderfully yours.', 'अपनी प्यारी कलाकारी बनाओ।'] },
-  { subject: 'Science wonders', icon: '🚀', className: 'portal-science', description: ['Explore nature and outer space.', 'प्रकृति और अंतरिक्ष की सैर करो।'] },
-];
-
 const progressKey = 'wonder-sprout-progress-v1';
 const questionHistoryKey = 'wonder-sprout-question-history-v1';
 const preferenceKey = 'wonder-sprout-preferences-v1';
@@ -156,6 +148,12 @@ function subjectFromPath(path: string): Subject {
   let slug = match[1];
   try { slug = decodeURIComponent(slug); } catch { /* Keep the route segment as-is. */ }
   return categories.find((category) => category.id !== 'all' && categorySlug(category.id) === slug)?.id ?? 'all';
+}
+
+function cataloguePageFromPath(path: string) {
+  const query = path.split('?')[1]?.split('#')[0] ?? '';
+  const page = Number(new URLSearchParams(query).get('page'));
+  return Number.isInteger(page) && page > 0 ? page : 1;
 }
 
 function readPreferences(): { age: AgeBand; language: Language } | null {
@@ -290,7 +288,7 @@ export default function App() {
   const [gamesError, setGamesError] = useState('');
   const [age, setAge] = useState<AgeBand>(() => readPreferences()?.age ?? '6-8');
   const [subject, setSubject] = useState<Subject>(() => subjectFromPath(window.location.pathname));
-  const [showMoreGames, setShowMoreGames] = useState(false);
+  const [cataloguePage, setCataloguePage] = useState(() => cataloguePageFromPath(`${window.location.pathname}${window.location.search}`));
   const [progress, setProgress] = useState<Progress>(readProgress);
   const [clubData, setClubData] = useState<ClubData>(readClubData);
   const [parentPreferences, setParentPreferences] = useState<ParentPreferences>(readParentPreferences);
@@ -321,7 +319,7 @@ export default function App() {
     setPage(nextPage);
     if (nextPage === 'games') {
       setSubject(subjectFromPath(path));
-      setShowMoreGames(false);
+      setCataloguePage(cataloguePageFromPath(path));
     }
   }
 
@@ -333,11 +331,21 @@ export default function App() {
     navigate('/games');
   }
 
+  function openCataloguePage(nextPage: number) {
+    const query = nextPage > 1 ? `?page=${nextPage}` : '';
+    navigate(`/games/category/${categorySlug(subject)}${query}`);
+    window.requestAnimationFrame(() => document.getElementById('adventures')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
   useEffect(() => {
     const onPopState = () => {
       const nextPage = pageFromPath(window.location.pathname);
       setPage(nextPage);
-      if (nextPage === 'games') setSubject(subjectFromPath(window.location.pathname));
+      if (nextPage === 'games') {
+        const path = `${window.location.pathname}${window.location.search}`;
+        setSubject(subjectFromPath(path));
+        setCataloguePage(cataloguePageFromPath(path));
+      }
       if (nextPage !== 'game') setActiveGame(null);
     };
     window.addEventListener('popstate', onPopState);
@@ -422,7 +430,15 @@ export default function App() {
   }, [activeGame]);
 
   const filteredGames = games.filter((game) => (subject === 'all' || game.subject === subject) && game.ageBands.includes(age));
-  const visibleGames = showMoreGames ? filteredGames : filteredGames.slice(0, 12);
+  const gamesPerPage = 12;
+  const cataloguePageCount = Math.max(1, Math.ceil(filteredGames.length / gamesPerPage));
+  const currentCataloguePage = Math.min(cataloguePage, cataloguePageCount);
+  const visibleGames = filteredGames.slice((currentCataloguePage - 1) * gamesPerPage, currentCataloguePage * gamesPerPage);
+  const cataloguePageLabel = language === 'hi'
+    ? `पृष्ठ ${currentCataloguePage} / ${cataloguePageCount}`
+    : language === 'mr'
+      ? `पान ${currentCataloguePage} / ${cataloguePageCount}`
+      : `Page ${currentCataloguePage} of ${cataloguePageCount}`;
   const rawCurrentQuestion = questions[questionIndex];
   const currentQuestion = rawCurrentQuestion && activeGame
     ? localizedQuestion(language, activeGame.subject, activeGame.id, rawCurrentQuestion)
@@ -523,7 +539,7 @@ export default function App() {
 
   async function startGame(game: Game, openRoute = true) {
     if (openRoute) {
-      if (page !== 'game') cataloguePath.current = window.location.pathname;
+      if (page !== 'game') cataloguePath.current = `${window.location.pathname}${window.location.search}`;
       navigate(`/games/${game.id}`);
     }
     setActiveGame(game);
@@ -736,12 +752,12 @@ export default function App() {
     <>
       <a className="skip-link" href="#main" hidden={page === 'game'}>{tr(language, 'Skip to games')}</a>
       <header className="site-header" hidden={page === 'game'}>
-        <a className="brand" href="#top" aria-label={tr(language, 'WonderSprout home')}>
+        <a className="brand" href="/games" aria-label={tr(language, 'WonderSprout home')} onClick={(event) => { event.preventDefault(); navigate('/games'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
           <img className="brand-mark" src="/sprout-icon.svg" alt="" aria-hidden="true" />
           <span className="brand-name">wonder<span>sprout</span></span>
         </a>
         <nav className="main-nav" aria-label={tr(language, 'Main navigation')}>
-          <a href="#adventures">{tr(language, 'Play zone')}</a>
+          <a href={subject === 'all' ? '#category-directory' : '#adventures'}>{tr(language, 'Play zone')}</a>
           <a href="/club" onClick={(event) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate('/club'); }}>{tr(language, 'Wonder Club')}</a>
           <a href="#rewards">{tr(language, 'My rewards')}</a>
           <a href="#grownups">{tr(language, 'For grown-ups')}</a>
@@ -765,7 +781,7 @@ export default function App() {
             <h1>{tr(language, 'Play big.')}<br /><span>{tr(language, 'Grow curious.')}</span></h1>
             <p className="hero-description">{tr(language, 'Choose a world, collect little wins, and find a new adventure every day.')}</p>
             <div className="hero-actions">
-              <a className="button button-primary" href="#adventures"><span aria-hidden="true">▶</span> {tr(language, 'Let’s play')}</a>
+              <a className="button button-primary" href="#category-directory"><span aria-hidden="true">▶</span> {tr(language, 'Let’s play')}</a>
               <a className="text-link" href="#rewards">{tr(language, 'See my star garden')} <span aria-hidden="true">↓</span></a>
             </div>
             <div className="hero-footnote"><span aria-hidden="true">🕹️</span> {localizedText(language, 'PLAY · COMPLETE MISSIONS · EARN STARS', 'खेलो · मिशन पूरे करो · सितारे कमाओ')}</div>
@@ -778,37 +794,38 @@ export default function App() {
           </div>
         </section>
 
-        <section className="world-portals section-wrap" hidden={subject !== 'all'}>
-          <div className="portal-heading">
-            <div><span className="portal-kicker">{tr(language, 'Choose a portal')}</span><h2>{tr(language, 'Pick your first world')}</h2></div>
-            <a href="#adventures">{tr(language, 'See every game')} <span aria-hidden="true">↘</span></a>
+        <section className="category-directory section-wrap" id="category-directory" hidden={subject !== 'all'}>
+          <div className="category-directory-heading">
+            <span>{tr(language, 'Choose a world')}</span>
+            <h2>{tr(language, 'Pick a game category')}</h2>
+            <p>{tr(language, 'Each category opens on its own page with games picked for your age.')}</p>
           </div>
-          <div className="portal-grid">
-            {portalCards.map((portal) => (
+          <div className="category-directory-grid">
+            {categories.map((category, index) => (
               <a
-                className={`portal-card ${portal.className}`}
-                href={`/games/category/${categorySlug(portal.subject)}`}
-                key={portal.subject}
+                className={`category-directory-card category-tone-${index % 6}`}
+                href={`/games/category/${categorySlug(category.id)}`}
+                key={category.id}
                 onClick={(event) => {
                   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                   event.preventDefault();
-                  navigate(`/games/category/${categorySlug(portal.subject)}`);
+                  navigate(`/games/category/${categorySlug(category.id)}`);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
               >
-                <span className="portal-icon" aria-hidden="true"><span>{portal.icon}</span></span>
-                <span className="portal-copy"><small>{tr(language, 'OPEN A WORLD')}</small><strong>{localizedSubject(language, portal.subject)}</strong><span>{localizedPair(language, portal.description)}</span></span>
-                <span className="portal-arrow" aria-hidden="true">↗</span>
+                <span className="category-directory-icon" aria-hidden="true">{category.icon}</span>
+                <span className="category-directory-copy"><strong>{localizedSubject(language, category.id)}</strong><small>{tr(language, 'Open category')} ↗</small></span>
               </a>
             ))}
           </div>
         </section>
 
-        <section className="adventures section-wrap" id="adventures">
+        <section className="adventures section-wrap" id="adventures" hidden={subject === 'all'}>
           <div className="section-heading">
             <div>
-              {subject !== 'all' && <a className="category-back-link" href="/games" onClick={(event) => { event.preventDefault(); navigate('/games'); }}>← {tr(language, 'All games')}</a>}
+              <a className="category-back-link" href="/games" onClick={(event) => { event.preventDefault(); navigate('/games'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>← {tr(language, 'Browse categories')}</a>
               <div className="eyebrow eyebrow-lilac"><span className="eyebrow-dot" /> {tr(language, 'Choose your quest')}</div>
-              <h2>{subject === 'all' ? <>{tr(language, 'Where shall we')} <span>{tr(language, 'explore?')}</span></> : localizedSubject(language, subject)}</h2>
+              <h2>{localizedSubject(language, subject)}</h2>
             </div>
             <p>{tr(language, 'Short, cheerful games made to match your growing brain.')}</p>
           </div>
@@ -820,7 +837,13 @@ export default function App() {
                 className={`age-option ${age === band.id ? 'selected' : ''}`}
                 type="button"
                 key={band.id}
-                onClick={() => { setAge(band.id); setSetupAge(band.id); setShowMoreGames(false); try { localStorage.setItem(preferenceKey, JSON.stringify({ age: band.id, language })); } catch { /* The in-memory choice still applies. */ } }}
+                onClick={() => {
+                  setAge(band.id);
+                  setSetupAge(band.id);
+                  setCataloguePage(1);
+                  if (window.location.search) window.history.replaceState({}, '', window.location.pathname);
+                  try { localStorage.setItem(preferenceKey, JSON.stringify({ age: band.id, language })); } catch { /* The in-memory choice still applies. */ }
+                }}
                 aria-pressed={age === band.id}
               >
                 <span aria-hidden="true">{band.icon}</span>
@@ -835,13 +858,13 @@ export default function App() {
             <nav className="category-tabs" aria-label={tr(language, 'Filter by subject')}>
               {categories.map((category) => (
                 <a
-                  href={category.id === 'all' ? '/games' : `/games/category/${categorySlug(category.id)}`}
+                  href={`/games/category/${categorySlug(category.id)}`}
                   key={category.id}
                   className={`category-tab ${subject === category.id ? 'active' : ''}`}
                   onClick={(event) => {
                     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
                     event.preventDefault();
-                    navigate(category.id === 'all' ? '/games' : `/games/category/${categorySlug(category.id)}`);
+                    navigate(`/games/category/${categorySlug(category.id)}`);
                   }}
                   aria-current={subject === category.id ? 'page' : undefined}
                 >
@@ -862,7 +885,7 @@ export default function App() {
             <div className="game-grid">
               {visibleGames.map((game, index) => (
                 <article className={`game-card ${game.theme}`} key={game.id}>
-                  <div className="card-topline"><span className="card-number">{localizedText(language, `MISSION ${String(index + 1).padStart(2, '0')}`, `मिशन ${String(index + 1).padStart(2, '0')}`)}</span><span className="card-age">{localizedAgeCopy(language, currentAge.label)}</span></div>
+                  <div className="card-topline"><span className="card-number">{localizedText(language, `MISSION ${String((currentCataloguePage - 1) * gamesPerPage + index + 1).padStart(2, '0')}`, `मिशन ${String((currentCataloguePage - 1) * gamesPerPage + index + 1).padStart(2, '0')}`)}</span><span className="card-age">{localizedAgeCopy(language, currentAge.label)}</span></div>
                   <div className="game-art" aria-hidden="true">
                     <span className="art-halo" />
                     <span className="game-art-label">{localizedText(language, 'PLAY QUEST', 'खेल शुरू करो')}</span>
@@ -888,8 +911,12 @@ export default function App() {
               {filteredGames.length === 0 && <div className="state-card">{tr(language, 'There are no games in this category for this age band yet. Choose another age group or category.')} 🌱</div>}
             </div>
           )}
-          {!gamesLoading && !gamesError && filteredGames.length > 12 && (
-            <div className="show-games-wrap"><button className="show-games-button" type="button" onClick={() => setShowMoreGames((value) => !value)}>{showMoreGames ? `${tr(language, 'Show fewer games')} ↑` : language === 'hi' ? `सभी ${filteredGames.length} खेल देखें ↓` : language === 'mr' ? `सर्व ${filteredGames.length} खेळ पहा ↓` : `Browse all ${filteredGames.length} games ↓`}</button></div>
+          {!gamesLoading && !gamesError && filteredGames.length > gamesPerPage && (
+            <nav className="catalogue-pagination" aria-label={tr(language, 'Game pages')}>
+              <button type="button" onClick={() => openCataloguePage(currentCataloguePage - 1)} disabled={currentCataloguePage <= 1}>← {tr(language, 'Previous page')}</button>
+              <span aria-live="polite">{cataloguePageLabel}</span>
+              <button type="button" onClick={() => openCataloguePage(currentCataloguePage + 1)} disabled={currentCataloguePage >= cataloguePageCount}>{tr(language, 'Next page')} →</button>
+            </nav>
           )}
         </section>
 
@@ -933,7 +960,7 @@ export default function App() {
         <a className="mobile-nav-item" href="/games" onClick={(event) => { event.preventDefault(); navigate('/games'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
           <span aria-hidden="true">🏡</span><small>{tr(language, 'Home')}</small>
         </a>
-        <a className="mobile-nav-item mobile-nav-active" href="#adventures">
+        <a className="mobile-nav-item mobile-nav-active" href={subject === 'all' ? '#category-directory' : '#adventures'}>
           <span aria-hidden="true">🎮</span><small>{tr(language, 'Games')}</small>
         </a>
         <a className="mobile-nav-item" href="/club" onClick={(event) => { event.preventDefault(); navigate('/club'); }}>

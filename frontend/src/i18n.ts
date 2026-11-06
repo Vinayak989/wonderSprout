@@ -107,6 +107,8 @@ export const textHi: Record<string, string> = {
   'Let’s play': 'चलो खेलें', 'See my star garden': 'मेरे सितारे देखो', 'Made for curious kids ages 3–12': '3–12 साल के जिज्ञासु बच्चों के लिए',
   'Choose your quest': 'अपना खेल चुनो', 'Where shall we': 'कहाँ', 'explore?': 'घूमेंगे?', 'Short, cheerful games made to match your growing brain.': 'तुम्हारी बढ़ती समझ के लिए छोटे और मज़ेदार खेल।',
   'I’m in the': 'मेरी उम्र', 'All games': 'सभी खेल', Math: 'गणित', Words: 'शब्द', Science: 'विज्ञान',
+  'Choose a world': 'एक दुनिया चुनो', 'Pick a game category': 'खेल की श्रेणी चुनो', 'Each category opens on its own page with games picked for your age.': 'हर श्रेणी के अपने पन्ने पर तुम्हारी उम्र के खेल मिलेंगे।', 'Open category': 'श्रेणी खोलें',
+  'Browse categories': 'श्रेणियाँ देखें', 'Game pages': 'खेलों के पन्ने', 'Previous page': 'पिछला पन्ना', 'Next page': 'अगला पन्ना',
   'Just 3–4 minutes each': 'हर खेल 8–10 मिनट', 'Finding your adventures…': 'तुम्हारे खेल ढूँढ़ रहे हैं…',
   'We can’t reach the adventure map yet.': 'खेलों का नक्शा अभी नहीं खुला।', 'Start the Java API, then refresh the page.': 'Java API शुरू करके पन्ना फिर खोलें।',
   'Play': 'खेलो', 'Browse all': 'सभी खेल देखें', 'Show fewer games': 'कम खेल दिखाएँ',

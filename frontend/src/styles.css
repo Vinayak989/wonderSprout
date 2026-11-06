@@ -79,6 +79,7 @@ a { color: inherit; text-decoration: none; }
 .adventures > .section-heading, .adventures > .age-picker { grid-column: 1 / -1; }
 .adventures > .state-card, .adventures > .game-grid { grid-column: 2; grid-row: 3; }
 .adventures > .show-games-wrap { grid-column: 2; }
+.adventures > .catalogue-pagination { grid-column: 2; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 30px; }
 .eyebrow-lilac { margin-bottom: 13px; color: #8667c6; }
 .eyebrow-lilac .eyebrow-dot { background: #9b78dc; box-shadow: 0 0 0 4px #9b78dc1d; }
@@ -885,7 +886,7 @@ button.word-slot { border-style: solid; border-color: #d9c9f4; background: #f6f0
 
 @media (max-width: 700px) {
   .adventures { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
-  .adventures > .state-card, .adventures > .game-grid, .adventures > .show-games-wrap { grid-column: 1; grid-row: auto; }
+  .adventures > .state-card, .adventures > .game-grid, .adventures > .show-games-wrap, .adventures > .catalogue-pagination { grid-column: 1; grid-row: auto; }
   .game-toolbar.category-sidebar { grid-column: 1; grid-row: auto; position: static; max-height: none; overflow: visible; margin: 0 0 15px; padding: 13px; }
   .category-sidebar-title { font-size: 15px; }
   .category-sidebar .category-tabs { flex-direction: row; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin; }
@@ -1554,4 +1555,44 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
 
 @media (prefers-reduced-motion: reduce) {
   .kart-pickup.star, .kart-player { animation: none; }
+}
+
+.category-directory { padding-block: 30px 68px; scroll-margin-top: 90px; }
+.category-directory-heading { margin-bottom: 22px; text-align: center; }
+.category-directory-heading > span { color: #7255ad; font-size: 10px; font-weight: 950; letter-spacing: 1.8px; text-transform: uppercase; }
+.category-directory-heading h2 { margin: 5px 0 7px; color: #30204f; font-family: 'Fredoka', 'Trebuchet MS', sans-serif; font-size: clamp(27px, 4vw, 38px); letter-spacing: -.7px; }
+.category-directory-heading p { margin: 0; color: #756d89; font-size: 13px; }
+.category-directory-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; }
+.category-directory-card { display: flex; min-width: 0; min-height: 100px; align-items: center; gap: 12px; padding: 14px; border: 3px solid white; border-radius: 22px; background: linear-gradient(135deg, var(--category-light), white); box-shadow: 0 6px 0 var(--category-shadow), 0 12px 22px #37285112; transition: transform .18s ease, box-shadow .18s ease; }
+.category-directory-card:hover { transform: translateY(-4px) rotate(-.4deg); box-shadow: 0 9px 0 var(--category-shadow), 0 17px 26px #3728511c; }
+.category-tone-0 { --category-light: #fff0c8; --category-shadow: #e3c975; }
+.category-tone-1 { --category-light: #e8e0ff; --category-shadow: #c0afe8; }
+.category-tone-2 { --category-light: #ddf7ec; --category-shadow: #a7d8bf; }
+.category-tone-3 { --category-light: #ffe2ed; --category-shadow: #e3adc2; }
+.category-tone-4 { --category-light: #def1ff; --category-shadow: #a9cee8; }
+.category-tone-5 { --category-light: #f8e4d5; --category-shadow: #ddbaa0; }
+.category-directory-icon { display: grid; width: 54px; height: 54px; flex: 0 0 auto; place-items: center; border: 2px solid white; border-radius: 18px; background: #ffffffb8; box-shadow: 0 4px 0 #58446b14; font-size: 30px; }
+.category-directory-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 5px; }
+.category-directory-copy strong { color: #382854; font-family: 'Fredoka', 'Trebuchet MS', sans-serif; font-size: 15px; line-height: 1.15; }
+.category-directory-copy small { color: #76688c; font-size: 9px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; }
+.catalogue-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 26px; }
+.catalogue-pagination button { min-height: 43px; padding: 0 16px; border: 2px solid white; border-radius: 13px; background: linear-gradient(120deg, #7450d5, #a24ec8); box-shadow: 0 4px 0 #49327f; color: white; cursor: pointer; font-size: 11px; font-weight: 900; }
+.catalogue-pagination button:disabled { cursor: default; opacity: .45; }
+.catalogue-pagination span { min-width: 105px; color: #5e4b7d; font-size: 11px; font-weight: 900; text-align: center; }
+
+@media (max-width: 980px) {
+  .category-directory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 700px) {
+  .category-directory { padding-block: 19px 42px; }
+  .category-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+  .category-directory-card { min-height: 79px; gap: 9px; padding: 9px; border-width: 2px; border-radius: 17px; box-shadow: 0 4px 0 var(--category-shadow); }
+  .category-directory-icon { width: 43px; height: 43px; border-radius: 14px; font-size: 24px; }
+  .category-directory-copy strong { font-size: 12px; }
+  .category-directory-copy small { font-size: 7px; }
+  .category-directory-heading { margin-bottom: 15px; }
+  .category-directory-heading p { max-width: 330px; margin-inline: auto; font-size: 11px; line-height: 1.4; }
+  .catalogue-pagination { gap: 8px; margin-top: 19px; }
+  .catalogue-pagination button { min-height: 39px; padding-inline: 10px; font-size: 9px; }
+  .catalogue-pagination span { min-width: 77px; font-size: 9px; }
 }
