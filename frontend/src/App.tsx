@@ -864,7 +864,6 @@ export default function App() {
           <a href="/wonder-cards" aria-current={page === 'wonder' ? 'page' : undefined} onClick={(event) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); setSurpriseCard(null); navigate('/wonder-cards'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>{factCopy(language, ['Wonder Cards', 'कमाल के कार्ड', 'कुतूहल कार्ड'])}</a>
           <a href="/club" onClick={(event) => { if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); navigate('/club'); }}>{tr(language, 'Wonder Club')}</a>
           <a href="/games#rewards" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })); }}>{tr(language, 'My rewards')}</a>
-          <a href="/games#grownups" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('grownups')?.scrollIntoView({ behavior: 'smooth' })); }}>{tr(language, 'For grown-ups')}</a>
           <a href="/" aria-label={tr(language, 'Change age or language')} onClick={(event) => { event.preventDefault(); setSetupAge(age); navigate('/'); }}>{tr(language, 'Change age or language')}</a>
         </nav>
         <a className="header-stars" href="/games#rewards" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })); }} aria-label={`${progress.stars} ${tr(language, 'stars collected')}`}>
@@ -1082,9 +1081,6 @@ export default function App() {
         </a>
         <a className="mobile-nav-item" href="/games#rewards" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })); }}>
           <span aria-hidden="true">🌟</span><small>{tr(language, 'Stars')}</small>
-        </a>
-        <a className="mobile-nav-item" href="/games#grownups" onClick={(event) => { event.preventDefault(); navigate('/games'); window.requestAnimationFrame(() => document.getElementById('grownups')?.scrollIntoView({ behavior: 'smooth' })); }}>
-          <span aria-hidden="true">💛</span><small>{tr(language, 'About')}</small>
         </a>
       </nav>
 

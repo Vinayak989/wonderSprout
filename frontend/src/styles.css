@@ -1785,7 +1785,7 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .wonder-surprise-prompt { margin-top:8px; font-size:10px; }
   .wonder-surprise-actions { flex-direction:column-reverse; gap:7px; padding:10px 13px 13px; }
   .wonder-surprise-actions .button { width:100%; min-height:42px; }
-  .mobile-bottom-nav:not([hidden]) { grid-template-columns:repeat(6,minmax(0,1fr)); }
+  .mobile-bottom-nav:not([hidden]) { grid-template-columns:repeat(5,minmax(0,1fr)); }
   .mobile-nav-item small { font-size:7px; letter-spacing:-.2px; white-space:nowrap; }
 }
 @media (prefers-reduced-motion:reduce) {
