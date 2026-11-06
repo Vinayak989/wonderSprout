@@ -10,7 +10,7 @@ WORKDIR /workspace
 COPY pom.xml ./
 COPY src/ ./src/
 COPY --from=frontend-build /workspace/frontend/dist/ ./src/main/resources/static/
-RUN mvn -B -DskipTests package
+RUN mvn -B -DskipTests clean package
 
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
