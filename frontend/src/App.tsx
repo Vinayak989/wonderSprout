@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
 import { hindiQuestionRound, localizedAgeCopy, localizedGame, localizedLesson, localizedPair, localizedQuestion, localizedSubject, localizedText, marathiQuestionRound, tr, type Language } from './i18n';
 import ClubPage, { type ClubGame } from './ClubPage';
-import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readClubData, readParentPreferences, usageStorageKey, type ClubData, type GalleryArtwork, type GamePerformance, type ParentPreferences } from './club';
+import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readClubData, readParentPreferences, type ClubData, type GalleryArtwork, type GamePerformance, type ParentPreferences } from './club';
 
 const ThreeArcade = lazy(() => import('./ThreeArcade'));
 
@@ -189,18 +189,6 @@ function readProgress(): Progress {
   }
 }
 
-function dayKey() {
-  const today = new Date();
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-}
-
-function readTodayMinutes() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(usageStorageKey) ?? '{}') as { date?: string; minutes?: number };
-    return saved.date === dayKey() ? Math.max(0, Number(saved.minutes) || 0) : 0;
-  } catch { return 0; }
-}
-
 function shuffleItems<T>(items: T[]): T[] {
   const shuffled = [...items];
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
@@ -307,9 +295,7 @@ export default function App() {
   const [clubData, setClubData] = useState<ClubData>(readClubData);
   const [parentPreferences, setParentPreferences] = useState<ParentPreferences>(readParentPreferences);
   const [artworks, setArtworks] = useState<GalleryArtwork[]>(readArtwork);
-  const [minutesToday, setMinutesToday] = useState(readTodayMinutes);
   const [online, setOnline] = useState(navigator.onLine);
-  const [breakReminder, setBreakReminder] = useState(false);
   const [activeGame, setActiveGame] = useState<Game | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [memoryCards, setMemoryCards] = useState<MemoryCard[]>([]);
@@ -337,13 +323,6 @@ export default function App() {
       setSubject(subjectFromPath(path));
       setShowMoreGames(false);
     }
-  }
-
-  function openClubSection(section: string) {
-    navigate('/club');
-    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-      document.getElementById(`club-${section}`)?.scrollIntoView({ behavior: parentPreferences.reduceMotion ? 'auto' : 'smooth' });
-    }));
   }
 
   function choosePreferences() {
@@ -406,15 +385,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      if (document.visibilityState !== 'visible') return;
-      setMinutesToday((value) => {
-        const next = value + 1;
-        try { localStorage.setItem(usageStorageKey, JSON.stringify({ date: dayKey(), minutes: next })); } catch { /* Session reminders remain local. */ }
-        return next;
-      });
-    }, 60_000);
-    return () => window.clearInterval(timer);
+    try { localStorage.removeItem('wonder-sprout-daily-usage-v1'); } catch { /* Screen-time tracking has been removed. */ }
   }, []);
 
   useEffect(() => {
@@ -479,7 +450,6 @@ export default function App() {
     ? Math.min(100, ((progress.stars - priorMilestone) / (nextMilestone - priorMilestone)) * 100)
     : 100;
   const starsToNext = badge.next ? Math.max(0, badge.target - progress.stars) : 0;
-  const playLimitReached = parentPreferences.dailyLimit > 0 && minutesToday >= parentPreferences.dailyLimit;
   const featuredGame = filteredGames.find((game) => game.id === 'moon-meadow-quest') ?? filteredGames.find((game) => game.mode === 'adventure') ?? filteredGames[0];
   const explorerLevel = Math.floor(progress.stars / 10) + 1;
 
@@ -552,10 +522,6 @@ export default function App() {
   }
 
   async function startGame(game: Game, openRoute = true) {
-    if (playLimitReached) {
-      setBreakReminder(true);
-      return;
-    }
     if (openRoute) {
       if (page !== 'game') cataloguePath.current = window.location.pathname;
       navigate(`/games/${game.id}`);
@@ -603,12 +569,11 @@ export default function App() {
 
   useEffect(() => {
     if (page !== 'game' || activeGame || games.length === 0) return;
-    if (playLimitReached) { navigate('/club', true); return; }
     const gameId = window.location.pathname.split('/')[2];
     const game = games.find((candidate) => candidate.id === gameId);
     if (game) void startGame(game, false);
     else navigate('/games', true);
-  }, [page, games, activeGame, playLimitReached]);
+  }, [page, games, activeGame]);
 
   function closeGame() {
     answerLock.current = false;
@@ -752,7 +717,6 @@ export default function App() {
     onPreferencesChange={setParentPreferences}
     artworks={artworks}
     onRemoveArtwork={removeArtwork}
-    minutesToday={minutesToday}
     online={online}
     onPlay={(clubGame) => {
       const game = games.find((candidate) => candidate.id === clubGame.id);
@@ -770,7 +734,6 @@ export default function App() {
 
   return (
     <>
-      {breakReminder && <div className="break-reminder-backdrop" role="presentation"><section className="break-reminder-card" role="dialog" aria-modal="true" aria-labelledby="break-reminder-title"><span aria-hidden="true">🌱</span><h2 id="break-reminder-title">{tr(language, 'Time for a little break')}</h2><p>{tr(language, 'Take a little screen break. Your games and progress will be here when you come back.')}</p><button className="button button-primary" type="button" onClick={() => setBreakReminder(false)}>{tr(language, 'Got it')}</button><a href="/club#club-grownup" onClick={(event) => { event.preventDefault(); setBreakReminder(false); openClubSection('grownup'); }}>{tr(language, 'Grown-up corner')} →</a></section></div>}
       <a className="skip-link" href="#main" hidden={page === 'game'}>{tr(language, 'Skip to games')}</a>
       <header className="site-header" hidden={page === 'game'}>
         <a className="brand" href="#top" aria-label={tr(language, 'WonderSprout home')}>
@@ -790,7 +753,6 @@ export default function App() {
       </header>
 
       <main id="main" hidden={page === 'game'}>
-        {playLimitReached && <div className="session-break-banner section-wrap" role="status">🌱 {tr(language, 'Take a little screen break. Your games and progress will be here when you come back.')} <a href="/club#club-grownup" onClick={(event) => { event.preventDefault(); openClubSection('grownup'); }}>{tr(language, 'Grown-up corner')} →</a></div>}
         <section className="hero section-wrap" id="top" hidden={subject !== 'all'}>
           <div className="hero-copy">
             <div className="eyebrow"><span className="eyebrow-dot" /> {localizedText(language, 'YOUR GAME WORLD', 'तुम्हारा गेमिंग संसार')}</div>

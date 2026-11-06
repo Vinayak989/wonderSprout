@@ -39,7 +39,6 @@ export type ClubData = {
 };
 
 export type ParentPreferences = {
-  dailyLimit: number;
   highContrast: boolean;
   dyslexicFont: boolean;
   reduceMotion: boolean;
@@ -49,7 +48,6 @@ export type ParentPreferences = {
 export const clubStorageKey = 'wonder-sprout-club-v1';
 export const parentStorageKey = 'wonder-sprout-parent-v1';
 export const artworkStorageKey = 'wonder-sprout-art-gallery-v1';
-export const usageStorageKey = 'wonder-sprout-daily-usage-v1';
 
 export const defaultClubData: ClubData = {
   avatar: '🦊',
@@ -66,7 +64,6 @@ export const defaultClubData: ClubData = {
 };
 
 export const defaultParentPreferences: ParentPreferences = {
-  dailyLimit: 30,
   highContrast: false,
   dyslexicFont: false,
   reduceMotion: false,
@@ -99,7 +96,6 @@ export function readClubData(): ClubData {
 export function readParentPreferences(): ParentPreferences {
   const saved = readStored<ParentPreferences>(parentStorageKey, defaultParentPreferences);
   return {
-    dailyLimit: [0, 15, 20, 30, 45].includes(saved.dailyLimit) ? saved.dailyLimit : defaultParentPreferences.dailyLimit,
     highContrast: Boolean(saved.highContrast),
     dyslexicFont: Boolean(saved.dyslexicFont),
     reduceMotion: Boolean(saved.reduceMotion),
