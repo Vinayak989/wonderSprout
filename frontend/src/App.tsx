@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
 import { hindiQuestionRound, localizedAgeCopy, localizedGame, localizedLesson, localizedQuestion, localizedSubject, localizedText, marathiQuestionRound, tr, type Language } from './i18n';
 import { wonderFacts, type WonderCategoryId } from './wonder-facts';
+import WonderCardAnimation from './WonderCardAnimation';
 import ClubPage, { type ClubGame } from './ClubPage';
 import { artworkStorageKey, clubStorageKey, parentStorageKey, readArtwork, readClubData, readParentPreferences, type ClubData, type GalleryArtwork, type GamePerformance, type ParentPreferences } from './club';
 
@@ -290,16 +291,15 @@ type WonderCategoryInfo = {
   id: WonderCategoryId;
   title: LocalizedLine;
   description: LocalizedLine;
-  image: string;
   icon: string;
 };
 type WonderSelection = { category: WonderCategoryId; index: number };
 
 const wonderCategories: WonderCategoryInfo[] = [
-  { id: 'animals', title: ['Animals', 'जानवर', 'प्राणी'], description: ['Meet some amazing animal neighbors.', 'अनोखे जानवरों से मिलो।', 'मजेदार प्राण्यांना भेटा.'], image: '/wonder-animals.svg', icon: '🐾' },
-  { id: 'plants', title: ['Plants', 'पौधे', 'वनस्पती'], description: ['Explore the green world around us.', 'हमारे आसपास की हरी दुनिया जानो।', 'आपल्या भोवतालच्या हिरव्या जगाचा शोध घ्या.'], image: '/wonder-plants.svg', icon: '🌿' },
-  { id: 'fish', title: ['Fish', 'मछलियाँ', 'मासे'], description: ['Dive into colorful life under the water.', 'पानी के नीचे की रंगीन दुनिया में गोता लगाओ।', 'पाण्याखालील रंगीबेरंगी जगात डुबकी मारा.'], image: '/wonder-fish.svg', icon: '🐠' },
-  { id: 'planets', title: ['Planets', 'ग्रह', 'ग्रह'], description: ['Fly through our solar system and beyond.', 'सौर मंडल और उससे आगे की सैर करो।', 'आपल्या सूर्यमालेतून आणि त्यापलीकडे सफर करा.'], image: '/wonder-planets.svg', icon: '🪐' },
+  { id: 'animals', title: ['Animals', 'जानवर', 'प्राणी'], description: ['Meet some amazing animal neighbors.', 'अनोखे जानवरों से मिलो।', 'मजेदार प्राण्यांना भेटा.'], icon: '🐾' },
+  { id: 'plants', title: ['Plants', 'पौधे', 'वनस्पती'], description: ['Explore the green world around us.', 'हमारे आसपास की हरी दुनिया जानो।', 'आपल्या भोवतालच्या हिरव्या जगाचा शोध घ्या.'], icon: '🌿' },
+  { id: 'fish', title: ['Fish', 'मछलियाँ', 'मासे'], description: ['Dive into colorful life under the water.', 'पानी के नीचे की रंगीन दुनिया में गोता लगाओ।', 'पाण्याखालील रंगीबेरंगी जगात डुबकी मारा.'], icon: '🐠' },
+  { id: 'planets', title: ['Planets', 'ग्रह', 'ग्रह'], description: ['Fly through our solar system and beyond.', 'सौर मंडल और उससे आगे की सैर करो।', 'आपल्या सूर्यमालेतून आणि त्यापलीकडे सफर करा.'], icon: '🪐' },
 ];
 
 function WonderCardSection({ category, language }: { category: WonderCategoryInfo; language: Language }) {
@@ -321,10 +321,7 @@ function WonderCardSection({ category, language }: { category: WonderCategoryInf
         <span className="wonder-category-count">{cards.length} {localized(['cards', 'कार्ड', 'कार्डे'])}</span>
       </header>
       <article className="wonder-card" aria-live="polite">
-        <div className="wonder-card-picture">
-          <img src={category.image} alt="" draggable={false} />
-          <span className="wonder-picture-sparkle" aria-hidden="true">✦</span>
-        </div>
+        <WonderCardAnimation key={category.id + '-' + index} category={category.id} fact={currentFact[0]} label={currentFact[language === 'mr' ? 2 : language === 'hi' ? 1 : 0]} className="wonder-card-picture" />
         <div className="wonder-card-details">
           <span className="wonder-card-label">{localized(['DID YOU KNOW?', 'क्या तुम्हें पता है?', 'तुम्हाला माहीत आहे का?'])}</span>
           <p className="wonder-card-fact" key={index}>{currentFact[language === 'mr' ? 2 : language === 'hi' ? 1 : 0]}</p>
@@ -1088,7 +1085,7 @@ export default function App() {
         <div className="wonder-surprise-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setSurpriseCard(null); }}>
           <section className={'wonder-surprise-dialog wonder-category-' + surpriseCard.category + (age === '3-5' ? ' wonder-surprise-young' : '')} role="dialog" aria-modal="true" aria-labelledby="wonder-surprise-title">
             <button className="wonder-surprise-close" type="button" autoFocus onClick={() => setSurpriseCard(null)} aria-label={factCopy(language, ['Close surprise', 'बंद करें', 'बंद करा'])}>×</button>
-            <div className="wonder-surprise-picture"><img src={surpriseCategory.image} alt="" /></div>
+            <WonderCardAnimation key={surpriseCard.category + '-' + surpriseCard.index} category={surpriseCard.category} fact={surpriseFact[0]} label={surpriseFact[language === 'mr' ? 2 : language === 'hi' ? 1 : 0]} className="wonder-surprise-picture" />
             <div className="wonder-surprise-copy">
               <span className="wonder-category-kicker">{factCopy(language, ['A LITTLE SURPRISE', 'एक छोटा-सा सरप्राइज़', 'एक छोटीशी गंमत'])} · {factCopy(language, surpriseCategory.title)}</span>
               <h2 id="wonder-surprise-title">{factCopy(language, ['A wonder for you!', 'तुम्हारे लिए कमाल की बात!', 'तुझ्यासाठी एक कुतूहलाची गोष्ट!'])}</h2>

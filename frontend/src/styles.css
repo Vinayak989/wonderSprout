@@ -1688,7 +1688,75 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
 .wonder-card { display:grid; min-height:245px; grid-template-columns:minmax(230px,.88fr) minmax(0,1.12fr); overflow:hidden; border:3px solid white; border-radius:22px; background:#fffefa; box-shadow:0 5px 0 #38294d16,0 9px 18px #34274a0d; }
 .wonder-card-picture { position:relative; display:grid; min-height:240px; overflow:hidden; place-items:center; background:var(--wonder-soft); }
 .wonder-card-picture::after { position:absolute; inset:auto 0 0; height:25px; background:linear-gradient(transparent,#ffffff26); content:''; pointer-events:none; }
-.wonder-card-picture img { display:block; width:100%; height:100%; min-height:240px; object-fit:cover; animation:wonder-picture-float 5s ease-in-out infinite alternate; }
+.wonder-card-animation { position:relative; display:grid; width:100%; min-height:240px; height:100%; overflow:hidden; place-items:center; isolation:isolate; background:radial-gradient(ellipse at 50% 83%,#ffffffa6 0 23%,transparent 24%),linear-gradient(145deg,#fff5d8,#efe8ff 58%,#e4f6ec); }
+.wonder-animation-plants { background:radial-gradient(ellipse at 50% 88%,#d0eab5 0 21%,transparent 22%),linear-gradient(145deg,#e5f4ce,#f5f8df 58%,#dff0d9); }
+.wonder-animation-fish { background:radial-gradient(ellipse at 50% 90%,#8ed5e8 0 24%,transparent 25%),linear-gradient(145deg,#d7f3ff,#e4fcf4 58%,#d8eaff); }
+.wonder-animation-planets { background:radial-gradient(circle at 50% 50%,#403a78 0 1px,transparent 2px),radial-gradient(circle at 17% 23%,#fff 0 1px,transparent 2px),radial-gradient(circle at 81% 71%,#fff 0 1.5px,transparent 2px),linear-gradient(145deg,#242a5c,#433570 60%,#70508d); background-size:auto,auto,auto,cover; }
+.wonder-animation-halo { position:absolute; z-index:0; width:clamp(130px,20vw,178px); aspect-ratio:1; border:2px dashed #ffffffc9; border-radius:50%; box-shadow:0 0 0 12px #ffffff3d,0 0 0 25px #ffffff26; animation:wonder-halo-orbit 24s linear infinite; }
+.wonder-animation-subject { position:relative; z-index:2; display:grid; min-width:1em; min-height:1em; place-items:center; font-size:clamp(72px,13vw,105px); line-height:1; filter:drop-shadow(0 9px 5px #2c23422a); transform-origin:50% 72%; animation:wonder-subject-bob 3.2s ease-in-out infinite; }
+.wonder-animation-companion { position:absolute; z-index:3; top:17%; right:16%; font-size:clamp(25px,5vw,38px); filter:drop-shadow(0 4px 3px #2c234224); animation:wonder-companion-float 2.5s ease-in-out infinite; }
+.wonder-animation-floor { position:absolute; z-index:1; bottom:27px; width:56%; height:17px; border-radius:50%; background:#53487915; filter:blur(2px); }
+.wonder-animation-sparkle { position:absolute; z-index:2; top:18%; left:18%; color:#ffe176; font-size:24px; filter:drop-shadow(0 2px 4px #7151a766); animation:sparkle-twinkle 1.8s ease-in-out infinite; }
+.wonder-animation-planets .wonder-animation-subject { color:#fff; filter:drop-shadow(0 0 16px #fff4a9a8); }
+.wonder-animation-planets .wonder-animation-floor { width:43%; background:#161b3d5c; }
+.wonder-motion-trunk-reach .wonder-animation-subject,.wonder-motion-neck-stretch .wonder-animation-subject,.wonder-motion-tooth-grow .wonder-animation-subject,.wonder-motion-bamboo-sway .wonder-animation-subject { animation-name:wonder-grow; }
+.wonder-motion-wing-flutter .wonder-animation-subject,.wonder-motion-pollinate .wonder-animation-subject { animation-name:wonder-flutter; }
+.wonder-motion-echo-pulse .wonder-animation-halo,.wonder-motion-sense-ripple .wonder-animation-halo { animation-name:wonder-ripple; animation-duration:1.7s; }
+.wonder-motion-click-swim .wonder-animation-subject,.wonder-motion-fin-steer .wonder-animation-subject,.wonder-motion-cartilage-glide .wonder-animation-subject,.wonder-motion-water-glide .wonder-animation-subject,.wonder-motion-streamline .wonder-animation-subject { animation-name:wonder-swim; }
+.wonder-motion-waddle .wonder-animation-subject,.wonder-motion-mud-walk .wonder-animation-subject,.wonder-motion-leg-scuttle .wonder-animation-subject { animation-name:wonder-waddle; }
+.wonder-motion-head-turn .wonder-animation-subject,.wonder-motion-eye-shift .wonder-animation-subject { animation-name:wonder-look; }
+.wonder-motion-color-shift .wonder-animation-subject,.wonder-motion-food-color .wonder-animation-subject,.wonder-motion-methane-glow .wonder-animation-subject { animation-name:wonder-color; }
+.wonder-motion-fur-reveal .wonder-animation-subject,.wonder-motion-leaf-store .wonder-animation-subject { animation-name:wonder-reveal; }
+.wonder-motion-pouch-bounce .wonder-animation-subject,.wonder-motion-plankton-filter .wonder-animation-subject,.wonder-motion-planet-grow .wonder-animation-subject,.wonder-motion-surface-soak .wonder-animation-subject { animation-name:wonder-pulse; }
+.wonder-motion-heart-beat .wonder-animation-subject { animation-name:wonder-heartbeat; }
+.wonder-motion-rock-crack .wonder-animation-subject,.wonder-motion-leaf-snap .wonder-animation-subject,.wonder-motion-pitcher-trap .wonder-animation-subject { animation-name:wonder-snap; }
+.wonder-motion-stripe-dash .wonder-animation-subject,.wonder-motion-antenna-sense .wonder-animation-subject,.wonder-motion-river-swim .wonder-animation-subject,.wonder-motion-steady-swim .wonder-animation-subject { animation-name:wonder-dash; }
+.wonder-motion-hover-feed .wonder-animation-subject,.wonder-motion-lily-float .wonder-animation-subject,.wonder-motion-fish-school .wonder-animation-subject { animation-name:wonder-hover; }
+.wonder-motion-eyelash-blink .wonder-animation-subject,.wonder-motion-gill-breathe .wonder-animation-subject,.wonder-motion-leaf-breathe .wonder-animation-subject,.wonder-motion-air-breathe .wonder-animation-subject { animation-name:wonder-blink; }
+.wonder-motion-snow-listen .wonder-animation-subject,.wonder-motion-slow-spin .wonder-animation-subject { animation-name:wonder-listen; }
+.wonder-motion-tail-curl .wonder-animation-subject,.wonder-motion-curl-up .wonder-animation-subject,.wonder-motion-tendril-climb .wonder-animation-subject { animation-name:wonder-curl; }
+.wonder-motion-standing-doze .wonder-animation-subject,.wonder-motion-fish-rest .wonder-animation-subject { animation-name:wonder-doze; }
+.wonder-motion-make-food .wonder-animation-subject,.wonder-motion-water-store .wonder-animation-subject,.wonder-motion-root-store .wonder-animation-subject,.wonder-motion-seed-open .wonder-animation-subject,.wonder-motion-seed-shower .wonder-animation-subject,.wonder-motion-water-rise .wonder-animation-subject,.wonder-motion-root-partner .wonder-animation-subject,.wonder-motion-sun-capture .wonder-animation-subject { animation-name:wonder-sprout; }
+.wonder-motion-roots-drink .wonder-animation-subject,.wonder-motion-root-partner .wonder-animation-companion,.wonder-motion-water-rise .wonder-animation-companion { animation-name:wonder-root; }
+.wonder-motion-sun-follow .wonder-animation-subject,.wonder-motion-seasons-turn .wonder-animation-subject { animation-name:wonder-track; }
+.wonder-motion-spore-drift .wonder-animation-subject,.wonder-motion-wind-carry .wonder-animation-subject,.wonder-motion-acorn-fall .wonder-animation-subject,.wonder-motion-eggs-hatch .wonder-animation-companion { animation-name:wonder-drift; }
+.wonder-motion-tree-rings .wonder-animation-halo { animation-name:wonder-tree-rings; animation-duration:4s; }
+.wonder-motion-needle-sway .wonder-animation-subject,.wonder-motion-underwater-sway .wonder-animation-subject { animation-name:wonder-sway; }
+.wonder-motion-lily-float .wonder-animation-companion,.wonder-motion-moon-lakes .wonder-animation-halo,.wonder-motion-hidden-ocean .wonder-animation-halo { animation-name:wonder-ripple; }
+.wonder-motion-root-store .wonder-animation-companion,.wonder-motion-lily-float .wonder-animation-companion { animation-name:wonder-rise; }
+.wonder-motion-bamboo-sway .wonder-animation-subject,.wonder-motion-needle-sway .wonder-animation-subject,.wonder-motion-underwater-sway .wonder-animation-subject { animation-name:wonder-sway; }
+.wonder-motion-anemone-hide .wonder-animation-subject,.wonder-motion-sand-hide .wonder-animation-subject { animation-name:wonder-hide; }
+.wonder-motion-puff-up .wonder-animation-subject { animation-name:wonder-puff; }
+.wonder-motion-scale-shimmer .wonder-animation-subject { animation-name:wonder-shimmer; }
+.wonder-motion-eggs-hatch .wonder-animation-subject,.wonder-motion-large-moon .wonder-animation-companion { animation-name:wonder-hatch; }
+.wonder-motion-water-squirt .wonder-animation-companion { animation-name:wonder-squirt; }
+.wonder-motion-reef-nibble .wonder-animation-subject { animation-name:wonder-nibble; }
+.wonder-motion-electric-zap .wonder-animation-companion,.wonder-motion-io-erupt .wonder-animation-companion { animation-name:wonder-zap; }
+.wonder-motion-lure-glow .wonder-animation-companion,.wonder-motion-heat-wave .wonder-animation-companion { animation-name:wonder-glow; }
+.wonder-motion-feeding-routine .wonder-animation-subject { animation-name:wonder-routine; }
+.wonder-motion-tail-grip .wonder-animation-subject { animation-name:wonder-grip; }
+.wonder-motion-fast-orbit .wonder-animation-subject { animation-name:wonder-orbit; animation-duration:3.5s; font-size:clamp(39px,8vw,56px); }
+.wonder-motion-fast-orbit .wonder-animation-companion,.wonder-motion-moonless-orbit .wonder-animation-companion { top:50%; right:auto; left:50%; font-size:58px; animation:none; transform:translate(-50%,-50%); }
+.wonder-motion-moon-orbit .wonder-animation-companion,.wonder-motion-reverse-orbit .wonder-animation-companion { top:50%; right:auto; left:50%; animation-name:wonder-orbit; animation-duration:4.4s; }
+.wonder-motion-moon-orbit .wonder-animation-companion { font-size:26px; }
+.wonder-motion-reverse-orbit .wonder-animation-companion { animation-name:wonder-orbit-reverse; animation-duration:4.4s; }
+.wonder-motion-moon-orbit .wonder-animation-subject,.wonder-motion-moonless-orbit .wonder-animation-subject { animation-name:wonder-subject-bob; }
+.wonder-motion-volcano-erupt .wonder-animation-subject,.wonder-motion-io-erupt .wonder-animation-subject { animation-name:wonder-erupt; }
+.wonder-motion-cloud-storm .wonder-animation-subject { animation-name:wonder-storm; }
+.wonder-motion-ring-spin .wonder-animation-halo,.wonder-motion-moon-family .wonder-animation-halo,.wonder-motion-twin-moons .wonder-animation-halo,.wonder-motion-reverse-orbit .wonder-animation-halo { animation-name:wonder-orbit; animation-duration:6s; }
+.wonder-motion-tilted-spin .wonder-animation-subject,.wonder-motion-reverse-orbit .wonder-animation-subject { animation-name:wonder-tilt; }
+.wonder-motion-reverse-orbit .wonder-animation-halo { animation-direction:reverse; }
+.wonder-motion-wind-rush .wonder-animation-subject,.wonder-motion-cloud-cover .wonder-animation-companion,.wonder-motion-far-planet .wonder-animation-subject { animation-name:wonder-wind; }
+.wonder-motion-slow-spin .wonder-animation-subject { animation-name:wonder-spin-slow; }
+.wonder-motion-blue-sunset .wonder-animation-subject { animation-name:wonder-sunset; }
+.wonder-motion-cooling-cliffs .wonder-animation-subject { animation-name:wonder-cool; }
+.wonder-motion-air-layers .wonder-animation-companion { animation-name:wonder-layer-drift; }
+.wonder-motion-large-moon .wonder-animation-subject { animation-name:wonder-pulse; }
+.wonder-motion-far-planet .wonder-animation-subject { animation-name:wonder-distance; }
+.wonder-motion-nose-print .wonder-animation-subject,.wonder-motion-lure-glow .wonder-animation-companion { animation-name:wonder-glow; }
+.wonder-motion-fur-reveal .wonder-animation-companion,.wonder-motion-cloud-cover .wonder-animation-subject { animation-name:wonder-drift; }
+.wonder-motion-fish-school .wonder-animation-companion { animation-name:wonder-school; }
+.wonder-motion-roots-drink .wonder-animation-companion,.wonder-motion-surface-soak .wonder-animation-companion { animation-name:wonder-rise; }
 .wonder-picture-sparkle { position:absolute; top:17px; right:20px; color:#fff5a9; font-size:29px; filter:drop-shadow(0 2px 5px #51416966); animation:sparkle-twinkle 1.8s ease-in-out infinite; }
 .wonder-card-details { display:flex; min-width:0; flex-direction:column; justify-content:center; padding:23px clamp(19px,4vw,42px); }
 .wonder-card-label { align-self:flex-start; padding:6px 10px; border:1px solid var(--wonder-shadow); border-radius:999px; background:var(--wonder-soft); color:var(--wonder-accent); font-size:9px; font-weight:950; letter-spacing:.9px; }
@@ -1702,6 +1770,55 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
 .wonder-card-navigation > span { color:#655979; font-size:12px; font-weight:950; }
 .wonder-card-navigation i { padding-inline:4px; color:#a69bb5; font-style:normal; }
 @keyframes wonder-picture-float { from{transform:translateY(0) scale(1)} to{transform:translateY(-4px) scale(1.015)} }
+@keyframes wonder-halo-orbit { to{transform:rotate(360deg)} }
+@keyframes wonder-subject-bob { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-11px) rotate(2deg)} }
+@keyframes wonder-companion-float { 0%,100%{transform:translateY(0) rotate(-7deg)} 50%{transform:translateY(-10px) rotate(8deg)} }
+@keyframes wonder-grow { 0%,100%{transform:scale(.94, .94)} 55%{transform:scale(1.06,1.12)} }
+@keyframes wonder-flutter { 0%,100%{transform:rotate(-8deg) translateY(2px)} 50%{transform:rotate(9deg) translateY(-9px)} }
+@keyframes wonder-ripple { 0%,100%{transform:scale(.86);opacity:.55} 50%{transform:scale(1.13);opacity:1} }
+@keyframes wonder-swim { 0%,100%{transform:translateX(-8px) rotate(-3deg)} 50%{transform:translateX(11px) rotate(3deg)} }
+@keyframes wonder-waddle { 0%,100%{transform:translateX(-5px) rotate(-7deg)} 50%{transform:translateX(5px) rotate(7deg)} }
+@keyframes wonder-look { 0%,100%{transform:rotate(-9deg)} 50%{transform:rotate(9deg)} }
+@keyframes wonder-color { 0%,100%{filter:drop-shadow(0 9px 5px #2c23422a) hue-rotate(0deg)} 50%{filter:drop-shadow(0 9px 8px #e8a6df99) hue-rotate(80deg)} }
+@keyframes wonder-reveal { 0%,100%{transform:translateY(7px) scale(.94);opacity:.82} 50%{transform:translateY(-5px) scale(1.05);opacity:1} }
+@keyframes wonder-pulse { 0%,100%{transform:scale(.94)} 50%{transform:scale(1.1)} }
+@keyframes wonder-heartbeat { 0%,35%,65%,100%{transform:scale(1)} 15%,50%{transform:scale(1.13)} }
+@keyframes wonder-snap { 0%,70%,100%{transform:scale(1) rotate(0)} 82%{transform:scale(.84,.92) rotate(-5deg)} }
+@keyframes wonder-dash { 0%,100%{transform:translateX(-13px)} 50%{transform:translateX(13px)} }
+@keyframes wonder-hover { 0%,100%{transform:translateY(2px)} 50%{transform:translateY(-15px)} }
+@keyframes wonder-blink { 0%,42%,48%,100%{transform:scaleY(1)} 45%{transform:scaleY(.84)} }
+@keyframes wonder-listen { 0%,100%{transform:rotate(-10deg)} 50%{transform:rotate(8deg) translateY(-4px)} }
+@keyframes wonder-curl { 0%,100%{transform:rotate(-6deg) scale(1)} 50%{transform:rotate(18deg) scale(.88)} }
+@keyframes wonder-doze { 0%,100%{transform:translateY(2px) rotate(0)} 50%{transform:translateY(5px) rotate(3deg)} }
+@keyframes wonder-sprout { 0%,100%{transform:scale(.88,.9) translateY(5px)} 60%{transform:scale(1.06,1.12) translateY(-5px)} }
+@keyframes wonder-root { 0%,100%{transform:translateY(8px)} 50%{transform:translateY(-8px)} }
+@keyframes wonder-track { 0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(10deg)} }
+@keyframes wonder-drift { 0%{transform:translate(-5px,8px) rotate(-8deg);opacity:.8} 100%{transform:translate(9px,-14px) rotate(9deg);opacity:1} }
+@keyframes wonder-tree-rings { 0%,100%{transform:scale(.88);opacity:.55} 50%{transform:scale(1.12);opacity:1} }
+@keyframes wonder-sway { 0%,100%{transform:rotate(-6deg)} 50%{transform:rotate(7deg)} }
+@keyframes wonder-rise { 0%,100%{transform:translateY(8px);opacity:.65} 50%{transform:translateY(-10px);opacity:1} }
+@keyframes wonder-hide { 0%,100%{transform:translateY(0) scale(1);opacity:1} 50%{transform:translateY(8px) scale(.72);opacity:.72} }
+@keyframes wonder-puff { 0%,100%{transform:scale(.88)} 55%{transform:scale(1.18)} }
+@keyframes wonder-shimmer { 0%,100%{filter:brightness(.95)} 50%{filter:brightness(1.28) drop-shadow(0 0 12px #fff5ad)} }
+@keyframes wonder-hatch { 0%,100%{transform:translateY(6px) scale(.76);opacity:.7} 65%{transform:translateY(-12px) scale(1);opacity:1} }
+@keyframes wonder-squirt { 0%,100%{transform:translate(0,0) scale(.85)} 45%{transform:translate(13px,-14px) scale(1.08)} }
+@keyframes wonder-nibble { 0%,100%{transform:rotate(0) scale(1)} 30%,70%{transform:rotate(-5deg) scale(.96,1.04)} }
+@keyframes wonder-zap { 0%,100%{transform:scale(1);filter:brightness(1)} 48%{transform:scale(1.15);filter:brightness(1.8)} }
+@keyframes wonder-glow { 0%,100%{filter:drop-shadow(0 0 3px #fff6a1)} 50%{filter:drop-shadow(0 0 15px #fff064) brightness(1.2)} }
+@keyframes wonder-routine { 0%,100%{transform:translateY(2px)} 25%,75%{transform:translateY(-7px)} 50%{transform:translateY(2px)} }
+@keyframes wonder-grip { 0%,100%{transform:rotate(-8deg) translateY(2px)} 50%{transform:rotate(7deg) translateY(-5px)} }
+@keyframes wonder-orbit { 0%{transform:translate(38px,-30px)} 25%{transform:translate(0,-62px)} 50%{transform:translate(-38px,-28px)} 75%{transform:translate(0,1px)} 100%{transform:translate(38px,-30px)} }
+@keyframes wonder-orbit-reverse { 0%{transform:translate(-38px,-30px)} 25%{transform:translate(0,-62px)} 50%{transform:translate(38px,-28px)} 75%{transform:translate(0,1px)} 100%{transform:translate(-38px,-30px)} }
+@keyframes wonder-erupt { 0%,100%{transform:translateY(1px)} 45%{transform:translateY(-16px) scale(1.06)} 55%{transform:translateY(-8px) scale(.98)} }
+@keyframes wonder-storm { to{transform:rotate(360deg)} }
+@keyframes wonder-tilt { 0%,100%{transform:rotate(-22deg)} 50%{transform:rotate(22deg)} }
+@keyframes wonder-wind { 0%,100%{transform:translateX(-12px)} 50%{transform:translateX(13px)} }
+@keyframes wonder-spin-slow { to{transform:rotate(360deg)} }
+@keyframes wonder-sunset { 0%,100%{filter:drop-shadow(0 0 7px #ffe29b) hue-rotate(0deg)} 50%{filter:drop-shadow(0 0 18px #f49bc4) hue-rotate(35deg)} }
+@keyframes wonder-cool { 0%,100%{filter:drop-shadow(0 9px 5px #2c23422a) saturate(1)} 50%{filter:drop-shadow(0 0 12px #c9e6ff) saturate(.55)} }
+@keyframes wonder-layer-drift { 0%,100%{transform:translateY(6px)} 50%{transform:translateY(-11px)} }
+@keyframes wonder-distance { 0%,100%{transform:translateX(5px) scale(.9);opacity:.78} 50%{transform:translateX(-13px) scale(1.04);opacity:1} }
+@keyframes wonder-school { 0%,100%{transform:translate(-4px,2px)} 50%{transform:translate(8px,-7px)} }
 @keyframes wonder-fact-enter { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:translateY(0)} }
 @media (max-width:700px) {
   .wonder-explorer { margin-block:8px 26px; }
@@ -1719,7 +1836,7 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .wonder-category-kicker { font-size:7px; letter-spacing:1px; }
   .wonder-category-count { padding:6px 8px; font-size:8px; }
   .wonder-card { grid-template-columns:1fr; border-width:2px; border-radius:17px; }
-  .wonder-card-picture,.wonder-card-picture img { min-height:170px; max-height:190px; }
+  .wonder-card-picture,.wonder-card-animation { min-height:170px; max-height:190px; }
   .wonder-card-details { padding:13px 15px 15px; }
   .wonder-card-fact { min-height:0; margin:10px 0 13px; font-size:19px; }
   .wonder-card-navigation { margin-top:9px; }
@@ -1732,7 +1849,7 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .wonder-category-count { padding:5px 7px; font-size:7px; }
 }
 @media (prefers-reduced-motion:reduce) {
-  .wonder-card-picture img,.wonder-picture-sparkle,.wonder-card-fact { animation:none; }
+  .wonder-card-animation *,.wonder-card-fact { animation:none !important; }
   .wonder-card-navigation button { transition:none; }
 }
 .main-nav a[aria-current="page"] { color:#ffd65c; text-decoration:underline; text-underline-offset:7px; }
@@ -1753,8 +1870,7 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
 .wonder-surprise-dialog.wonder-category-fish { --wonder-accent:#287eaa; --wonder-soft:#dff6fb; --wonder-shadow:#aadbe4; }
 .wonder-surprise-dialog.wonder-category-planets { --wonder-accent:#6554b5; --wonder-soft:#e9e8ff; --wonder-shadow:#c9c8ee; }
 .wonder-surprise-close { position:absolute; z-index:2; top:12px; right:12px; display:grid; width:39px; height:39px; place-items:center; border:2px solid white; border-radius:50%; background:#fffef3; box-shadow:0 3px 0 #4e3b6333; color:#53416d; cursor:pointer; font-size:25px; }
-.wonder-surprise-picture { display:grid; min-height:280px; place-items:center; overflow:hidden; background:var(--wonder-soft); }
-.wonder-surprise-picture img { display:block; width:100%; height:100%; min-height:280px; object-fit:cover; animation:wonder-picture-float 4s ease-in-out infinite alternate; }
+.wonder-surprise-picture { display:grid; min-height:280px; place-items:center; overflow:hidden; }
 .wonder-surprise-copy { display:flex; flex-direction:column; justify-content:center; padding:34px 34px 26px; }
 .wonder-surprise-copy .wonder-category-kicker { font-size:9px; letter-spacing:1.2px; }
 .wonder-surprise-copy h2 { margin:10px 0 9px; color:#30204f; font-family:'Fredoka','Trebuchet MS',sans-serif; font-size:clamp(24px,4vw,33px); line-height:1.12; }
@@ -1778,7 +1894,7 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .wonder-category-tab small { width:24px; height:24px; font-size:9px; }
   .wonder-surprise-backdrop { align-items:center; padding:12px; }
   .wonder-surprise-dialog { width:min(460px,100%); grid-template-columns:1fr; border-width:3px; border-radius:23px; }
-  .wonder-surprise-picture,.wonder-surprise-picture img { min-height:145px; max-height:170px; }
+  .wonder-surprise-picture { min-height:145px; max-height:170px; }
   .wonder-surprise-copy { padding:17px 19px 15px; }
   .wonder-surprise-copy h2 { margin:6px 0; font-size:24px; }
   .wonder-surprise-copy > p { font-size:16px; }
@@ -1789,7 +1905,7 @@ body { background: radial-gradient(ellipse at 8% 20%, #e5f5ff 0, transparent 27%
   .mobile-nav-item small { font-size:7px; letter-spacing:-.2px; white-space:nowrap; }
 }
 @media (prefers-reduced-motion:reduce) {
-  .wonder-surprise-backdrop,.wonder-surprise-dialog,.wonder-surprise-picture img { animation:none; }
+  .wonder-surprise-backdrop,.wonder-surprise-dialog,.wonder-surprise-picture { animation:none; }
   .wonder-category-tab { transition:none; }
 }
 .wonder-surprise-young .wonder-surprise-copy > p { font-size:21px; line-height:1.5; }
