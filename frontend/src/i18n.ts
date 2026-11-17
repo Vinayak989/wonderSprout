@@ -9,6 +9,7 @@ export const subjectsHi: Record<string, string> = {
   'Music & Rhythm': 'संगीत और ताल', 'Coding & Computational Thinking': 'कोडिंग और सोच', 'Life Skills & Good Habits': 'जीवन कौशल और अच्छी आदतें',
   'Emotions & Social Skills': 'भावनाएँ और सामाजिक कौशल', 'Time & Calendar': 'समय और कैलेंडर', 'History & Culture': 'इतिहास और संस्कृति',
   'Money & Financial Literacy': 'पैसा और समझदारी', 'Sports & Movement': 'खेल और गतिविधि', 'Interactive Stories & Reading': 'कहानियाँ और पढ़ना',
+  'English Grammar': 'अंग्रेज़ी व्याकरण', 'Marathi Grammar': 'मराठी व्याकरण',
 };
 
 export const ageCopyHi: Record<string, string> = {
@@ -119,6 +120,12 @@ export const gameCopyHi: Record<string, [string, string]> = {
   'coin-collector-shop': ['सिक्के गिनने की दुकान', 'लक्ष्य तक पहुँचने के लिए सिक्कों की कीमत जोड़ो।'],
   'balance-the-forest': ['जंगल का संतुलन', 'हल्के टैप से जंगल का संतुलन बनाए रखो।'],
   'pixel-creature-studio': ['पिक्सेल जीव कला कक्ष', 'एक-एक रंगीन पिक्सेल से छोटा जीव बनाओ।'],
+  'maths-mission': ['गणित मिशन', 'संख्या, आकार, भिन्न और सोच-विचार की चुनौतियाँ हल करो।'],
+  'science-detectives': ['विज्ञान खोजी', 'पौधों, पदार्थ, अंतरिक्ष, बल और प्रकृति की जाँच करो।'],
+  'history-time-trail': ['इतिहास की समय-यात्रा', 'समयरेखा, महत्वपूर्ण लोगों और भारत-दुनिया के इतिहास को जानो।'],
+  'globe-trotter-quest': ['दुनिया की खोज', 'नक्शे, स्थलरूप, दिशाओं और दुनिया की जगहों की यात्रा करो।'],
+  'english-grammar-garden': ['अंग्रेज़ी व्याकरण बगीचा', 'शब्दों, विराम चिह्नों और वाक्य रचना से अंग्रेज़ी सीखो।'],
+  'marathi-grammar-grove': ['मराठी व्याकरण बगीचा', 'मराठी शब्दों, वाक्य के हिस्सों, सर्वनाम और रूपों का अभ्यास करो।'],
 };
 
 export const textHi: Record<string, string> = {
@@ -290,6 +297,7 @@ const correctAnswerIndices: Record<string, number[]> = {
   'Life Skills & Good Habits': [0, 0, 0, 0, 0], 'Emotions & Social Skills': [0, 0, 0, 0, 0], 'Time & Calendar': [1, 1, 1, 0, 1],
   'History & Culture': [0, 0, 0, 0, 0], 'Money & Financial Literacy': [1, 0, 0, 1, 0], 'Sports & Movement': [0, 0, 0, 1, 0],
   'Interactive Stories & Reading': [0, 0, 0, 0, 0], 'Adventure & Treasure Hunt': [0, 0, 1, 0, 0], 'Puzzle & Logic': [0, 0, 0, 0, 0],
+  'English Grammar': [0, 1, 0, 1, 1], 'Marathi Grammar': [0, 0, 1, 0, 1],
 };
 const generatedQuestionsHi: Record<string, HiQuestion[]> = {
   'Geography & World Explorer': [
@@ -375,6 +383,20 @@ const generatedQuestionsHi: Record<string, HiQuestion[]> = {
     { prompt: 'काम में कई कदम हों तो क्या कर सकते हो?', hint: 'इसे छोटे हिस्सों में बाँटो।', choices: ['एक-एक कदम करो', 'हर कदम छोड़ दो', 'बिना देखे जल्दी करो'], lesson: 'छोटे कदम बड़ा काम आसान कर सकते हैं।' },
     { prompt: 'साथी के साथ काम करते समय क्या मददगार है?', hint: 'ध्यान से सुनने से सब अपने विचार बाँटते हैं।', choices: ['बारी-बारी से सुनो', 'सबके ऊपर बोलो', 'सामान छिपाओ'], lesson: 'बारी-बारी से सुनने से समूह मिलकर काम करता है।' },
     { prompt: 'समझ न आए कि क्या करें तो अगला अच्छा कदम क्या है?', hint: 'भरोसेमंद बड़ा मदद कर सकता है।', choices: ['मदद माँगो', 'खतरनाक स्थिति में अंदाज़ा लगाओ', 'अकेले चले जाओ'], lesson: 'भरोसेमंद व्यक्ति से पूछना सुरक्षित तरीका है।' },
+  ],
+  'English Grammar': [
+    { prompt: 'समूह में कौन-सा शब्द संज्ञा (noun) है?', hint: 'संज्ञा किसी व्यक्ति, जगह या चीज़ का नाम बताती है।', choices: ['River', 'Quickly', 'Blue'], lesson: 'River संज्ञा है क्योंकि यह जगह या चीज़ का नाम बताता है।' },
+    { prompt: '“Birds sing.” में क्रिया कौन-सी है?', hint: 'क्रिया बताती है कि कोई क्या करता है।', choices: ['Birds', 'Sing', 'The'], lesson: 'Sing यह बताने वाला क्रिया शब्द है कि पक्षी क्या करते हैं।' },
+    { prompt: '“a bright star” में कौन-सा शब्द वर्णन करता है?', hint: 'वर्णन करने वाला शब्द खोजो।', choices: ['Bright', 'Star', 'A'], lesson: 'Bright तारे का वर्णन करता है, इसलिए यह विशेषण है।' },
+    { prompt: '“Where is my book__” के अंत में कौन-सा विराम चिह्न आएगा?', hint: 'यह वाक्य एक सवाल पूछता है।', choices: ['.', '?', '!'], lesson: 'सवाल के अंत में question mark (?) आता है।' },
+    { prompt: 'एक से ज़्यादा किताबें बताने वाला शब्द कौन-सा है?', hint: 'इस शब्द का मतलब है कि किताब एक से अधिक है।', choices: ['Book', 'Books', 'Booked'], lesson: 'Books बहुवचन है; s अंत से एक से अधिक का पता चलता है।' },
+  ],
+  'Marathi Grammar': [
+    { prompt: 'मराठी में “पुस्तक” किस प्रकार का शब्द है?', hint: 'यह किसी चीज़ का नाम है।', choices: ['नाम', 'क्रियापद', 'विशेषण'], lesson: 'पुस्तक किसी वस्तु का नाम है, इसलिए यह मराठी संज्ञा है।' },
+    { prompt: 'मराठी में “I” के लिए कौन-सा सर्वनाम है?', hint: 'बोलने वाला अपने लिए यह शब्द कहता है।', choices: ['मी', 'तू', 'तो'], lesson: 'मी मराठी में प्रथम पुरुष एकवचन सर्वनाम है।' },
+    { prompt: '“मुलगा” (लड़का) का बहुवचन क्या है?', hint: 'एक से ज़्यादा लड़कों के लिए रूप चुनो।', choices: ['मुलगी', 'मुलगे', 'मुलगा'], lesson: 'मुलगे, मुलगा का बहुवचन रूप है।' },
+    { prompt: '“सुंदर फूल” में कौन-सा शब्द विशेषण है?', hint: 'यह फूल का वर्णन करता है।', choices: ['सुंदर', 'फूल', 'आहे'], lesson: 'सुंदर फूल का वर्णन करता है, इसलिए यह विशेषण है।' },
+    { prompt: 'मराठी वाक्य “सीमा गाते.” में क्रिया कौन-सी है?', hint: 'क्रिया बताती है कि कोई क्या करता है।', choices: ['सीमा', 'गाते', 'सुंदर'], lesson: 'गाते क्रिया है क्योंकि यह बताता है कि सीमा क्या करती है।' },
   ],
 };
 

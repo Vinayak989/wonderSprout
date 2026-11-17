@@ -9,7 +9,7 @@ const ThreeArcade = lazy(() => import('./ThreeArcade'));
 
 type AgeBand = '3-5' | '6-8' | '9-12';
 type Page = 'welcome' | 'games' | 'game' | 'club' | 'wonder';
-type Subject = 'all' | 'Math magic' | 'Word adventures' | 'Science wonders' | 'Adventure & Treasure Hunt' | 'Memory Games' | 'Puzzle & Logic' | 'Art & Creativity' | 'Geography & World Explorer' | 'Animals & Nature' | 'Music & Rhythm' | 'Coding & Computational Thinking' | 'Life Skills & Good Habits' | 'Emotions & Social Skills' | 'Time & Calendar' | 'History & Culture' | 'Money & Financial Literacy' | 'Sports & Movement' | 'Interactive Stories & Reading';
+type Subject = 'all' | 'Math magic' | 'Word adventures' | 'Science wonders' | 'Adventure & Treasure Hunt' | 'Memory Games' | 'Puzzle & Logic' | 'Art & Creativity' | 'Geography & World Explorer' | 'Animals & Nature' | 'Music & Rhythm' | 'Coding & Computational Thinking' | 'Life Skills & Good Habits' | 'Emotions & Social Skills' | 'Time & Calendar' | 'History & Culture' | 'Money & Financial Literacy' | 'Sports & Movement' | 'Interactive Stories & Reading' | 'English Grammar' | 'Marathi Grammar';
 type GameMode = 'quiz' | 'bubble' | 'spell' | 'match' | 'adventure' | 'memory' | 'puzzle' | 'creative' | 'scavenger' | 'coding' | 'sequence' | 'missing' | 'sudoku' | 'monster' | 'pixel' | 'piano' | 'rhythm' | 'sound' | 'sort' | 'clock' | 'shop' | 'balance' | 'emotion' | 'loop' | 'readaloud' | 'maze3d' | 'space3d' | 'racing' | 'shooting';
 type LocalizedLine = readonly [string, string, string];
 
@@ -135,6 +135,8 @@ const categories: { id: Subject; label: string; icon: string }[] = [
   { id: 'Money & Financial Literacy', label: 'Money & Financial Literacy', icon: '🪙' },
   { id: 'Sports & Movement', label: 'Sports & Movement', icon: '⚽' },
   { id: 'Interactive Stories & Reading', label: 'Interactive Stories & Reading', icon: '📖' },
+  { id: 'English Grammar', label: 'English Grammar', icon: '📚' },
+  { id: 'Marathi Grammar', label: 'Marathi Grammar', icon: '📝' },
 ];
 
 function factCopy(language: Language, line: LocalizedLine) {

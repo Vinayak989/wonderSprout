@@ -158,7 +158,19 @@ public class GameCatalogService {
             game("balance-the-forest", "Balance the Forest", "Sports & Movement", "balance",
                     "Use gentle taps to balance a friendly seesaw in a forest setting.", "🌳", "wildlife", 4),
             game("pixel-creature-studio", "Pixel Creature Studio", "Art & Creativity", "pixel",
-                    "Paint a tiny creature one bright pixel at a time.", "🟪", "art", 4)
+                    "Paint a tiny creature one bright pixel at a time.", "🟪", "art", 4),
+            game("maths-mission", "Maths Mission", "Math magic", "quiz",
+                    "Solve age-level number, shape, fraction, and problem-solving challenges.", "🧮", "sunshine", 4),
+            game("science-detectives", "Science Detectives", "Science wonders", "quiz",
+                    "Investigate plants, matter, space, forces, and the natural world.", "🔬", "mint", 4),
+            game("history-time-trail", "History Time Trail", "History & Culture", "quiz",
+                    "Explore timelines, important people, and moments from India and the world.", "⏳", "history", 4),
+            game("globe-trotter-quest", "Globe Trotter Quest", "Geography & World Explorer", "quiz",
+                    "Travel through maps, landforms, directions, and places around the world.", "🌍", "globe", 4),
+            game("english-grammar-garden", "Grammar Garden", "English Grammar", "quiz",
+                    "Grow strong English sentences with word, punctuation, and grammar clues.", "📚", "berry", 4, AGE_6_12),
+            game("marathi-grammar-grove", "Marathi Grammar Grove", "Marathi Grammar", "quiz",
+                    "Practice Marathi words, sentence parts, pronouns, and forms.", "📝", "peach", 4, AGE_6_12)
     );
 
     private final Map<String, Map<String, List<Question>>> questionBank = buildQuestionBank();
@@ -753,6 +765,136 @@ public class GameCatalogService {
                         q("wsct-912-5", "🌊 Find the ocean animal with three hearts!", "Two hearts send blood to its gills.", "🐙 Octopus", "🐬 Dolphin", "🦈 Shark", "🐙 Octopus", "An octopus has three hearts and blue blood that contains copper-based hemocyanin.")
                 )
         ));
+        bank.put("maths-mission", Map.of(
+                "3-5", List.of(
+                        q("mm-35-1", "There are 3 stars and 1 more joins. How many stars are there?", "Count on one more from three.", "3", "4", "5", "4", "Three stars and one more make four."),
+                        q("mm-35-2", "Which shape has four equal sides?", "Think of a square window.", "Circle", "Square", "Triangle", "Square", "A square has four equal sides."),
+                        q("mm-35-3", "Five apples are here. Two are eaten. How many are left?", "Count back two from five.", "2", "3", "4", "3", "Five take away two leaves three apples."),
+                        q("mm-35-4", "What number comes next: 2, 3, 4, __?", "The numbers go up by one.", "5", "6", "7", "5", "Counting one after four gives five."),
+                        q("mm-35-5", "Which number is smaller: 2 or 5?", "Compare how far each number is when you count.", "2", "4", "5", "2", "Two comes before five, so two is smaller.")
+                ),
+                "6-8", List.of(
+                        q("mm-68-1", "What is 24 + 18?", "Add twenty-four and eighteen.", "32", "42", "44", "42", "Twenty-four plus eighteen equals forty-two."),
+                        q("mm-68-2", "What is 6 × 4?", "Make four groups of six.", "20", "24", "28", "24", "Six groups of four make twenty-four."),
+                        q("mm-68-3", "What is 35 − 17?", "Subtract ten, then subtract seven.", "18", "19", "22", "18", "Thirty-five minus seventeen equals eighteen."),
+                        q("mm-68-4", "What is half of 10?", "Split ten into two equal groups.", "4", "5", "6", "5", "Ten split into two equal groups gives five in each group."),
+                        q("mm-68-5", "A square has sides of 3 cm. What is its perimeter?", "Add all four equal sides.", "9 cm", "12 cm", "15 cm", "12 cm", "A square has four sides, so 3 + 3 + 3 + 3 is 12 cm.")
+                ),
+                "9-12", List.of(
+                        q("mm-912-1", "What is three-quarters of 20?", "Find one quarter, then take three of those parts.", "5", "15", "18", "15", "One quarter of twenty is five, so three quarters is fifteen."),
+                        q("mm-912-2", "What is 2.5 + 1.75?", "Line up the decimal points before adding.", "3.25", "4.25", "4.75", "4.25", "Two and a half plus one and three-quarters is four and a quarter."),
+                        q("mm-912-3", "What is 20% of 150?", "Ten percent is fifteen; take twice that amount.", "15", "30", "45", "30", "Twenty percent is two groups of ten percent, so the answer is thirty."),
+                        q("mm-912-4", "A triangle has a base of 8 cm and height of 5 cm. What is its area?", "Use one-half times base times height.", "20 cm²", "40 cm²", "13 cm²", "20 cm²", "Half of 8 times 5 is 20 square centimetres."),
+                        q("mm-912-5", "A 2:3 ratio has 25 items altogether. How many are in the first part?", "There are five equal ratio parts in total.", "10", "12", "15", "10", "Each part is five items, so the first two parts contain ten.")
+                )
+        ));
+
+        bank.put("science-detectives", Map.of(
+                "3-5", List.of(
+                        q("sd-35-1", "What does a young plant need to grow?", "Its roots take this in from the soil.", "Water", "A toy", "A shoe", "Water", "Plants need water, light, and air to grow."),
+                        q("sd-35-2", "Which animal breathes air and lives in the sea?", "It is a very large sea mammal.", "Whale", "Goldfish", "Crab", "Whale", "Whales are mammals that breathe air at the surface."),
+                        q("sd-35-3", "What happens to an ice cube in a warm room?", "It changes from a solid into a liquid.", "It melts", "It grows leaves", "It becomes a rock", "It melts", "Warmth makes ice melt into liquid water."),
+                        q("sd-35-4", "What gives Earth most of its daylight?", "It is the star in our daytime sky.", "The Sun", "The Moon", "A cloud", "The Sun", "Sunlight brightens Earth during the day."),
+                        q("sd-35-5", "Which body part helps you hear a bell?", "The sound travels to this part of your body.", "Ears", "Elbows", "Knees", "Ears", "Our ears help us hear sounds.")
+                ),
+                "6-8", List.of(
+                        q("sd-68-1", "What is the change from liquid water to water vapour called?", "The Sun can warm puddles and start this change.", "Freezing", "Evaporation", "Melting", "Evaporation", "Evaporation changes liquid water into water vapour."),
+                        q("sd-68-2", "Which state of matter keeps its own shape?", "A wooden block is an example.", "Solid", "Liquid", "Gas", "Solid", "A solid keeps its shape unless a force changes it."),
+                        q("sd-68-3", "Which material is attracted to a magnet?", "Look for a common metal used in some nails.", "Iron", "Glass", "Paper", "Iron", "Magnets attract iron and some other metals."),
+                        q("sd-68-4", "Which part of a plant takes in water from the soil?", "It grows below the ground.", "Roots", "Petals", "Fruit", "Roots", "Roots absorb water and help hold a plant in place."),
+                        q("sd-68-5", "What does the Moon travel around?", "It is Earth's natural satellite.", "Earth", "Mars", "The Sun", "Earth", "The Moon orbits Earth.")
+                ),
+                "9-12", List.of(
+                        q("sd-912-1", "Which three ingredients do plants use in photosynthesis?", "Think about sunlight, air, and water.", "Light, carbon dioxide, and water", "Oxygen, soil, and salt", "Moonlight, oil, and ice", "Light, carbon dioxide, and water", "Plants use light energy, carbon dioxide, and water to make sugars."),
+                        q("sd-912-2", "What force pulls objects toward Earth?", "It keeps us on the ground.", "Gravity", "Friction", "Magnetism", "Gravity", "Gravity pulls objects toward the centre of Earth."),
+                        q("sd-912-3", "What is the basic unit that makes up living things?", "It is much smaller than a tissue.", "Cell", "Organ", "Habitat", "Cell", "Cells are the basic structural units of living organisms."),
+                        q("sd-912-4", "About how long does Earth take to orbit the Sun once?", "It is close to one calendar year.", "24 hours", "365 days", "30 days", "365 days", "One complete orbit of Earth takes about 365 days."),
+                        q("sd-912-5", "What forms when water vapour cools and condenses in the sky?", "Tiny water droplets gather together.", "Clouds", "Sand dunes", "Volcanoes", "Clouds", "Condensed water droplets or ice crystals form clouds.")
+                )
+        ));
+
+        bank.put("history-time-trail", Map.of(
+                "3-5", List.of(
+                        q("ht-35-1", "An event that happened before today is in the __.", "Think about something that has already happened.", "Past", "Future", "Tomorrow", "Past", "The past is the time before now."),
+                        q("ht-35-2", "Where can you see old objects and learn about them?", "It is a place that keeps objects from the past.", "Museum", "Bakery", "Playground", "Museum", "Museums care for objects and help people learn about the past."),
+                        q("ht-35-3", "What does a timeline help us put in order?", "It shows when events happened.", "Events in time", "Colors in a box", "Foods on a plate", "Events in time", "A timeline shows events in the order they happened."),
+                        q("ht-35-4", "An old coin from long ago is a historical __.", "It is an object people can study.", "Artifact", "Cloud", "Seed", "Artifact", "An artifact is an object made or used by people in the past."),
+                        q("ht-35-5", "Which usually happens first in a person's life?", "Think of the earliest step in growing up.", "Learning to crawl", "Learning to drive", "Starting a job", "Learning to crawl", "People usually crawl when they are babies, before later life events.")
+                ),
+                "6-8", List.of(
+                        q("ht-68-1", "Which famous monument is in Agra, India?", "It is made of white marble.", "Taj Mahal", "India Gate", "Gateway of India", "Taj Mahal", "The Taj Mahal is a white-marble monument in Agra."),
+                        q("ht-68-2", "What did Mahatma Gandhi's Dandi March protest in 1930?", "The march challenged a British rule about an everyday mineral.", "The salt tax", "A school rule", "A railway timetable", "The salt tax", "The Dandi March protested the British salt tax in India."),
+                        q("ht-68-3", "What were many of Emperor Ashoka's messages written on?", "Some still stand as stone monuments.", "Pillars and rocks", "Paper airplanes", "Glass bottles", "Pillars and rocks", "Ashoka's edicts were inscribed on rocks and pillars."),
+                        q("ht-68-4", "When did India's Constitution come into effect?", "Republic Day marks this date each year.", "15 August 1947", "26 January 1950", "2 October 1869", "26 January 1950", "The Constitution of India came into effect on 26 January 1950."),
+                        q("ht-68-5", "What is one feature of many Indus Valley cities?", "Archaeologists found careful city planning.", "Planned streets and drains", "Skyscrapers with lifts", "Electric trains", "Planned streets and drains", "Many Indus Valley cities had planned streets and drainage systems.")
+                ),
+                "9-12", List.of(
+                        q("ht-912-1", "On what date was India's Constitution adopted?", "It was adopted before it came into force in January 1950.", "26 November 1949", "26 January 1950", "15 August 1947", "26 November 1949", "India's Constituent Assembly adopted the Constitution on 26 November 1949."),
+                        q("ht-912-2", "In which year did the Quit India Movement begin?", "It began during the Second World War.", "1930", "1942", "1947", "1942", "The Quit India Movement began in 1942."),
+                        q("ht-912-3", "Which event led Emperor Ashoka to turn toward a policy of peace?", "It was a major conflict in ancient India.", "Kalinga War", "Battle of Plassey", "Dandi March", "Kalinga War", "The suffering after the Kalinga War influenced Ashoka's later policy."),
+                        q("ht-912-4", "Which ancient civilization built cities such as Harappa and Mohenjo-daro?", "It developed along a major river system in South Asia.", "Indus Valley Civilization", "Roman Empire", "Maya Civilization", "Indus Valley Civilization", "Harappa and Mohenjo-daro were major Indus Valley Civilization cities."),
+                        q("ht-912-5", "What was the main purpose of the Dandi March?", "It was a non-violent protest led by Gandhi in 1930.", "To protest the salt tax", "To build a railway", "To elect a king", "To protest the salt tax", "The march challenged British control and taxation of salt.")
+                )
+        ));
+
+        bank.put("globe-trotter-quest", Map.of(
+                "3-5", List.of(
+                        q("gt-35-1", "What is a globe?", "It is shaped like the planet we live on.", "A model of Earth", "A kind of shoe", "A tall tree", "A model of Earth", "A globe is a round model of Earth."),
+                        q("gt-35-2", "Which direction does the Sun appear to rise from?", "It is one of the four main compass directions.", "East", "West", "South", "East", "The Sun appears to rise in the east."),
+                        q("gt-35-3", "What is an island?", "Look at how land meets water around it.", "Land with water all around", "A road through a forest", "A very tall hill", "Land with water all around", "An island is land surrounded by water."),
+                        q("gt-35-4", "Which landform is usually much higher than the land around it?", "It can have a peak near the clouds.", "Mountain", "Valley", "Beach", "Mountain", "A mountain is a high landform."),
+                        q("gt-35-5", "What does a north arrow on a map show?", "It helps you know which way is north.", "A direction", "The temperature", "The time", "A direction", "A north arrow helps readers orient a map.")
+                ),
+                "6-8", List.of(
+                        q("gt-68-1", "What is the capital of India?", "It is a union territory in northern India.", "New Delhi", "Mumbai", "Jaipur", "New Delhi", "New Delhi is the capital of India."),
+                        q("gt-68-2", "Which is the largest ocean on Earth?", "It lies between Asia, Australia, and the Americas.", "Pacific Ocean", "Indian Ocean", "Atlantic Ocean", "Pacific Ocean", "The Pacific Ocean is Earth's largest ocean."),
+                        q("gt-68-3", "What does the equator divide Earth into?", "It separates two halves of the planet.", "Northern and Southern Hemispheres", "Land and ocean", "East and West Asia", "Northern and Southern Hemispheres", "The equator divides Earth into the Northern and Southern Hemispheres."),
+                        q("gt-68-4", "Which tool shows directions such as north and west?", "It has a needle that points north.", "Compass", "Thermometer", "Ruler", "Compass", "A compass helps people find directions."),
+                        q("gt-68-5", "Which mountain range lies along much of India's northern edge?", "It includes some of the world's tallest peaks.", "Himalayas", "Andes", "Alps", "Himalayas", "The Himalayas stretch across India's northern region.")
+                ),
+                "9-12", List.of(
+                        q("gt-912-1", "What do lines of latitude measure?", "They are measured north or south of the equator.", "Distance north or south of the equator", "Distance east or west of the Prime Meridian", "Elevation above sea level", "Distance north or south of the equator", "Latitude measures angular distance north or south of the equator."),
+                        q("gt-912-2", "What do lines of longitude measure?", "They are measured east or west from a reference line.", "Distance east or west of the Prime Meridian", "Distance north or south of the equator", "Rainfall in a place", "Distance east or west of the Prime Meridian", "Longitude measures angular distance east or west of the Prime Meridian."),
+                        q("gt-912-3", "Which range forms a natural boundary along much of northern India?", "It contains Mount Everest and many other high peaks.", "Himalayas", "Western Ghats", "Aravalli Range", "Himalayas", "The Himalayas form a high mountain region along India's north."),
+                        q("gt-912-4", "What are monsoon winds best known for bringing to much of India?", "They bring seasonal weather changes and rain.", "Seasonal rainfall", "Snow all year", "Sand from the Sahara", "Seasonal rainfall", "Seasonal monsoon winds bring much of India's annual rainfall."),
+                        q("gt-912-5", "Where is the Deccan Plateau located?", "It covers a large area of peninsular India.", "Southern India", "The Himalayas", "The Thar Desert only", "Southern India", "The Deccan Plateau covers much of southern and central peninsular India.")
+                )
+        ));
+
+        bank.put("english-grammar-garden", Map.of(
+                "6-8", List.of(
+                        q("eg-68-1", "Which word is a noun in this group?", "A noun names a person, place, or thing.", "River", "Quickly", "Blue", "River", "River is a noun because it names a place or thing."),
+                        q("eg-68-2", "Choose the verb in: The bird sings.", "A verb tells what someone or something does.", "The", "Sings", "Bird", "Sings", "Sings is the action word in the sentence."),
+                        q("eg-68-3", "Which word describes the star in “a bright star”?", "Look for the describing word.", "Bright", "Star", "A", "Bright", "Bright is an adjective describing the star."),
+                        q("eg-68-4", "Which punctuation mark completes: “Where is my book__”", "The sentence asks a question.", ".", "?", "!", "?", "A question ends with a question mark."),
+                        q("eg-68-5", "Which word is plural?", "It means there is more than one book.", "Book", "Books", "Booked", "Books", "Books is plural; the ending s shows more than one.")
+                ),
+                "9-12", List.of(
+                        q("eg-912-1", "Which word is an adverb in: She carefully opened the box.", "It tells how she opened the box.", "She", "Carefully", "Box", "Carefully", "Carefully is an adverb describing how she opened the box."),
+                        q("eg-912-2", "Which word is a conjunction in: I wanted to play, but it rained.", "It joins two ideas.", "Wanted", "But", "Rained", "But", "But is a conjunction joining two contrasting ideas."),
+                        q("eg-912-3", "Which sentence uses capital letters correctly?", "Capitalize a person's name and a place name.", "Mira visits Pune.", "mira visits Pune.", "Mira visits pune.", "Mira visits Pune.", "Mira and Pune are proper nouns and begin with capital letters."),
+                        q("eg-912-4", "Choose the right word: Put the books over ___.", "This word tells a place or position.", "there", "their", "they're", "there", "There refers to a place; their shows belonging, and they're means they are."),
+                        q("eg-912-5", "Which phrase is in the past perfect tense?", "It uses had plus a past participle.", "Has finished", "Had finished", "Will finish", "Had finished", "Past perfect uses had with a past participle, as in had finished.")
+                )
+        ));
+
+        bank.put("marathi-grammar-grove", Map.of(
+                "6-8", List.of(
+                        q("mg-68-1", "Which Marathi word is a naming word (noun)?", "A noun names a person, place, animal, or thing.", "पुस्तक", "धावतो", "सुंदर", "पुस्तक", "पुस्तक names a thing, so it is a Marathi noun."),
+                        q("mg-68-2", "Which Marathi pronoun means “I”?", "It is the word a speaker uses for themself.", "मी", "तू", "तो", "मी", "मी is the Marathi first-person singular pronoun for I."),
+                        q("mg-68-3", "What is the plural form of “मुलगा” (boy)?", "Choose the form used for more than one boy.", "मुलगी", "मुलगे", "मुलगा", "मुलगे", "मुलगे is the plural form of मुलगा."),
+                        q("mg-68-4", "Which word is an adjective in “सुंदर फूल”?", "It describes the flower.", "सुंदर", "फूल", "आहे", "सुंदर", "सुंदर describes the flower, so it is an adjective."),
+                        q("mg-68-5", "Choose the verb in the Marathi sentence “सीमा गाते.”", "A verb tells what someone does.", "सीमा", "गाते", "सुंदर", "गाते", "गाते is the verb because it tells what Seema does.")
+                ),
+                "9-12", List.of(
+                        q("mg-912-1", "Which word is the adjective in “मोठे झाड”?", "It describes the tree.", "मोठे", "झाड", "आहे", "मोठे", "मोठे describes the tree and is an adjective."),
+                        q("mg-912-2", "What is the singular form of “मुलगे”?", "Choose the word for one boy.", "मुलगा", "मुलगी", "मुले", "मुलगा", "मुलगा is singular; मुलगे is its plural form."),
+                        q("mg-912-3", "Which Marathi word is a verb?", "A verb describes an action or state.", "लिहितो", "निळा", "पुस्तक", "लिहितो", "लिहितो means writes and is a verb."),
+                        q("mg-912-4", "Which pronoun means “we” in Marathi?", "It refers to the speaker and at least one other person.", "मी", "आम्ही", "ती", "आम्ही", "आम्ही is a Marathi pronoun meaning we."),
+                        q("mg-912-5", "What is the plural form of “पुस्तक”?", "Choose the form used for more than one book.", "पुस्तके", "पुस्तकाचा", "पुस्तकी", "पुस्तके", "पुस्तके is the plural form of पुस्तक.")
+                )
+        ));
+
         return bank;
     }
 
