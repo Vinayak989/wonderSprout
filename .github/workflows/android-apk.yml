@@ -43,14 +43,14 @@ jobs:
         working-directory: mobile
 
       - name: Build APK
-        run: ./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
         working-directory: mobile/android
 
       - name: Save APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: wondersprout-android-apk
-          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          path: mobile/android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 30
       
@@ -58,7 +58,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          apk="mobile/android/app/build/outputs/apk/debug/app-debug.apk"
+          apk="mobile/android/app/build/outputs/apk/release/app-release.apk"
           release_apk="$RUNNER_TEMP/WonderSprout.apk"
           cp "$apk" "$release_apk"
           tag="android-apk-latest"
