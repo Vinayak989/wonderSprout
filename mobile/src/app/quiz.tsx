@@ -7,6 +7,7 @@ import { text } from '../copy';
 import { localizedGame, localizedLesson, localizedQuestion } from '../shared/i18n';
 import { API_BASE, useLearning, type Game, type Question } from '../store';
 import { colors } from '../theme';
+import NativeActivityScreen, { nativeActivityModes } from '../components/NativeActivity';
 
 type AnswerResult = { correct: boolean; correctAnswer: string; lesson: string; encouragement: string };
 
@@ -25,7 +26,11 @@ export default function QuizScreen() {
   const [error, setError] = useState(false);
 
   const loadQuestions = useCallback(async () => {
-    if (!game) return;
+    if (!game || nativeActivityModes.has(game.mode)) {
+      setLoading(false);
+      setError(false);
+      return;
+    }
     setLoading(true); setError(false); setQuestions([]); setIndex(0); setFeedback(null); setSelectedChoice(null); setFinished(false);
     try {
       const response = await fetch(`${API_BASE}/games/${encodeURIComponent(game.id)}/questions?ageBand=${age}`);
@@ -74,6 +79,8 @@ export default function QuizScreen() {
 
   const closeToExplore = () => router.replace('/explore');
 
+  if (game && nativeActivityModes.has(game.mode)) return <NativeActivityScreen game={game} />;
+
   return <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
     <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       <View style={styles.topbar}><Pressable onPress={() => router.back()} style={styles.backButton}><Text style={styles.backText}>‹</Text></Pressable><Text numberOfLines={1} style={styles.topTitle}>{localizedGameCopy?.title ?? 'WonderSprout'}</Text><Text style={styles.ageTag}>{age}</Text></View>
@@ -115,3 +122,4 @@ const styles = StyleSheet.create({
   feedbackBox: { borderRadius: 16, padding: 13, marginTop: 13 }, feedbackCorrect: { backgroundColor: '#E7F3E9' }, feedbackTry: { backgroundColor: '#FFF1DC' }, feedbackTitle: { color: colors.ink, fontWeight: '900', fontSize: 14 }, feedbackCopy: { color: colors.ink, fontSize: 12, lineHeight: 17, marginTop: 4 }, nextButton: { marginTop: 13 }, checking: { textAlign: 'center', color: colors.muted, fontSize: 12, marginTop: 12 },
   finishedCard: { marginTop: 20, alignItems: 'center', padding: 24 }, finishedEmoji: { fontSize: 57, marginBottom: 9 }, finishedStat: { alignItems: 'center', marginTop: 20 }, finishedStatNumber: { color: colors.leaf, fontWeight: '900', fontSize: 30 }, finishedStatLabel: { color: colors.muted, fontWeight: '700', marginTop: 2 }, pressed: { opacity: 0.8 },
 });
+

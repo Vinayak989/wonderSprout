@@ -5,7 +5,6 @@ import type { Language } from './shared/i18n';
 
 export const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? 'https://wonder-sprout.onrender.com/api';
 const STORAGE_KEY = 'wondersprout-mobile-progress-v1';
-const playableModes = new Set(['quiz', 'bubble', 'spell', 'match', 'adventure', 'puzzle', 'scavenger', 'emotion', 'readaloud']);
 
 export type Game = {
   id: string;
@@ -93,7 +92,9 @@ export function LearningProvider({ children }: React.PropsWithChildren) {
   useEffect(() => { void refreshGames(); }, [refreshGames]);
 
   const value = useMemo<LearningContext>(() => ({
-    games: games.filter((game) => playableModes.has(game.mode)),
+    // Keep the full API catalog so native mini-games and question rounds share
+    // the same category and age filtering as the web app.
+    games,
     age: saved.age,
     language: saved.language,
     answers: saved.answers,
@@ -119,3 +120,4 @@ export function useLearning() {
   if (!value) throw new Error('useLearning must be used inside LearningProvider');
   return value;
 }
+
