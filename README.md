@@ -73,7 +73,7 @@ Create a Render Web Service from this repository using the Docker runtime and th
 
 The separate Expo app lives in `mobile/` and provides native-style subject browsing, quiz rounds, and a parent or teacher progress view. Answers and completed rounds are stored on the device, and quiz content uses the same Render API as the web app.
 
-Pushing mobile changes to `main` starts the **Build Android APK** GitHub Actions workflow. Download the sideloadable debug APK from that workflow's Artifacts section. For iOS, `mobile/eas.json` is configured for EAS Build; installing an IPA on a real iPhone requires Apple Developer signing credentials configured in EAS.
+Pushing mobile changes to `main` starts the **Build Android APK** GitHub Actions workflow. Each successful build updates the APK attached to the project's [latest Android release](https://github.com/Vinayak989/wonderSprout/releases/latest/download/WonderSprout.apk). The workflow's Artifacts section also keeps a 30-day copy. For iOS, `mobile/eas.json` is configured for EAS Build; installing an IPA on a real iPhone requires Apple Developer signing credentials configured in EAS.
 
 ## API
 
