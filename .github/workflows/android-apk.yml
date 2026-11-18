@@ -43,7 +43,7 @@ jobs:
         working-directory: mobile
 
       - name: Build APK
-        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a,x86_64
         working-directory: mobile/android
 
       - name: Save APK artifact
