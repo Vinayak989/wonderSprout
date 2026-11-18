@@ -305,13 +305,13 @@ function SudokuActivity({ onAnswer, onFinish }: ActivityProps) {
   </ActivityCard>;
 }
 
-const pianoSound = require('../assets/piano-tone.wav');
-const birdSound = require('../assets/bird-clue.wav');
-const frogSound = require('../assets/frog-clue.wav');
-const cowSound = require('../assets/cow-clue.wav');
-const fluteSound = require('../assets/flute-clue.wav');
-const violinSound = require('../assets/violin-clue.wav');
-const drumSound = require('../assets/drum-clue.wav');
+const pianoSound = require('../../assets/piano-tone.wav');
+const birdSound = require('../../assets/bird-clue.wav');
+const frogSound = require('../../assets/frog-clue.wav');
+const cowSound = require('../../assets/cow-clue.wav');
+const fluteSound = require('../../assets/flute-clue.wav');
+const violinSound = require('../../assets/violin-clue.wav');
+const drumSound = require('../../assets/drum-clue.wav');
 const noteRates = [0.75, 0.84, 0.94, 1, 1.12, 1.26, 1.41];
 const noteNames = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'];
 
