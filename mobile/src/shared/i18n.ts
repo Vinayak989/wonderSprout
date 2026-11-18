@@ -513,23 +513,33 @@ export function marathiQuestionRound(subject: string, gameId: string, age: strin
 
 export function localizedQuestion<T extends { id: string; prompt: string; hint: string; choices: string[] }>(language: Language, subject: string, gameId: string, question: T): T {
   if (language === 'en' || language === 'mr' && 'localized' in question && question.localized) return question;
+  const isDedicatedGrammarGame = gameId === 'english-grammar-garden' || gameId === 'marathi-grammar-grove';
+  const index = Number(question.id.match(/-(\d+)$/)?.[1] ?? 0) - 1;
   if (language === 'mr') return {
     ...question,
-    prompt: textMr[question.prompt] ?? question.prompt,
-    hint: textMr[question.hint] ?? question.hint,
-    choices: question.choices.map((choice) => textMr[choice] ?? choice),
+    prompt: isDedicatedGrammarGame && generatedQuestionsHi[subject]?.[index]
+      ? hindiTextMr[generatedQuestionsHi[subject][index].prompt] ?? generatedQuestionsHi[subject][index].prompt
+      : textMr[question.prompt] ?? question.prompt,
+    hint: isDedicatedGrammarGame && generatedQuestionsHi[subject]?.[index]
+      ? hindiTextMr[generatedQuestionsHi[subject][index].hint] ?? generatedQuestionsHi[subject][index].hint
+      : textMr[question.hint] ?? question.hint,
+    choices: isDedicatedGrammarGame && generatedQuestionsHi[subject]?.[index]
+      ? generatedQuestionsHi[subject][index].choices.map((choice) => hindiTextMr[choice] ?? questionTextMr[choice] ?? choice)
+      : question.choices.map((choice) => textMr[choice] ?? choice),
   };
   if ('localized' in question && question.localized) return question;
-  const index = Number(question.id.match(/-(\d+)$/)?.[1] ?? 0) - 1;
-  const translated = gameId === 'guess-the-emotion' ? emotionQuestionsHi[index] : question.id.startsWith(`${gameId}-`) ? generatedQuestionsHi[subject]?.[index] : undefined;
+  const translated = gameId === 'guess-the-emotion' ? emotionQuestionsHi[index] : question.id.startsWith(`${gameId}-`) || isDedicatedGrammarGame ? generatedQuestionsHi[subject]?.[index] : undefined;
   if (translated) return { ...question, prompt: translated.prompt, hint: translated.hint, choices: translated.choices };
   return { ...question, prompt: tr(language, question.prompt), hint: tr(language, question.hint), choices: question.choices.map((choice) => tr(language, choice)) };
 }
 
 export function localizedLesson(language: Language, subject: string, questionId: string, lesson: string): string {
   if (language === 'en') return lesson;
-  if (language === 'mr') return textMr[lesson] ?? questionTextMr[lesson] ?? lesson;
   const index = Number(questionId.match(/-(\d+)$/)?.[1] ?? 0) - 1;
+  if (language === 'mr') {
+    const grammarLesson = generatedQuestionsHi[subject]?.[index]?.lesson;
+    return grammarLesson ? hindiTextMr[grammarLesson] ?? questionTextMr[grammarLesson] ?? grammarLesson : textMr[lesson] ?? questionTextMr[lesson] ?? lesson;
+  }
   const translated = generatedQuestionsHi[subject]?.[index] ?? (questionId.startsWith('guess-the-emotion-') ? emotionQuestionsHi[index] : undefined);
   return translated?.lesson ?? tr(language, lesson);
 }
