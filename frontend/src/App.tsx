@@ -605,7 +605,11 @@ export default function App() {
 
   function markGameCompleted() {
     if (!activeGame) return;
-    updateClubData((previous) => ({ ...previous, lastCompletedGameId: activeGame.id }));
+    updateClubData((previous) => ({
+      ...previous,
+      lastCompletedGameId: activeGame.id,
+      gameCompletions: { ...previous.gameCompletions, [activeGame.id]: (previous.gameCompletions[activeGame.id] ?? 0) + 1 },
+    }));
   }
 
   function saveArtwork(image: string) {

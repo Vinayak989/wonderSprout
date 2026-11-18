@@ -35,6 +35,7 @@ export type ClubData = {
   weeklyStarted: { key: string; gameId: string } | null;
   weeklyCompleted: string[];
   lastCompletedGameId: string | null;
+  gameCompletions: Record<string, number>;
   coopWins: number;
 };
 
@@ -60,6 +61,7 @@ export const defaultClubData: ClubData = {
   weeklyStarted: null,
   weeklyCompleted: [],
   lastCompletedGameId: null,
+  gameCompletions: {},
   coopWins: 0,
 };
 
@@ -90,6 +92,7 @@ export function readClubData(): ClubData {
     visitedStops: Array.isArray(saved.visitedStops) ? saved.visitedStops : [],
     stories: Array.isArray(saved.stories) ? saved.stories : [],
     weeklyCompleted: Array.isArray(saved.weeklyCompleted) ? saved.weeklyCompleted : [],
+    gameCompletions: saved.gameCompletions && typeof saved.gameCompletions === 'object' && !Array.isArray(saved.gameCompletions) ? saved.gameCompletions : {},
   };
 }
 

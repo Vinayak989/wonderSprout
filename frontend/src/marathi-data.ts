@@ -1002,7 +1002,21 @@ export const textMr: Record<string, string> = {
   "Wonder Kart Rally": "वंडर कार्ट रॅली",
   "Race through colorful worlds, steer around puddles, and collect stars. Practice planning and counting.": "रंगीबेरंगी जगातून शर्यत करा, डबक्यांभोवती फिरा आणि तारे गोळा करा. नियोजन आणि मोजणीचा सराव करा.",
   "Sparkle Target Blaster": "स्पार्कल टार्गेट ब्लास्टर",
-  "Aim a friendly sparkle launcher at stars and shape targets. No enemies or combat.": "तारे आणि आकार लक्ष्यांवर अनुकूल स्पार्कल लाँचरचे लक्ष्य ठेवा. कोणतेही शत्रू किंवा युद्ध नाही."
+  "Aim a friendly sparkle launcher at stars and shape targets. No enemies or combat.": "तारे आणि आकार लक्ष्यांवर अनुकूल स्पार्कल लाँचरचे लक्ष्य ठेवा. कोणतेही शत्रू किंवा युद्ध नाही.",
+  "Subject progress": "विषयानुसार प्रगती",
+  "Practice history from this device. Suggestions appear after at least 3 answers per subject.": "या डिव्हाइसवरील सराव. प्रत्येक विषयात किमान 3 उत्तरे दिल्यानंतर सरावाचा सल्ला दिसतो.",
+  "No subject activity yet. Play a game to start this summary.": "अद्याप विषयाचा सराव नोंदलेला नाही. सारांश सुरू करण्यासाठी एखादा खेळ खेळा.",
+  "games": "खेळ",
+  "finished": "पूर्ण",
+  "answers": "उत्तरे",
+  "Answer accuracy": "उत्तरांची अचूकता",
+  "Practice together": "एकत्र सराव करा",
+  "Strong progress": "छान प्रगती",
+  "In progress": "प्रगती सुरू आहे",
+  "Played": "खेळले",
+  "This activity has no scored questions.": "या खेळात गुण दिले जाणारे प्रश्न नाहीत.",
+  "This subject may benefit from a little more practice together.": "या विषयात एकत्र थोडा अधिक सराव केल्याने मदत होईल.",
+  "Try a game in this subject": "या विषयातील खेळ खेळून पाहा"
 };
 
 export const questionTextMr: Record<string, string> = {

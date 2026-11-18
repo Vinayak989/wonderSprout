@@ -52,6 +52,7 @@ const phrases: Record<string, [string, string]> = {
   'My art gallery': ['My art gallery', 'मेरी कला गैलरी'], 'Drawings saved on this device will show up here.': ['Drawings saved on this device will show up here.', 'इस डिवाइस पर सहेजी गई तस्वीरें यहाँ दिखेंगी।'], 'Remove artwork': ['Remove artwork', 'तस्वीर हटाओ'],
   'Explorer avatar': ['Explorer avatar', 'खोजी किरदार'], 'Pick a friendly face for your adventures.': ['Pick a friendly face for your adventures.', 'अपने रोमांच के लिए प्यारा चेहरा चुनो।'], 'Favorite games': ['Favorite games', 'पसंदीदा खेल'], 'Remove favorite': ['Remove favorite', 'पसंदीदा से हटाओ'], 'No favorites yet. Tap the heart on a game card to save one.': ['No favorites yet. Tap the heart on a game card to save one.', 'अभी पसंदीदा खेल नहीं हैं। खेल के दिल पर दबाकर सहेजो।'],
   'Grown-up corner': ['Grown-up corner', 'बड़ों का कोना'], 'A quick grown-up check keeps settings away from little hands.': ['A quick grown-up check keeps settings away from little hands.', 'छोटा-सा बड़ों का सवाल सेटिंग्स को सुरक्षित रखता है।'], 'Solve 7 + 5 to open settings.': ['Solve 7 + 5 to open settings.', 'सेटिंग्स खोलने के लिए 7 + 5 हल करें।'], 'Check': ['Check', 'जाँचें'], 'That answer needs a grown-up. Try again.': ['That answer needs a grown-up. Try again.', 'यह जवाब सही नहीं है। फिर से कोशिश करें।'], 'Parent dashboard': ['Parent dashboard', 'अभिभावक डैशबोर्ड'], 'Progress on this device': ['Progress on this device', 'इस डिवाइस की प्रगति'], 'Finished games': ['Finished games', 'पूरे किए खेल'], 'Accessibility': ['Accessibility', 'सुगमता'], 'High contrast': ['High contrast', 'गहरा कंट्रास्ट'], 'Easy-read font': ['Easy-read font', 'आसानी से पढ़ने वाला फ़ॉन्ट'], 'Reduce motion': ['Reduce motion', 'कम गति वाले प्रभाव'], 'Read game clues aloud': ['Read game clues aloud', 'खेल के संकेत बोलकर सुनाएँ'], 'Your choices and creations stay in this browser. No account or child profile is sent anywhere.': ['Your choices and creations stay in this browser. No account or child profile is sent anywhere.', 'तुम्हारी पसंद और बनाई चीज़ें इसी ब्राउज़र में रहती हैं। कोई खाता या बच्चों की जानकारी कहीं नहीं भेजी जाती।'],
+  'Subject progress': ['Subject progress', 'विषय की प्रगति'], 'Practice history from this device. Suggestions appear after at least 3 answers per subject.': ['Practice history from this device. Suggestions appear after at least 3 answers per subject.', 'इस डिवाइस का अभ्यास। हर विषय में कम से कम 3 जवाब मिलने पर सुझाव दिखते हैं।'], 'No subject activity yet. Play a game to start this summary.': ['No subject activity yet. Play a game to start this summary.', 'अभी किसी विषय का अभ्यास नहीं हुआ। यह सारांश देखने के लिए एक खेल खेलें।'], 'games': ['games', 'खेल'], 'finished': ['finished', 'पूरे'], 'answers': ['answers', 'जवाब'], 'Answer accuracy': ['Answer accuracy', 'सही जवाबों का प्रतिशत'], 'Practice together': ['Practice together', 'मिलकर अभ्यास करें'], 'Strong progress': ['Strong progress', 'अच्छी प्रगति'], 'In progress': ['In progress', 'प्रगति जारी'], 'Played': ['Played', 'खेला गया'], 'This activity has no scored questions.': ['This activity has no scored questions.', 'इस गतिविधि में अंक वाले सवाल नहीं हैं।'], 'This subject may benefit from a little more practice together.': ['This subject may benefit from a little more practice together.', 'इस विषय में साथ मिलकर थोड़ा और अभ्यास मददगार हो सकता है।'], 'Try a game in this subject': ['Try a game in this subject', 'इस विषय का एक खेल खेलें'],
   'Offline ready': ['Offline ready', 'ऑफ़लाइन खेलने के लिए तैयार'], 'Some games need an internet connection the first time you open them.': ['Some games need an internet connection the first time you open them.', 'कुछ खेल पहली बार खोलने के लिए इंटरनेट चाहते हैं।'], 'Choose a game': ['Choose a game', 'खेल चुनो'],
   'Smart next step': ['Smart next step', 'तुम्हारा अगला कदम'], 'Practice pick': ['Practice pick', 'अभ्यास का खेल'], 'Ready for a twist?': ['Ready for a twist?', 'नई चुनौती के लिए तैयार?'], 'A gentle retry and a familiar game can help build confidence.': ['A gentle retry and a familiar game can help build confidence.', 'धीरे से फिर कोशिश करना और जाना-पहचाना खेल आत्मविश्वास बढ़ाते हैं।'], 'You are doing great. Try a new kind of challenge next.': ['You are doing great. Try a new kind of challenge next.', 'तुम बहुत अच्छा कर रहे हो। अब एक नई तरह की चुनौती आज़माओ।'], 'Keep exploring. Your next game is picked for your age.': ['Keep exploring. Your next game is picked for your age.', 'खोजते रहो। तुम्हारा अगला खेल तुम्हारी उम्र के हिसाब से चुना गया है।'], 'Answer a few questions to get a practice pick.': ['Answer a few questions to get a practice pick.', 'अभ्यास का खेल पाने के लिए कुछ सवालों के जवाब दो।'],
 };
@@ -157,6 +158,37 @@ export default function ClubPage({ age, language, games, progress, data, onDataC
   const totalAttempts = gamePerformance.reduce((sum, item) => sum + item.attempts, 0);
   const totalCorrect = gamePerformance.reduce((sum, item) => sum + item.correct, 0);
   const accuracy = totalAttempts ? Math.round(totalCorrect / totalAttempts * 100) : 0;
+  const subjectProgress = useMemo(() => {
+    type SubjectSummary = { subject: string; label: string; games: number; finished: number; answers: number; correct: number };
+    const summaries = new Map<string, SubjectSummary>();
+    for (const game of games) {
+      const performance = progress.performance?.[game.id];
+      const answers = Math.max(0, Number(performance?.attempts) || 0);
+      const finished = Math.max(0, Number(data.gameCompletions?.[game.id]) || 0);
+      if (answers === 0 && finished === 0) continue;
+      const summary = summaries.get(game.subject) ?? {
+        subject: game.subject,
+        label: game.localizedSubject ?? game.subject,
+        games: 0,
+        finished: 0,
+        answers: 0,
+        correct: 0,
+      };
+      summary.games += 1;
+      summary.finished += finished;
+      summary.answers += answers;
+      summary.correct += Math.min(answers, Math.max(0, Number(performance?.correct) || 0));
+      summaries.set(game.subject, summary);
+    }
+    return [...summaries.values()].map((summary) => {
+      const subjectAccuracy = summary.answers ? Math.round(summary.correct / summary.answers * 100) : null;
+      return { ...summary, accuracy: subjectAccuracy, needsPractice: summary.answers >= 3 && subjectAccuracy !== null && subjectAccuracy < 60 };
+    }).sort((a, b) => {
+      if (a.needsPractice !== b.needsPractice) return a.needsPractice ? -1 : 1;
+      if (a.accuracy !== null && b.accuracy !== null && a.answers >= 3 && b.answers >= 3) return a.accuracy - b.accuracy;
+      return b.answers - a.answers || a.label.localeCompare(b.label);
+    });
+  }, [data.gameCompletions, games, progress.performance]);
   const weakestGame = Object.entries(progress.performance ?? {}).filter(([, score]) => score.attempts >= 3).sort((a, b) => a[1].correct / a[1].attempts - b[1].correct / b[1].attempts)[0];
   const focusSubject = games.find((game) => game.id === weakestGame?.[0])?.subject;
   const recommendedGame = accuracy < 55
@@ -336,9 +368,68 @@ export default function ClubPage({ age, language, games, progress, data, onDataC
       </section>
 
       <section className="club-section grownup-section" id="club-grownup">
-        <div className="grownup-lock-icon">🛡️</div><div className="grownup-gate"><span className="club-kicker">{t(language, 'Grown-up corner')}</span><h2>{parentUnlocked ? t(language, 'Parent dashboard') : t(language, 'A little control for grown-ups')}</h2><p>{t(language, 'A quick grown-up check keeps settings away from little hands.')}</p>{!parentUnlocked ? <form className="parent-gate-form" onSubmit={(event) => { event.preventDefault(); checkParent(); }}><label>{t(language, 'Solve 7 + 5 to open settings.')}<input inputMode="numeric" value={parentAnswer} onChange={(event) => setParentAnswer(event.target.value)} aria-label={t(language, 'Solve 7 + 5 to open settings.')} /></label><button type="submit" className="club-secondary">{t(language, 'Check')}</button>{parentError && <small role="alert">{t(language, 'That answer needs a grown-up. Try again.')}</small>}</form> : <div className="parent-dashboard"><div className="parent-stats"><span>⭐ <strong>{progress.stars}</strong> {t(language, 'stars')}</span><span>🎮 <strong>{progress.games}</strong> {t(language, 'Finished games')}</span><span>🧠 <strong>{accuracy}%</strong> {localizedText(language, 'answer accuracy', 'सही जवाब')}</span></div><div className="accessibility-options"><strong>{t(language, 'Accessibility')}</strong>{([
-            ['highContrast', 'High contrast'], ['dyslexicFont', 'Easy-read font'], ['reduceMotion', 'Reduce motion'], ['readAloud', 'Read game clues aloud'],
-          ] as const).map(([key, label]) => <label key={key}><span>{t(language, label)}</span><input type="checkbox" checked={preferences[key]} onChange={(event) => onPreferencesChange({ ...preferences, [key]: event.target.checked })} /></label>)}</div><p className="parent-privacy">🔒 {t(language, 'Your choices and creations stay in this browser. No account or child profile is sent anywhere.')}</p><button className="club-text-button" type="button" onClick={() => setParentUnlocked(false)}>{localizedText(language, 'Lock parent corner', 'बंद करें')}</button></div>}</div>
+        <div className="grownup-lock-icon">🛡️</div>
+        <div className="grownup-gate">
+          <span className="club-kicker">{t(language, 'Grown-up corner')}</span>
+          <h2>{parentUnlocked ? t(language, 'Parent dashboard') : t(language, 'A little control for grown-ups')}</h2>
+          <p>{t(language, 'A quick grown-up check keeps settings away from little hands.')}</p>
+          {!parentUnlocked ? (
+            <form className="parent-gate-form" onSubmit={(event) => { event.preventDefault(); checkParent(); }}>
+              <label>{t(language, 'Solve 7 + 5 to open settings.')}<input inputMode="numeric" value={parentAnswer} onChange={(event) => setParentAnswer(event.target.value)} aria-label={t(language, 'Solve 7 + 5 to open settings.')} /></label>
+              <button type="submit" className="club-secondary">{t(language, 'Check')}</button>
+              {parentError && <small role="alert">{t(language, 'That answer needs a grown-up. Try again.')}</small>}
+            </form>
+          ) : (
+            <div className="parent-dashboard">
+              <div className="parent-stats">
+                <span>⭐ <strong>{progress.stars}</strong> {t(language, 'stars')}</span>
+                <span>🎮 <strong>{progress.games}</strong> {t(language, 'Finished games')}</span>
+                <span>🧠 <strong>{accuracy}%</strong> {t(language, 'Answer accuracy')}</span>
+              </div>
+              <section className="parent-subject-progress" aria-labelledby="parent-subject-progress-title">
+                <div className="parent-subject-heading">
+                  <div><strong id="parent-subject-progress-title">{t(language, 'Subject progress')}</strong><small>{t(language, 'Practice history from this device. Suggestions appear after at least 3 answers per subject.')}</small></div>
+                  <span>📚 {subjectProgress.length}</span>
+                </div>
+                {subjectProgress.length ? (
+                  <div className="parent-subject-list">
+                    {subjectProgress.map((subject) => {
+                      const practiceGame = subject.needsPractice
+                        ? ageGames.find((game) => game.subject === subject.subject && ['quiz', 'bubble', 'spell', 'match'].includes(game.mode)) ?? ageGames.find((game) => game.subject === subject.subject)
+                        : undefined;
+                      const status = subject.needsPractice
+                        ? 'Practice together'
+                        : subject.answers >= 3 && subject.accuracy !== null && subject.accuracy >= 80
+                          ? 'Strong progress'
+                          : subject.answers > 0 ? 'In progress' : 'Played';
+                      return (
+                        <article className={`parent-subject-card${subject.needsPractice ? ' needs-practice' : ''}`} key={subject.subject}>
+                          <div className="parent-subject-card-heading">
+                            <strong>{subject.label}</strong>
+                            <span className={subject.needsPractice ? 'subject-status needs-practice' : 'subject-status'}>{t(language, status)}</span>
+                          </div>
+                          <small className="parent-subject-counts">{subject.games} {t(language, 'games')} · {subject.finished} {t(language, 'finished')} · {subject.answers} {t(language, 'answers')}</small>
+                          {subject.accuracy !== null ? (
+                            <div className="parent-subject-score">
+                              <span>{t(language, 'Answer accuracy')} <strong>{subject.accuracy}%</strong></span>
+                              <div className="parent-subject-track" role="progressbar" aria-label={`${subject.label} ${t(language, 'Answer accuracy')}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={subject.accuracy}><i style={{ width: `${subject.accuracy}%` }} /></div>
+                            </div>
+                          ) : <small className="parent-subject-no-score">{t(language, 'This activity has no scored questions.')}</small>}
+                          {subject.needsPractice && <div className="parent-practice-note"><p>{t(language, 'This subject may benefit from a little more practice together.')}</p>{practiceGame && <button type="button" className="club-secondary" onClick={() => onPlay(practiceGame)}>{t(language, 'Try a game in this subject')} →</button>}</div>}
+                        </article>
+                      );
+                    })}
+                  </div>
+                ) : <p className="parent-subject-empty">{t(language, 'No subject activity yet. Play a game to start this summary.')}</p>}
+              </section>
+              <div className="accessibility-options"><strong>{t(language, 'Accessibility')}</strong>{([
+                ['highContrast', 'High contrast'], ['dyslexicFont', 'Easy-read font'], ['reduceMotion', 'Reduce motion'], ['readAloud', 'Read game clues aloud'],
+              ] as const).map(([key, label]) => <label key={key}><span>{t(language, label)}</span><input type="checkbox" checked={preferences[key]} onChange={(event) => onPreferencesChange({ ...preferences, [key]: event.target.checked })} /></label>)}</div>
+              <p className="parent-privacy">🔒 {t(language, 'Your choices and creations stay in this browser. No account or child profile is sent anywhere.')}</p>
+              <button className="club-text-button" type="button" onClick={() => setParentUnlocked(false)}>{localizedText(language, 'Lock parent corner', 'बंद करें')}</button>
+            </div>
+          )}
+        </div>
       </section>
 
       <footer className="club-footer"><span>{data.avatar} {localizedText(language, 'Play, discover, be kind!', 'खेलो, खोजो, दयालु बनो!')}</span><span>{t(language, 'Progress on this device')}</span></footer>

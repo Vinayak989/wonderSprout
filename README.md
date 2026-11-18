@@ -15,6 +15,8 @@ Each game category also has its own page, such as `/games/category/memory-games`
 
 Progress stars stay in the current browser. The site does not require an account or collect child profiles. The Java API provides the catalogue, question rounds, answer feedback, and memory cards without storing player data.
 
+The grown-up corner in Wonder Club (`/club`) includes a parent dashboard with games and answers practiced by subject, answer accuracy, and gentle practice suggestions after at least three answers in a subject. Progress remains in the current browser.
+
 ## Technology
 
 - **React 19 + TypeScript + Vite** for a responsive, component-based frontend.
@@ -66,6 +68,12 @@ The optimized site files are created in `frontend/dist`.
 The root `Dockerfile` builds the React site and Java API into one container. Spring Boot serves the frontend and `/api` from the same origin, including direct visits to `/games` routes.
 
 Create a Render Web Service from this repository using the Docker runtime and the `Dockerfile` at the repository root. The service listens on Render's `PORT` value. The app has no required secrets or external database. A free instance can sleep while idle; choose a paid instance if you need always-on service.
+
+## Android and iOS apps
+
+The separate Expo app lives in `mobile/` and provides native-style subject browsing, quiz rounds, and a parent or teacher progress view. Answers and completed rounds are stored on the device, and quiz content uses the same Render API as the web app.
+
+Pushing mobile changes to `main` starts the **Build Android APK** GitHub Actions workflow. Download the sideloadable debug APK from that workflow's Artifacts section. For iOS, `mobile/eas.json` is configured for EAS Build; installing an IPA on a real iPhone requires Apple Developer signing credentials configured in EAS.
 
 ## API
 
